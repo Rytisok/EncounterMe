@@ -53,3 +53,4 @@ function initialize() {
         alert("Geolocation API is not supported in your browser.");
     }
 }
+}
