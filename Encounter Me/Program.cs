@@ -20,7 +20,12 @@ namespace Encounter_Me
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+            builder.Services.AddScoped<Geolocation>();
+
             await builder.Build().RunAsync();
+
+
+
         }
     }
 }
