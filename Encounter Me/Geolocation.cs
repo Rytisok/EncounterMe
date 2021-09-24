@@ -28,7 +28,7 @@ namespace Encounter_Me
 
         public async ValueTask UpdateCoords()
         {
-            //await js.InvokeVoidAsync("Geolocate");
+            await js.InvokeVoidAsync("Geolocate");
             latitude = await js.InvokeAsync<float>("getLat");
             longitude = await js.InvokeAsync<float>("getLong");
         }
