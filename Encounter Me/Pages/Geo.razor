@@ -24,9 +24,8 @@
 
     private async Task getCoords()
     {
-        latitude = await JS.InvokeAsync<float>("getLat");
-        longitude = await JS.InvokeAsync<float>("getLong");
-
+        latitude = geo.getLatitude();
+        longitude = geo.getLongitude();
     }
 
 }

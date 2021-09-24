@@ -13,6 +13,8 @@ namespace Encounter_Me
     public class Geolocation
     {
         private readonly IJSRuntime js;
+        float latitude;
+        float longitude;
 
         public Geolocation(IJSRuntime js)
         {
@@ -24,6 +26,25 @@ namespace Encounter_Me
             await js.InvokeVoidAsync("Geolocate");
         }
 
-       
+        public async ValueTask UpdateCoords()
+        {
+            //await js.InvokeVoidAsync("Geolocate");
+            latitude = await js.InvokeAsync<float>("getLat");
+            longitude = await js.InvokeAsync<float>("getLong");
+        }
+
+        public float getLatitude()
+        {
+            UpdateCoords();
+            return this.latitude;
+        }
+        public float getLongitude()
+        {
+            UpdateCoords();
+            return this.longitude;
+        }
+
+
+
     }
 }
