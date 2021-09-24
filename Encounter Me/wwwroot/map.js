@@ -52,4 +52,7 @@ function initialize() {
     } else {
         alert("Geolocation API is not supported in your browser.");
     }
+
 }
+}
+
