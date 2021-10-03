@@ -1,6 +1,7 @@
 ﻿var longitude = 0;
 var latitude = 0;
 
+//var LtLng = new google.maps.LatLng(getLat(), getLong());
 
 //Geolocates the user using the browser
 function Geolocate() {
@@ -27,4 +28,12 @@ function getLat() {
 function getLong() {
 
     return longitude;
+}
+
+function getMapsObj() {
+    return new google.maps.LatLng(getLat(), getLong());
+}
+
+function getMapsObjJS() {
+    return { lat: latitude, lng: longitude };
 }

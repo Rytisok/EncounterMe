@@ -1,9 +1,13 @@
+var latitude = 0;
+var longitude = 0;
+var latlng = new google.maps.LatLng(0, 0);
 function initialize() {
     //var latlng = new google.maps.LatLng(54.69, 25.28);
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
-            var latitude = position.coords.latitude;
-            var longitude = position.coords.longitude;
+            latitude = position.coords.latitude;
+            longitude = position.coords.longitude;
+            latlng = new google.maps.LatLng(latitude,longitude);
             var coords = new google.maps.LatLng(latitude, longitude);
             var options = {
                 zoom: 15, center: coords,

@@ -44,7 +44,27 @@ namespace Encounter_Me
             return this.longitude;
         }
 
+        public void setLatitude(float latitude)
+        {
+            this.latitude = latitude;
+        }
 
+        public void setLongitude(float longitude)
+        {
+            this.longitude = longitude;
+        }
+
+        //I don't know if this works, need to get the API to work
+        public async ValueTask<float[]> GetCoordsObj()
+        {
+            return await js.InvokeAsync<float[]>("getMapsObj");
+        }
+
+        //Trying as a simple literal instead of a google maps object
+        public async ValueTask<float[]> GetCoordsObjJS()
+        {
+            return await js.InvokeAsync<float[]>("getMapsObjJS");
+        }
 
     }
 }
