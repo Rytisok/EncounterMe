@@ -1,111 +1,48 @@
 ﻿@page "/"
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
 
-@using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
-@using GoogleMapsComponents.Maps.Coordinates
-@using GoogleMapsComponents.Maps.Drawing
+<div id="mapid"></div>
+<button @onclick="UpdateMarkers">
+    Update heading
+</button>
 
-
-<h1>Google Map</h1>
-<div style="height: 1000px; width: 100%; ">
-    <GoogleMap @ref="@map1" Id="map1" Options="@mapOptions" Height="100%" OnAfterInit="async () => await OnAfterMapInit()"></GoogleMap>
-</div>
-@functions {
-
-    private GoogleMap map1 = default;
-    private MapOptions mapOptions;
-
-    protected override void OnInitialized()
+@code{
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        mapOptions = new MapOptions()
+        if (firstRender)
         {
-            Zoom = 14,
-            Center = new LatLngLiteral()
-            {
-                Lat = 54.69,
-                Lng = 25.28
-            },
-            MapTypeId = MapTypeId.Terrain,
-            StreetViewControl = false,
-            Styles = new MapTypeStyle[]
-        {
-            //Hides markers of places of interest
-            new MapTypeStyle()
-            {
-                featureType = "poi",
-                stylers = new GoogleMapStyleVisibility[]
-                {
-                    new GoogleMapStyleVisibility()
-                    {
-                        visibility = "off"
-                    }
-                }
-            },
-            new MapTypeStyle()
-            {
-                featureType = "transit",
-                stylers = new GoogleMapStyleVisibility[]
-                {
-                    new GoogleMapStyleVisibility()
-                    {
-                        visibility = "off"
-                    }
-                }
-            }
+
+            await JSRuntime.InvokeAsync<string>(
+            "initialize", 54.7, 25.26);
         }
-        };
+        base.OnAfterRender(firstRender);
     }
 
-    private async Task OnAfterMapInit()
+    private async Task UpdateMarkers()
     {
-        await AddMarker();
+        TrailContainer trail = await Http.GetFromJsonAsync<TrailContainer>("testTrail.json");
+        await AddMarker(trail);
     }
 
-    //Adds test marker
-    private async Task AddMarker()
+    private async Task AddMarker(TrailContainer trail)
     {
-        var marker = await Marker.CreateAsync(map1.JsRuntime,
-        new MarkerOptions()
+        string difficulty = "";
+        for (int i = 0; i < trail.Diff; i++)
         {
-            Position = new LatLngLiteral()
-            {
-                Lat = 54.69,
-                Lng = 25.28
-            },
-            Map = map1.InteropObject,
-            Icon = new Icon()
-            {
-                ScaledSize = new GoogleMapsComponents.Maps.Size()
-                {
-                    Height = 64,
-                    Width = 64
-                },
-                Url = "footprint.png"
-            }
-        });
-
-        var position = await map1.InteropObject.GetCenter();
-
-        var infoWindow = await InfoWindow.CreateAsync(map1.JsRuntime, new InfoWindowOptions()
+            difficulty += "★";
+        }
+        for (int i = 0; i < 5 - trail.Diff; i++)
         {
-            Position = await map1.InteropObject.GetCenter()
-        });
+            difficulty += '☆';
+        }
 
-        //Placeholder infoWindow text
-        var infoWindowContent = "<div id=content>" +
-                "<div id=siteNotice>" +
-                "</div>" +
-                "<h1 id=firstHeading class=firstHeading>Trail name</h1> " +
-                "<div id=bodyContent>" +
-                "<p>Trail information</p>" +
-                "</div></div>";
+        string infoWindowContent = "<div id=content>" +
+        "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
+        "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+        "</div>";
 
-
-        await marker.AddListener("click", async () =>
-        {
-            await infoWindow.SetContent(infoWindowContent);
-            await infoWindow.SetPosition(position);
-            await infoWindow.Open(map1.InteropObject);
-        });
+        await JSRuntime.InvokeAsync<string>(
+            "addMarker", trail.Lat, trail.Lng, infoWindowContent, trail.GeoJsonData);
     }
 }
