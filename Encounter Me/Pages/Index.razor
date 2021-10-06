@@ -4,7 +4,7 @@
 
 <div id="mapid"></div>
 <button @onclick="UpdateMarkers">
-    Update heading
+    Search for trails
 </button>
 
 @code{
@@ -21,8 +21,11 @@
 
     private async Task UpdateMarkers()
     {
-        TrailContainer trail = await Http.GetFromJsonAsync<TrailContainer>("testTrail.json");
-        await AddMarker(trail);
+        TrailContainer[] trails = await Http.GetFromJsonAsync<TrailContainer[]>("testTrail.json");
+        foreach(TrailContainer trail in trails)
+        {
+            await AddMarker(trail);
+        }
     }
 
     private async Task AddMarker(TrailContainer trail)
