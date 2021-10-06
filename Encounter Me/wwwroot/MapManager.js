@@ -38,8 +38,8 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
     var icon = L.Icon.extend({
         options: {
             iconSize: [currentZoom * 4, currentZoom * 4],
-            iconAnchor: [0, 0],
-            popupAnchor: [15, -50]
+            iconAnchor: [currentZoom * 2, currentZoom * 2],
+            popupAnchor: [0, (-200 / currentZoom)]
         }
     });
     //creates new marker with icon and specified coords
@@ -51,17 +51,29 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
 
     //show geojson on marker click
     marker.on('click',
-    function (e) {
-        showGeojson(geoJsonUrl);
+        function (e)
+        {
+            showGeojson(geoJsonUrl);
+            //in case of clicking same marker while pop up is open, pop up is closed and marker click event is called again
+            //calling open popup again prevents from geojson trail staying without popup staying open
+            openPopUp(marker);
         });
 
     //hide geojson on pop up close
     marker.getPopup().on('remove', function () {
-        geojsonLayer.clearLayers();
+        removeGeojson();
     });
 
     marker.addTo(map);
     markers.push(marker);
+}
+
+function openPopUp(marker)
+{
+    if (!marker.getPopup.isOpen)
+    {
+        marker.openPopup();
+    }
 }
 
 //loads and displays geojson with the specified name
@@ -72,9 +84,23 @@ function showGeojson(geoJsonUrl)
             return response.json();
         })
         .then(function (data) {
+
+            removeGeojson();
             geojsonLayer = L.geoJSON(data);
+
+            geojsonLayer.setStyle({
+                color: '#25C0C0',
+                weight: 7
+            });
+
             geojsonLayer.addTo(map);
         });
+}
+
+function removeGeojson() {
+    if (geojsonLayer != null) {
+        map.removeLayer(geojsonLayer);
+    }
 }
 
 //updates all marker sizes based on zoom level
@@ -83,8 +109,8 @@ function updateMarkerSize() {
     var icon = new L.Icon({
         iconUrl: 'footprint.png',
         iconSize: [currentZoom * 4, currentZoom * 4],
-        iconAnchor: [0, 0],
-        popupAnchor: [15, (-50 / currentZoom)]
+        iconAnchor: [currentZoom * 2, currentZoom * 2],
+        popupAnchor: [0, (-200 / currentZoom)]
     });
     markers.forEach(element => element.setIcon(icon));
 }
