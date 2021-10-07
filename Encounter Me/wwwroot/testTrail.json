@@ -1,0 +1,16 @@
+[
+  {
+    "Lat": 54.7214,
+    "Lng": 25.2555,
+    "Length": 2,
+    "Diff": 2,
+    "GeoJsonData": "test.geojson"
+  },
+  {
+    "Lat": 54.6850023616530,
+    "Lng": 25.240305662155,
+    "Length": 5,
+    "Diff": 3,
+    "GeoJsonData": "test1.geojson"
+  }
+]
