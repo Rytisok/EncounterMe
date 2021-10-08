@@ -37,3 +37,7 @@ function getMapsObj() {
 function getMapsObjJS() {
     return { lat: latitude, lng: longitude };
 }
+
+function UpdateMap() {
+
+}

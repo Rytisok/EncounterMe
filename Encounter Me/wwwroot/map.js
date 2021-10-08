@@ -1,13 +1,13 @@
 var latitude = 0;
 var longitude = 0;
-var latlng = new google.maps.LatLng(0, 0);
-function initialize() {
-    //var latlng = new google.maps.LatLng(54.69, 25.28);
+
+
+function initialize(latitude, longitude) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
             latitude = position.coords.latitude;
             longitude = position.coords.longitude;
-            latlng = new google.maps.LatLng(latitude,longitude);
+            latlng = new google.maps.LatLng(latitude, longitude);
             var coords = new google.maps.LatLng(latitude, longitude);
             var options = {
                 zoom: 15, center: coords,
@@ -18,16 +18,11 @@ function initialize() {
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map"), options);
-            const image = "footprint.png";
 
             const marker = new google.maps.Marker({
                 position: latlng,
                 map,
-                icon: {
-                    size: new google.maps.Size(64, 64),
-                    scaledSize: new google.maps.Size(64, 64),
-                    url: image
-                },
+                title: "",
             });
 
             const contentString =
@@ -51,11 +46,32 @@ function initialize() {
                     shouldFocus: false,
                 });
             });
+
+            //setInterval(UpdateMap, 10);
         });
 
-    } else {
-        alert("Geolocation API is not supported in your browser.");
-    }
-}
+        } else {
+            alert("Geolocation API is not supported in your browser.");
+        }
 }
 
+function UpdateMap() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                infoWindow.setPosition(pos);
+                infoWindow.setContent("Location found.");
+                infoWindow.open(map);
+                map.setCenter(pos);
+            },
+            () => {
+                handleLocationError(true, infoWindow, map.getCenter());
+            }
+        );
+    }
+}

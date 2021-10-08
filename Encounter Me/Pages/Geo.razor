@@ -1,6 +1,6 @@
 ﻿@page "/geo"
 @inject IJSRuntime JS
-@inject Geolocation geo 
+@inject Geolocation geo
 
 <h3>Your coordinates</h3>
 <button @onclick="getCoords">Current Location</button>
@@ -8,9 +8,10 @@
 
     <span>Latitude:    @latitude</span>
     <span>Longitude:   @longitude</span>
-   
-</div>
 
+</div>
+<div id="map" style="height:1000px;width:100%;">
+</div>
 
 @code{
 
@@ -19,7 +20,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //geo.GetUserCoords();
+        geo.UpdateMap();
     }
 
     private async Task getCoords()
@@ -27,6 +28,17 @@
         latitude = geo.getLatitude();
         longitude = geo.getLongitude();
     }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JS.InvokeVoidAsync("initialize",null);
+        }
+    }
+
+
 
 }
 

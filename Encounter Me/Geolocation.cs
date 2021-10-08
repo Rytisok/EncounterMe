@@ -33,6 +33,11 @@ namespace Encounter_Me
             longitude = await js.InvokeAsync<float>("getLong");
         }
 
+        public async ValueTask UpdateMap()
+        {
+            await js.InvokeVoidAsync("setInterval","UpdateMap",10);
+        }
+
         public float getLatitude()
         {
             UpdateCoords();
