@@ -18,11 +18,12 @@ namespace Encounter_Me.Shared
 
         public UserData(int id, string firstName, string lastName, string email, string userPhotoUrl)
         {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-            UserPhotoUrl = userPhotoUrl;
+            this.Id = id;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.Email = email;
+            this.UserPhotoUrl = userPhotoUrl;
         }
+
     }
 }
