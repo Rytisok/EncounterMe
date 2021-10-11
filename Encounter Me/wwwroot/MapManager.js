@@ -1,6 +1,7 @@
 ﻿var map;
 var markers = [];
 var geojsonLayer;
+var iconSizeMultiplier = 0.08;
 
 function initialize(Lat, Lng)
 {
@@ -30,41 +31,73 @@ function initialize(Lat, Lng)
     {
         updateMarkerSize();
     });
+
+    var icon = L.Icon.extend({
+        options: {
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+        }
+    });
+
+    var markerIcon = new icon({ iconUrl: 'rec.png' });
+    var leafletMarker;
+
+    //places dot icon and centers map on user location when location is acquired
+    map.locate({ setView: true, watch: false }).on('locationfound', function (ev) {
+        if (!leafletMarker) {
+            leafletMarker = L.marker(ev.latlng, { icon: markerIcon });
+        } else {
+            leafletMarker.setLatLng(ev.latlng);
+        }
+        leafletMarker.addTo(map);
+
+        var marker = {
+            marker: leafletMarker,
+            size: 28
+        };
+        markers.push(marker);
+    });
+
 }
 
 function addMarker(Lat, Lng, text, geoJsonUrl)
 {
     var currentZoom = map.getZoom();
+    var sizeMultiplier = currentZoom * iconSizeMultiplier;
     var icon = L.Icon.extend({
         options: {
-            iconSize: [currentZoom * 4, currentZoom * 4],
-            iconAnchor: [currentZoom * 2, currentZoom * 2],
-            popupAnchor: [0, (-200 / currentZoom)]
+            iconSize: [50 * sizeMultiplier, 50 * sizeMultiplier],
+            iconAnchor: [25 * sizeMultiplier, 25 * sizeMultiplier],
+            popupAnchor: [0, (sizeMultiplier * -4 / currentZoom)]
         }
     });
     //creates new marker with icon and specified coords
     var markerIcon = new icon({ iconUrl: 'footprint.png' });
-    var marker = L.marker([Lat, Lng], { icon: markerIcon });
+    var leafletMarker = L.marker([Lat, Lng], { icon: markerIcon });
 
     //assign trail information text
-    marker.bindPopup(text);
+    leafletMarker.bindPopup(text);
 
     //show geojson on marker click
-    marker.on('click',
+    leafletMarker.on('click',
         function (e)
         {
             showGeojson(geoJsonUrl);
             //in case of clicking same marker while pop up is open, pop up is closed and marker click event is called again
             //calling open popup again prevents from geojson trail staying without popup staying open
-            openPopUp(marker);
+            openPopUp(leafletMarker);
         });
 
     //hide geojson on pop up close
-    marker.getPopup().on('remove', function () {
+    leafletMarker.getPopup().on('remove', function () {
         removeGeojson();
     });
 
-    marker.addTo(map);
+    var marker = {
+        marker: leafletMarker,
+        size: 50};
+
+    leafletMarker.addTo(map);
     markers.push(marker);
 }
 
@@ -106,11 +139,14 @@ function removeGeojson() {
 //updates all marker sizes based on zoom level
 function updateMarkerSize() {
     var currentZoom = map.getZoom();
-    var icon = new L.Icon({
-        iconUrl: 'footprint.png',
-        iconSize: [currentZoom * 4, currentZoom * 4],
-        iconAnchor: [currentZoom * 2, currentZoom * 2],
-        popupAnchor: [0, (-200 / currentZoom)]
+    
+    markers.forEach(function (element) {
+        var icon = element.marker.options.icon;
+        var sizeMultiplier = currentZoom * iconSizeMultiplier;
+
+        icon.options.iconSize = [element.size * sizeMultiplier, element.size * sizeMultiplier];
+        icon.options.iconAnchor = [element.size * sizeMultiplier / 2, element.size * sizeMultiplier / 2];
+        icon.options.popupAnchor = [0, (element.size * -4 / currentZoom)];
+        element.marker.setIcon(icon);
     });
-    markers.forEach(element => element.setIcon(icon));
 }
