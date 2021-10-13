@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
@@ -10,10 +7,10 @@ namespace Encounter_Me
     public static class PaswordManager
     {
 
-
+        // Generate a 128-bit salt using a secure PRNG
         public static byte[] GenerateSalt()
         {
-            byte[] salt = new byte[128 / 8]; // Generate a 128-bit salt using a secure PRNG
+            byte[] salt = new byte[128 / 8]; 
             using (var rng = RandomNumberGenerator.Create())
             {
                 rng.GetBytes(salt);
@@ -21,9 +18,10 @@ namespace Encounter_Me
             return salt;
         }
 
-        public static string EncryptPassword (string password, byte[] salt)
+        // Hash the password using PBKDF2 algorithm
+        public static string EncryptPassword(string password, byte[] salt)
         {
-            string encryptedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+            string encryptedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2( 
                 password: password,
                 salt: salt,
                 prf: KeyDerivationPrf.HMACSHA256,
@@ -33,7 +31,7 @@ namespace Encounter_Me
             return encryptedPassword;
         }
 
-        public static bool IsPasswordCorrect (string enteredPassword, byte[] salt, string storedPassword)
+        public static bool IsPasswordCorrect(string enteredPassword, byte[] salt, string storedPassword)
         {
             if(EncryptPassword(enteredPassword, salt) == storedPassword)
             {
@@ -44,11 +42,12 @@ namespace Encounter_Me
                 return false;
             }
         }
+
         // IN context:
-        //Register(...)
         //{
-        //  var salt = PasswordManager.GenerateSalt;
-        //  var hashedPassword = PaswordManager.EncryptPassword(password, salt)
+        // ...
+        //  var salt = PasswordManager.GenerateSalt();
+        //  var hashedPassword = PaswordManager.EncryptPassword(password, salt);
         //  user.Password = hashedPassword;
         //  user.StoredSalt = salt;
         //}
