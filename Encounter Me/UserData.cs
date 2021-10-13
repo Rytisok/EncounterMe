@@ -14,7 +14,7 @@ namespace Encounter_Me.Shared
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public byte[] Salt { get; set; }
+        public byte[] StoredSalt { get; set; }
 
         public string UserPhotoUrl { get; set; }
 
