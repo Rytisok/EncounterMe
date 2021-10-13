@@ -8,6 +8,8 @@ namespace Encounter_Me.Shared
     public class UserData
     {
         public int Id { get; set; } 
+
+        public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -16,9 +18,10 @@ namespace Encounter_Me.Shared
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
-        public UserData(int id, string firstName, string lastName, string email, string userPhotoUrl)
+        public UserData(int id, string userName, string firstName, string lastName, string email, string userPhotoUrl = null)
         {
             this.Id = id;
+            this.UserName = userName;
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Email = email;
