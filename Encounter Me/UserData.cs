@@ -21,13 +21,15 @@ namespace Encounter_Me.Shared
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
-        public UserData(int id, string userName, string firstName, string lastName, string email, string userPhotoUrl = null)
+        public UserData(int id, string userName, string firstName, string lastName, string email, string password, byte[] salt, string userPhotoUrl = null)
         {
             this.Id = id;
             this.UserName = userName;
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Email = email;
+            this.Password = password;
+            this.StoredSalt = salt;
             this.UserPhotoUrl = userPhotoUrl;
         }
 
