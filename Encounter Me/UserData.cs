@@ -8,7 +8,6 @@ namespace Encounter_Me
     public class UserData
     {
         public int Id { get; set; } 
-
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -18,7 +17,6 @@ namespace Encounter_Me
 
         public string UserPhotoUrl { get; set; }
 
-        public int Id { get; set; }
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
