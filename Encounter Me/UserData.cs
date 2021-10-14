@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Encounter_Me.Shared
+namespace Encounter_Me
 {
     public class UserData
     {
@@ -18,6 +18,7 @@ namespace Encounter_Me.Shared
 
         public string UserPhotoUrl { get; set; }
 
+        public int Id { get; set; }
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
