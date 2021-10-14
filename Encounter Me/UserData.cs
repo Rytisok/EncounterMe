@@ -32,5 +32,9 @@ namespace Encounter_Me
             this.UserPhotoUrl = userPhotoUrl;
         }
 
+        public UserData()
+        {
+
+        }
     }
 }
