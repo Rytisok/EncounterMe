@@ -3,26 +3,25 @@
 @inject HttpClient Http
 
 <div id="mapid"></div>
-<button @onclick="UpdateMarkers">
-    Search for trails
-</button>
 
 @code{
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            var dotNetObjRef = DotNetObjectReference.Create(this);
 
             await JSRuntime.InvokeAsync<string>(
-            "initialize", 54.7, 25.26);
+            "initialize", 54.7, 25.26, dotNetObjRef);
         }
         base.OnAfterRender(firstRender);
     }
 
-    private async Task UpdateMarkers()
+    [JSInvokable]
+    public async void UpdateMarkers()
     {
         TrailContainer[] trails = await Http.GetFromJsonAsync<TrailContainer[]>("testTrail.json");
-        foreach(TrailContainer trail in trails)
+        foreach (TrailContainer trail in trails)
         {
             await AddMarker(trail);
         }
@@ -43,6 +42,8 @@
         string infoWindowContent = "<div id=content>" +
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
         "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+        "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"route.png\" ></button>" +
+        "<button title=\"Walk the trail\" onclick = \"futureFeature()\" ><img src = \"walk.png\" ></button>" +
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
