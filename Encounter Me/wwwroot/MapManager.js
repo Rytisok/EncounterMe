@@ -2,8 +2,9 @@
 var markers = [];
 var geojsonLayer;
 var iconSizeMultiplier = 0.08;
+var currentMarker;
 
-function initialize(Lat, Lng)
+function initialize(Lat, Lng, dotNetObjRef)
 {
     map = L.map('mapid').setView([Lat, Lng], 15);
 
@@ -53,11 +54,18 @@ function initialize(Lat, Lng)
 
         var marker = {
             marker: leafletMarker,
-            size: 28
+            size: 28,
+            geojson: null
         };
         markers.push(marker);
     });
 
+    //creates search for trails button and assigns UpdateMarkers method to its onClick event
+    let easyButtonInstance = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
+        dotNetObjRef.invokeMethodAsync("UpdateMarkers");
+    }, {
+        position: 'topright'}).addTo(map);
+    easyButtonInstance.button.style.width = '200px';
 }
 
 function addMarker(Lat, Lng, text, geoJsonUrl)
@@ -71,12 +79,20 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
             popupAnchor: [0, (sizeMultiplier * -4 / currentZoom)]
         }
     });
+
+
     //creates new marker with icon and specified coords
     var markerIcon = new icon({ iconUrl: 'footprint.png' });
     var leafletMarker = L.marker([Lat, Lng], { icon: markerIcon });
 
     //assign trail information text
     leafletMarker.bindPopup(text);
+
+    var marker = {
+        marker: leafletMarker,
+        size: 50,
+        geojson: geoJsonUrl
+    };
 
     //show geojson on marker click
     leafletMarker.on('click',
@@ -86,16 +102,13 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
             //in case of clicking same marker while pop up is open, pop up is closed and marker click event is called again
             //calling open popup again prevents from geojson trail staying without popup staying open
             openPopUp(leafletMarker);
+            currentMarker = marker;
         });
 
     //hide geojson on pop up close
     leafletMarker.getPopup().on('remove', function () {
         removeGeojson();
     });
-
-    var marker = {
-        marker: leafletMarker,
-        size: 50};
 
     leafletMarker.addTo(map);
     markers.push(marker);
@@ -107,6 +120,12 @@ function openPopUp(marker)
     {
         marker.openPopup();
     }
+}
+
+function showTrailOnly()
+{
+    map.closePopup();
+    showGeojson(currentMarker.geojson);
 }
 
 //loads and displays geojson with the specified name
@@ -149,4 +168,8 @@ function updateMarkerSize() {
         icon.options.popupAnchor = [0, (element.size * -4 / currentZoom)];
         element.marker.setIcon(icon);
     });
+}
+function futureFeature()
+{
+    alert("future feature");
 }

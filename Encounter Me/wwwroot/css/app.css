@@ -8,6 +8,10 @@ a, .btn-link {
     color: #0366d6;
 }
 
+mapText {
+    font-size: 20px;
+} 
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -29,6 +33,7 @@ a, .btn-link {
 .validation-message {
     color: red;
 }
+
 
 #blazor-error-ui {
     background: lightyellow;
