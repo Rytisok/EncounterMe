@@ -23,42 +23,33 @@ namespace Encounter_Me.Pages
             return base.OnInitializedAsync();
         }
 
-        public IEnumerable<UserData> Users { get; set; }
+        public List<UserData> Users { get; set; }
 
 
         private void InitializeUsers()
         {
-            var u1 = new UserData
-            {
-                FirstName = "Rytis",
-                LastName = "Mikalauskas",
-                Email = "rytis@gmail.com",
-                Id = 0,
-                Level = 43,
-                ExperiencePoints = 10001
-            };
 
-            var u2 = new UserData
-            {
-                FirstName = "Gabija",
-                LastName = "Gakaite",
-                Email = "gabija@gmail.com",
-                Id = 1,
-                Level = 43,
-                ExperiencePoints = 10002
-            };
+            
 
-            var u3 = new UserData
-            {
-                FirstName = "Catarina",
-                LastName = "Boto",
-                Email = "catarina@gmail.com",
-                Id = 2,
-                Level = 41,
-                ExperiencePoints = 8888
-            };
+            var u1 = new UserData(0, "rm", "Rytis", "Mikalauskas", "rytis@gmail.com");
+            u1.Level = 43;
+            u1.ExperiencePoints = 10001;
 
-            Users = new List<UserData> { u1, u2, u3 };
+
+            var u2 = new UserData(1, "gg", "Gabija", "Gakaite", "gg@gmail.com");
+            u2.Level = 43;
+            u2.ExperiencePoints = 10002;
+
+
+            var u3 = new UserData(2, "cb", "Catarina", "Boto", "catarina@gmail.com");
+            u3.Level = 41;
+            u3.ExperiencePoints = 8888;
+
+
+            var u4 = new UserData(3,"obuolys","Dominykas","Zagreckas","dz@gmail.com",
+                userPhotoUrl: "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg");
+
+            Users = new List<UserData> { u1, u2, u3, u4 };
 
         }
 
