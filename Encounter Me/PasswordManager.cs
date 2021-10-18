@@ -8,7 +8,7 @@ namespace Encounter_Me
     {
 
         
-        // Hash the password using PBKDF2 algorithm
+        // Hash the password using SHA256 algorithm.
         public static HashAndSalt EncryptPassword(string password, byte[] storedSalt = null)
         {
             var salt = new byte[128 / 8];
@@ -24,13 +24,11 @@ namespace Encounter_Me
                 // Ensures that salt is always generated.
             }
 
-            string encryptedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2( 
-                password: password,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8
-            ));
+            byte[] bytes = System.Text.Encoding.UTF8.GetBytes(password + salt);
+            SHA256Managed sha256hashstring = new SHA256Managed();
+            var encryptedPassword = Convert.ToBase64String(sha256hashstring.ComputeHash(bytes));
+
+
             return new HashAndSalt { Hash = encryptedPassword, Salt = salt };
         }
 
