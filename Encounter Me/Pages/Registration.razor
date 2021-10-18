@@ -7,37 +7,37 @@
                 <h2>User Registration</h2>
             </div>
             <div class="card-body">
-                <EditForm Model="@userModel" OnValidSubmit="CreateNewUser">
+                <EditForm Model="@userModel" OnValidSubmit="CreateNewUser" autocomplete ="off">
                     <DataAnnotationsValidator />
                     <div class="col-md-12 mb-3">
                         <label for="Username">User Name</label>
-                        <InputText id="Username" placeholder="Adventurous City Explorer" @bind-Value="userModel.UserName" class="form-control" />
-                        <ValidationMessage For="@(() => userModel.UserName)" />
+                        <InputText id="Username" placeholder="Enter Username" @bind-Value="userModel.UserName" class="form-control"/>
+                        <ValidationMessage For="@(() => userModel.UserName)"/>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="FirstName">First Name</label>
                         <InputText id="FirstName" placeholder="Enter Name" @bind-Value="userModel.FirstName" class="form-control" />
-                        <ValidationMessage For="@(() => userModel.FirstName)" />
+                        <ValidationMessage For="@(() => userModel.FirstName)"/>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="LastName">Last Name</label>
                         <InputText id="LastName" placeholder="Enter Surname" @bind-Value="userModel.LastName" class="form-control" />
-                        <ValidationMessage For="@(() =>  userModel.LastName)" />
+                        <ValidationMessage For="@(() =>  userModel.LastName)"/>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Email">Email</label>
                         <InputText id="Email" placeholder="Enter Email" @bind-Value="userModel.Email" class="form-control" />
-                        <ValidationMessage For="@(() => userModel.Email)" />
+                        <ValidationMessage For="@(() => userModel.Email)"/>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Password">Password</label>
-                        <InputText id="Password" type="password" placeholder="Enter Password" @bind-Value="@userModel.Password" class="form-control" />
-                        <ValidationMessage For="@(() => userModel.Password)" />
+                        <InputText id="Password"  placeholder="Enter Password" type="password" @bind-Value="userModel.Password" class="form-control" />
+                        <ValidationMessage For="@(() => userModel.Password)"/>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Confirm password">Confirm password</label>
-                        <InputText id="Confirm Password" type="password" placeholder="Repeat Password" @bind-Value="@userModel.Password" class="form-control" />
-                        <ValidationMessage For="@(() =>  userModel.ConfirmPassword)" />
+                        <InputText id="Confirm Password"  placeholder="Repeat Password" type="password" @bind-Value="userModel.ConfirmPassword" class="form-control" />
+                        <ValidationMessage For="@(() =>  userModel.ConfirmPassword)"/>
                     </div>
 
                     <div class="form-group" align="left">
@@ -59,6 +59,8 @@
     void CreateNewUser()
     {
         Console.WriteLine("New user name is...");
+       // var hashSalt = new Has
+       // var newUser = new UserData(0, userModel.UserName, userModel.FirstName, userModel.LastName, userModel.Email);
     }
 
     //TODO:
