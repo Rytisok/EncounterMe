@@ -2,15 +2,25 @@
   {
     "Lat": 54.7214,
     "Lng": 25.2555,
-    "Length": 2,
+    "Length": 2.4,
     "Diff": 2,
-    "GeoJsonData": "test.geojson"
+    "GeoJsonData": "test.geojson",
+    "trailType": 0
   },
   {
     "Lat": 54.6850023616530,
     "Lng": 25.240305662155,
-    "Length": 5,
+    "Length": 3,
     "Diff": 3,
-    "GeoJsonData": "test1.geojson"
+    "GeoJsonData": "test1.geojson",
+    "trailType": 1
+  },
+  {
+    "Lat": 54.6868133,
+    "Lng": 25.2905595,
+    "Length": 1.4,
+    "Diff": 1,
+    "GeoJsonData": "test2.geojson",
+    "trailType": 2
   }
 ]
