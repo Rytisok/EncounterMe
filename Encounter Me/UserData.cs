@@ -20,7 +20,7 @@ namespace Encounter_Me
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
-        public UserData(int id, string userName, string firstName, string lastName, string email, string password = null, byte[] salt = null, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
+        public UserData(int id, string userName, string firstName, string lastName, string email, string password, byte[] salt, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
         {
             this.Id = id;
             this.UserName = userName;
