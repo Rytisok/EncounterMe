@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me
 {
-    public class UserData
+    public class UserData : IComparable<UserData>
     {
         public int Id { get; set; } 
         public string UserName { get; set; }
@@ -20,7 +20,7 @@ namespace Encounter_Me
         public int Level { get; set; }
         public double ExperiencePoints { get; set; }
 
-        public UserData(int id, string userName, string firstName, string lastName, string email, string password, byte[] salt, string userPhotoUrl = null)
+        public UserData(int id, string userName, string firstName, string lastName, string email, string password, byte[] salt, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
         {
             this.Id = id;
             this.UserName = userName;
@@ -30,11 +30,22 @@ namespace Encounter_Me
             this.Password = password;
             this.StoredSalt = salt;
             this.UserPhotoUrl = userPhotoUrl;
+            this.Level = 0;
+            this.ExperiencePoints = 0;
         }
 
         public UserData()
         {
 
+        }
+
+        public int CompareTo(UserData other)
+        {
+            if(this.Level==other.Level)
+            {
+                return other.ExperiencePoints.CompareTo(this.ExperiencePoints);
+            }else
+                return other.Level.CompareTo(this.Level);
         }
     }
 }
