@@ -59,8 +59,22 @@
     void CreateNewUser()
     {
         Console.WriteLine("New user name is...");
-       // var hashSalt = new Has
-       // var newUser = new UserData(0, userModel.UserName, userModel.FirstName, userModel.LastName, userModel.Email);
+        var hashSalt = PasswordManager.EncryptPassword(userModel.Password);
+        var newUser = new UserData(
+            id: 0,
+            userName:userModel.UserName,
+            firstName: userModel.FirstName,
+            lastName: userModel.LastName,
+            email: userModel.Email,
+            password: hashSalt.Hash,
+            salt: hashSalt.Salt);
+
+
+        Console.WriteLine($"Name: {newUser.FirstName}\n " +
+                          $"Surname: {newUser.LastName}\n" +
+                          $"Email: {newUser.Email}\n" +
+                          $"Password: {newUser.Password}\n" +
+                          $"Salt: {newUser.StoredSalt}\n");
     }
 
     //TODO:
