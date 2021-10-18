@@ -27,12 +27,12 @@ namespace Encounter_Me.Pages
             u1.ExperiencePoints = 10001;
 
 
-            var u2 = new UserData(1, "gg", "Gabija", "Gakaite", "gg@gmail.com");
+            var u2 = new UserData(1, userName:"gg", firstName:"Gabija", "Gakaite", "gg@gmail.com");
             u2.Level = 43;
             u2.ExperiencePoints = 10002;
 
 
-            var u3 = new UserData(2, "cb", "Catarina", "Boto", "catarina@gmail.com");
+            var u3 = new UserData(2, "cb", "Catarina", email: "catarina@gmail.com", lastName:"Boto");
             u3.Level = 41;
             u3.ExperiencePoints = 8888;
 
