@@ -87,7 +87,7 @@ function clearMarkers()
     trailMarkers = [];
 }
 
-function addMarker(Lat, Lng, text, geoJsonUrl)
+function addMarker(Lat, Lng, text, trailType, geoJsonUrl)
 {
     var currentZoom = map.getZoom();
     var sizeMultiplier = currentZoom * iconSizeMultiplier;
@@ -101,7 +101,23 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
 
 
     //creates new marker with icon and specified coords
-    var markerIcon = new icon({ iconUrl: 'footprint.png' });
+
+    var trailIconUrl;
+
+    switch (trailType)
+    {
+        case 1:
+            trailIconUrl = 'forest.png';
+            break;
+        case 2:
+            trailIconUrl = 'temple.png';
+            break;
+        default:
+            trailIconUrl = 'footprint.png';
+            break;
+    }
+
+    var markerIcon = new icon({ iconUrl: trailIconUrl});
     var leafletMarker = L.marker([Lat, Lng], { icon: markerIcon });
 
     //assign trail information text

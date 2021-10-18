@@ -77,6 +77,6 @@
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
-            "addMarker", trail.Lat, trail.Lng, infoWindowContent, trail.GeoJsonData);
+            "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);
     }
 }
