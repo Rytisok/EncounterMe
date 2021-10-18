@@ -16,7 +16,7 @@ namespace Encounter_Me.Pages
         }
 
 
-        public IEnumerable<UserData> Users { get; set; }
+        public List<UserData> Users { get; set; }
 
 
         private void InitializeUsers()
@@ -27,8 +27,8 @@ namespace Encounter_Me.Pages
                 LastName = "Mikalauskas",
                 Email = "rytis@gmail.com",
                 Id = 0,
-                Level = 42,
-                ExperiencePoints = 9999
+                Level = 43,
+                ExperiencePoints = 10001
             };
 
             var u2 = new UserData
@@ -38,7 +38,7 @@ namespace Encounter_Me.Pages
                 Email = "gabija@gmail.com",
                 Id = 1,
                 Level = 43,
-                ExperiencePoints = 10000
+                ExperiencePoints = 10002
             };
 
             var u3 = new UserData
@@ -47,11 +47,12 @@ namespace Encounter_Me.Pages
                 LastName = "Boto",
                 Email = "catarina@gmail.com",
                 Id = 2,
-                Level = 44,
-                ExperiencePoints = 10002
+                Level = 41,
+                ExperiencePoints = 8888
             };
 
             Users = new List<UserData> { u1, u2, u3 };
+            Users.Sort();
 
         }
 

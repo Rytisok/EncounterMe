@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me
 {
-    public class UserData
+    public class UserData : IComparable<UserData>
     {
         public int Id { get; set; } 
         public string UserName { get; set; }
@@ -35,6 +35,15 @@ namespace Encounter_Me
         public UserData()
         {
 
+        }
+
+        public int CompareTo(UserData other)
+        {
+            if(this.Level==other.Level)
+            {
+                return other.ExperiencePoints.CompareTo(this.ExperiencePoints);
+            }else
+                return other.Level.CompareTo(this.Level);
         }
     }
 }
