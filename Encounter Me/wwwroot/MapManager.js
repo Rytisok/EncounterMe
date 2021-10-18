@@ -1,8 +1,10 @@
 ﻿var map;
 var markers = [];
+var trailMarkers = [];
 var geojsonLayer;
 var iconSizeMultiplier = 0.08;
 var currentMarker;
+var filterWindow = null;
 
 function initialize(Lat, Lng, dotNetObjRef)
 {
@@ -61,11 +63,28 @@ function initialize(Lat, Lng, dotNetObjRef)
     });
 
     //creates search for trails button and assigns UpdateMarkers method to its onClick event
-    let easyButtonInstance = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
-        dotNetObjRef.invokeMethodAsync("UpdateMarkers");
+    let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
+        dotNetObjRef.invokeMethodAsync("FindTrails");
     }, {
         position: 'topright'}).addTo(map);
-    easyButtonInstance.button.style.width = '200px';
+    trailSearchEasyButton.button.style.width = '200px';
+
+    let trailFilterEasyButton = L.easyButton('<img src="filter.png" width="40" height="40">', function (btn, map) {
+        openFilterWindow(dotNetObjRef);
+    }, {
+        position: 'topright'
+    }).addTo(map);
+    trailFilterEasyButton.button.style.width = '48px';
+    trailFilterEasyButton.button.style.height = '40px';
+}
+
+function clearMarkers()
+{
+    trailMarkers.forEach(function (element) {
+        map.removeLayer(element);
+    });
+
+    trailMarkers = [];
 }
 
 function addMarker(Lat, Lng, text, geoJsonUrl)
@@ -112,6 +131,7 @@ function addMarker(Lat, Lng, text, geoJsonUrl)
 
     leafletMarker.addTo(map);
     markers.push(marker);
+    trailMarkers.push(leafletMarker);
 }
 
 function openPopUp(marker)
@@ -169,6 +189,46 @@ function updateMarkerSize() {
         element.marker.setIcon(icon);
     });
 }
+
+function openFilterWindow(dotNetObjRef)
+{
+    if (filterWindow == null) {
+        filterWindow = L.control();
+
+        filterWindow.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'filter');
+            this.update();
+            L.DomEvent
+                .disableClickPropagation(this._div)
+                .disableScrollPropagation(this._div);
+            return this._div;
+        };
+
+        // method that we will use to update the control based on feature properties passed
+        filterWindow.update = function (d, l) {
+
+            //3 and 10 are the default values
+            var dif = (d ? d : 3);
+            var len = (l ? l : 10);
+
+            this._div.innerHTML = '<h4>Filter Trails</h4>' +
+                '<filter>Difficulty:</filter><br/>' +
+                '<input type="range" min="1" max="5" value="' + dif + '" class="slider" oninput="filterWindow.update(this.value, ' + len + ')" onchange="filterWindow.update(this.value, ' + len + ')" id="trailDiff">' + '<filter>' + dif + '★ </filter><br/>'+
+                '<filter>Length:</filter><br/>' +
+                '<input type="range" min="1" max="50" value="' + len + '" class="slider" oninput="filterWindow.update(' + dif + ', this.value)" onchange="filterWindow.update(' + dif + ', this.value)" id="trailLength">' + '<filter>' + len + 'km </filter><br/>';
+            dotNetObjRef.invokeMethodAsync("FilterMarkers", parseInt(dif), parseInt(len));
+        };
+
+        filterWindow.addTo(map);
+    }
+    else
+    {
+        filterWindow.remove();
+        filterWindow = null;
+    }
+    
+}
+
 function futureFeature()
 {
     alert("future feature");

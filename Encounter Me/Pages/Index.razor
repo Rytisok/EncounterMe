@@ -5,6 +5,8 @@
 <div id="mapid"></div>
 
 @code{
+    List <TrailContainer> trails = new List<TrailContainer>();
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -18,13 +20,41 @@
     }
 
     [JSInvokable]
+    public async void FindTrails()
+    {
+        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("testTrail.json");
+
+        UpdateMarkers();
+    }
+
     public async void UpdateMarkers()
     {
-        TrailContainer[] trails = await Http.GetFromJsonAsync<TrailContainer[]>("testTrail.json");
         foreach (TrailContainer trail in trails)
         {
             await AddMarker(trail);
         }
+    }
+
+    [JSInvokable]
+    public async void FilterMarkers(int difficulty, int length)
+    {
+        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("testTrail.json");
+
+        await JSRuntime.InvokeAsync<string>(
+        "clearMarkers");
+
+        var filterQuery = from trail in trails where trail.Diff <= difficulty && trail.Length <= length select trail;
+
+        List<TrailContainer> filteredTrails = new List<TrailContainer>();
+
+        foreach (var trail in filterQuery)
+        {
+            filteredTrails.Add(trail);
+        }
+
+        trails = filteredTrails;
+
+        UpdateMarkers();
     }
 
     private async Task AddMarker(TrailContainer trail)
