@@ -21,7 +21,7 @@ namespace Encounter_Me
             {
                 using var rng = RandomNumberGenerator.Create();
                 rng.GetBytes(salt);
-                // Ensures, that salt is always generated.
+                // Ensures that salt is always generated.
             }
 
             string encryptedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2( 
