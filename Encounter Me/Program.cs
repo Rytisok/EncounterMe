@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.JSInterop;
+using ExtensionMethods;
 
 namespace Encounter_Me
 {

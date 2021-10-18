@@ -1,11 +1,13 @@
 ﻿@page "/"
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
+@using ExtensionMethods
 
 <div id="mapid"></div>
 
 @code{
-    List <TrailContainer> trails = new List<TrailContainer>();
+
+    List<TrailContainer> trails = new List<TrailContainer>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -59,15 +61,7 @@
 
     private async Task AddMarker(TrailContainer trail)
     {
-        string difficulty = "";
-        for (int i = 0; i < trail.Diff; i++)
-        {
-            difficulty += "★";
-        }
-        for (int i = 0; i < 5 - trail.Diff; i++)
-        {
-            difficulty += '☆';
-        }
+        string difficulty = trail.Diff.ToTrailStars();
 
         string infoWindowContent = "<div id=content>" +
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
