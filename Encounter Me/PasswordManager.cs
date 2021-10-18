@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 
 namespace Encounter_Me
 {
-    public static class PaswordManager
+    public static class PasswordManager
     {
 
         
