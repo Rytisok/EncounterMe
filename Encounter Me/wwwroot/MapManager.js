@@ -42,7 +42,7 @@ function initialize(Lat, Lng, dotNetObjRef)
         }
     });
 
-    var markerIcon = new icon({ iconUrl: 'rec.png' });
+    var markerIcon = new icon({ iconUrl: 'Images/rec.png' });
     var leafletMarker;
 
     //places dot icon and centers map on user location when location is acquired
@@ -69,7 +69,7 @@ function initialize(Lat, Lng, dotNetObjRef)
         position: 'topright'}).addTo(map);
     trailSearchEasyButton.button.style.width = '200px';
 
-    let trailFilterEasyButton = L.easyButton('<img src="filter.png" width="40" height="40">', function (btn, map) {
+    let trailFilterEasyButton = L.easyButton('<img src="Images/filter.png" width="40" height="40">', function (btn, map) {
         openFilterWindow(dotNetObjRef);
     }, {
         position: 'topright'
@@ -107,13 +107,13 @@ function addMarker(Lat, Lng, text, trailType, geoJsonUrl)
     switch (trailType)
     {
         case 1:
-            trailIconUrl = 'forest.png';
+            trailIconUrl = 'Images/forest.png';
             break;
         case 2:
-            trailIconUrl = 'temple.png';
+            trailIconUrl = 'Images/temple.png';
             break;
         default:
-            trailIconUrl = 'footprint.png';
+            trailIconUrl = 'Images/footprint.png';
             break;
     }
 
