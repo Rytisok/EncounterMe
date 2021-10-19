@@ -5,16 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Shared\Models\**" />
+    <Content Remove="Shared\Models\**" />
+    <EmbeddedResource Remove="Shared\Models\**" />
+    <None Remove="Shared\Models\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BlazorGoogleMaps" Version="1.1.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.9" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="5.0.11" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Shared\Models\" />
   </ItemGroup>
 
 </Project>
