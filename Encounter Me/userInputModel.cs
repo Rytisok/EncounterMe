@@ -16,7 +16,7 @@ namespace Encounter_Me.Shared
             ErrorMessage = "Surname must start with a capital letter and have only letters")]
         public string LastName { get; set; }
         [Required]
-        [EmailAddress]
+        [EmailAddress] // TODO : improve this validation as it is not robust enough.
         public string Email { get; set; }
 
         [Required]
