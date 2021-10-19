@@ -4,7 +4,7 @@
     "Lng": 25.2555,
     "Length": 2.4,
     "Diff": 2,
-    "GeoJsonData": "test.geojson",
+    "GeoJsonData": "sample-data/test.geojson",
     "trailType": 0
   },
   {
@@ -12,7 +12,7 @@
     "Lng": 25.240305662155,
     "Length": 3,
     "Diff": 3,
-    "GeoJsonData": "test1.geojson",
+    "GeoJsonData": "sample-data/test1.geojson",
     "trailType": 1
   },
   {
@@ -20,7 +20,7 @@
     "Lng": 25.2905595,
     "Length": 1.4,
     "Diff": 1,
-    "GeoJsonData": "test2.geojson",
+    "GeoJsonData": "sample-data/test2.geojson",
     "trailType": 2
   }
 ]

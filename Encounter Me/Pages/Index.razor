@@ -24,7 +24,7 @@
     [JSInvokable]
     public async void FindTrails()
     {
-        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("testTrail.json");
+        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
 
         UpdateMarkers();
     }
@@ -40,12 +40,15 @@
     [JSInvokable]
     public async void FilterMarkers(int difficulty, int length)
     {
-        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("testTrail.json");
+        trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
 
         await JSRuntime.InvokeAsync<string>(
         "clearMarkers");
 
-        var filterQuery = from trail in trails where trail.Diff <= difficulty && trail.Length <= length select trail;
+        var filterQuery = from trail 
+                          in trails 
+                          where trail.Diff <= difficulty && trail.Length <= length 
+                          select trail;
 
         List<TrailContainer> filteredTrails = new List<TrailContainer>();
 
@@ -66,8 +69,8 @@
         string infoWindowContent = "<div id=content>" +
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
         "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
-        "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"futureFeature()\" ><img src = \"walk.png\" ></button>" +
+        "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
+        "<button title=\"Walk the trail\" onclick = \"futureFeature()\" ><img src = \"Images/walk.png\" ></button>" +
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
