@@ -17,8 +17,33 @@ namespace Encounter_Me
 
         public string UserPhotoUrl { get; set; }
 
-        public int Level { get; set; }
-        public double ExperiencePoints { get; set; }
+        private int _level;
+        public int Level 
+        {
+            get => _level;
+            set
+            {
+                if((value >= 0) && (value <=100))
+                {
+                    _level = value;
+                }
+                /// TODO: Throw an exception if value is not in range.
+            }
+        }
+
+        private double _experiencePoints;
+        public double ExperiencePoints 
+        {
+            get => _experiencePoints;
+            set
+            {
+                if(value >= 0 && value <= 100000)
+                {
+                    _experiencePoints = value;
+                }
+                /// TODO: Throw an exception if value is not in range.
+            }
+        }
 
         public UserData(int id, string userName, string firstName, string lastName, string email, string password, byte[] salt, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
         {
