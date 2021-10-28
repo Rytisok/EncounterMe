@@ -2,12 +2,22 @@
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
 @using ExtensionMethods
+@using BrowserInterop.Extensions
+@using BrowserInterop.Geolocation
+@implements IAsyncDisposable
 
-<div id="mapid"></div>
+<div id="map"></div>
 
 @code{
 
     List<TrailContainer> trails = new List<TrailContainer>();
+
+    private WindowNavigatorGeolocation geolocationWrapper;
+    private GeolocationPosition geolocationPosition;
+
+    private List<GeolocationPosition> positionHistory = new List<GeolocationPosition>();
+
+    private IAsyncDisposable geopositionWatcher;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -15,10 +25,42 @@
         {
             var dotNetObjRef = DotNetObjectReference.Create(this);
 
+            var window = await JSRuntime.Window();
+            var navigator = await window.Navigator();
+            geolocationWrapper = navigator.Geolocation;
+
+            await GetLocation();
+
             await JSRuntime.InvokeAsync<string>(
-            "initialize", 54.7, 25.26, dotNetObjRef);
+            "initialize", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef);
+
+            await WatchPosition();
         }
         base.OnAfterRender(firstRender);
+    }
+
+    public async Task GetLocation()
+    {
+        geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
+        {
+            EnableHighAccuracy = true,
+            MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+            TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+        })).Location;
+    }
+
+    public async Task WatchPosition()
+    {
+        geopositionWatcher = await geolocationWrapper.WatchPosition(async (p) =>
+        {
+            //might need later to compensate for accuracy problems
+            //positionHistory.Add(p.Location);
+
+            await JSRuntime.InvokeAsync<string>(
+            "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
+            StateHasChanged();
+        }
+        );
     }
 
     [JSInvokable]
@@ -45,9 +87,9 @@
         await JSRuntime.InvokeAsync<string>(
         "clearMarkers");
 
-        var filterQuery = from trail 
-                          in trails 
-                          where trail.Diff <= difficulty && trail.Length <= length 
+        var filterQuery = from trail
+                          in trails
+                          where trail.Diff <= difficulty && trail.Length <= length
                           select trail;
 
         List<TrailContainer> filteredTrails = new List<TrailContainer>();
@@ -75,5 +117,16 @@
 
         await JSRuntime.InvokeAsync<string>(
             "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopWatch();
+    }
+
+    public async Task StopWatch()
+    {
+        await geopositionWatcher.DisposeAsync();
+        geopositionWatcher = null;
     }
 }
