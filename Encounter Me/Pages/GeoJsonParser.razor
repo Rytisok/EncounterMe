@@ -14,7 +14,7 @@
     {
         try
         {
-            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>("sample-data/test1.geojson");
+            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>("sample-data/test.geojson");
             var coordinatesArr = geoJsonTrailData.Features[0].Geometry.Coordinates;
 
             var coordinatesList = new List<Tuple<float, float>>();

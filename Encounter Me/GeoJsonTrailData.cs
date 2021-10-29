@@ -7,11 +7,6 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me
 {
-    //public class GeoJsonTrailData
-    //{ 
-    //    public RooTobject AccessTrailData { get; set; }
-    //}
-
     public class RooTobject
     {
         public string Type { get; set; }
