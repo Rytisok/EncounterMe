@@ -1,0 +1,103 @@
+﻿@page "/TrailProgress/{ID:int}"
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@using ExtensionMethods
+@using BrowserInterop.Extensions
+@using BrowserInterop.Geolocation
+@implements IAsyncDisposable
+
+<div id="map"></div>
+
+@code{
+
+    [Parameter]
+    public int ID { get; set; }
+
+    private WindowNavigatorGeolocation geolocationWrapper;
+    private GeolocationPosition geolocationPosition;
+
+    private List<GeolocationPosition> positionHistory = new List<GeolocationPosition>();
+
+    private IAsyncDisposable geopositionWatcher;
+    private TrailContainer trailInProgress;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var dotNetObjRef = DotNetObjectReference.Create(this);
+
+            var window = await JSRuntime.Window();
+            var navigator = await window.Navigator();
+            geolocationWrapper = navigator.Geolocation;
+
+            await GetLocation();
+
+            await GetTrailInProgress(ID);
+
+            await JSRuntime.InvokeAsync<string>(
+            "initializeTrailWalking", trailInProgress.Lat, trailInProgress.Lng, dotNetObjRef);
+
+            string geojsonData = await Http.GetStringAsync(trailInProgress.GeoJsonData);
+
+            await JSRuntime.InvokeAsync<string>(
+           "showWalkGeojson", geojsonData);
+
+            await WatchPosition();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task GetTrailInProgress(int trailID)
+    {
+        List<TrailContainer> trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
+        var searchQuery = from trail
+                          in trails
+                          where trail.ID == trailID
+                          select trail;
+
+        List<TrailContainer> foundTrails = new List<TrailContainer>();
+
+        foreach (var trail in searchQuery)
+        {
+            trailInProgress = trail;
+        }
+    }
+
+    public async Task GetLocation()
+    {
+        geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
+        {
+            EnableHighAccuracy = true,
+            MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+            TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+        })).Location;
+    }
+
+    public async Task WatchPosition()
+    {
+        geopositionWatcher = await geolocationWrapper.WatchPosition(async (p) =>
+        {
+            //might need later to compensate for accuracy problems
+            //positionHistory.Add(p.Location);
+
+            await JSRuntime.InvokeAsync<string>(
+            "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
+            StateHasChanged();
+        }
+        );
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopWatch();
+    }
+
+    public async Task StopWatch()
+    {
+        await geopositionWatcher.DisposeAsync();
+        geopositionWatcher = null;
+    }
+}

@@ -6,10 +6,12 @@ var iconSizeMultiplier = 0.08;
 var currentMarker;
 var filterWindow = null;
 var positionMarker = null;
+var dotNetObj = null;
 
 function initialize(Lat, Lng, dotNetObjRef)
 {
     map = L.map('map').setView([Lat, Lng], 15);
+    dotNetObj = dotNetObjRef;
 
     //mapbox map
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -264,6 +266,11 @@ function openFilterWindow(dotNetObjRef)
         filterWindow = null;
     }
     
+}
+
+function startTrail(ID)
+{
+    dotNetObj.invokeMethodAsync("StartTrail", parseInt(ID));
 }
 
 function futureFeature()

@@ -1,6 +1,7 @@
 ﻿@page "/"
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
+@inject NavigationManager NavManager
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
@@ -57,10 +58,17 @@
             //positionHistory.Add(p.Location);
 
             await JSRuntime.InvokeAsync<string>(
-            "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
+                "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
             StateHasChanged();
         }
         );
+    }
+
+
+    [JSInvokable]
+    public async void StartTrail(int trailID)
+    {
+        NavManager.NavigateTo("/TrailProgress/" + trailID.ToString());
     }
 
     [JSInvokable]
@@ -112,7 +120,7 @@
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
         "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
         "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"futureFeature()\" ><img src = \"Images/walk.png\" ></button>" +
+        "<button title=\"Walk the trail\" onclick = \"startTrail("+ trail.ID.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
