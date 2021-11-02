@@ -12,6 +12,7 @@ mapText {
     font-size: 20px;
 } 
 
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -19,7 +20,8 @@ mapText {
 }
 
 .content {
-    padding-top: 1.1rem;
+    padding-top: 0rem;
+    margin: 0px;
 }
 
 .valid.modified:not([type=checkbox]) {
@@ -106,6 +108,8 @@ mapText {
         right: 0.75rem;
         top: 0.5rem;
     }
-#mapid {
-    height: 900px;
+
+#map {
+    width: 100%;
+    height: 95vh;
 }

@@ -5,10 +5,13 @@ var geojsonLayer;
 var iconSizeMultiplier = 0.08;
 var currentMarker;
 var filterWindow = null;
+var positionMarker = null;
+var dotNetObj = null;
 
 function initialize(Lat, Lng, dotNetObjRef)
 {
-    map = L.map('mapid').setView([Lat, Lng], 15);
+    map = L.map('map').setView([Lat, Lng], 15);
+    dotNetObj = dotNetObjRef;
 
     //mapbox map
     L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
@@ -16,6 +19,7 @@ function initialize(Lat, Lng, dotNetObjRef)
         attribution: "&copy; <a lhref='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
         tileSize: 512,
         zoomOffset: -1,
+        detectRetina: true,
         id: "mapbox/outdoors-v11",
         accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
     }).addTo(map);
@@ -35,32 +39,7 @@ function initialize(Lat, Lng, dotNetObjRef)
         updateMarkerSize();
     });
 
-    var icon = L.Icon.extend({
-        options: {
-            iconSize: [28, 28],
-            iconAnchor: [14, 14]
-        }
-    });
-
-    var markerIcon = new icon({ iconUrl: 'Images/rec.png' });
-    var leafletMarker;
-
-    //places dot icon and centers map on user location when location is acquired
-    map.locate({ setView: true, watch: false }).on('locationfound', function (ev) {
-        if (!leafletMarker) {
-            leafletMarker = L.marker(ev.latlng, { icon: markerIcon });
-        } else {
-            leafletMarker.setLatLng(ev.latlng);
-        }
-        leafletMarker.addTo(map);
-
-        var marker = {
-            marker: leafletMarker,
-            size: 28,
-            geojson: null
-        };
-        markers.push(marker);
-    });
+    UpdatePositionMarker(Lat, Lng);
 
     //creates search for trails button and assigns UpdateMarkers method to its onClick event
     let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
@@ -76,6 +55,50 @@ function initialize(Lat, Lng, dotNetObjRef)
     }).addTo(map);
     trailFilterEasyButton.button.style.width = '48px';
     trailFilterEasyButton.button.style.height = '40px';
+}
+
+//places dot icon on location
+function UpdatePositionMarker(Lat, Lng)
+{
+    //if position marker is null, create one
+    if (positionMarker == null)
+    {
+        CreateUserLocationMarker(Lat, Lng);
+    }
+    else {
+        //just update position markers location
+        positionMarker.marker.setLatLng([Lat, Lng]);
+    }
+
+}
+
+function CreateUserLocationMarker(Lat, Lng)
+{
+    var leafletMarker;
+
+    var icon = L.Icon.extend({
+        options: {
+            iconSize: [28, 28],
+            iconAnchor: [14, 14]
+        }
+    });
+
+    var markerIcon = new icon({ iconUrl: 'Images/rec.png' });
+
+    leafletMarker = L.marker([Lat, Lng], { icon: markerIcon });
+    leafletMarker.addTo(map);
+
+    var marker = {
+        marker: leafletMarker,
+        size: 28,
+        geojson: null
+    };
+    positionMarker = marker;
+    markers.push(positionMarker);
+}
+
+function myAlert(msg) {
+    alert(msg);
 }
 
 function clearMarkers()
@@ -243,6 +266,11 @@ function openFilterWindow(dotNetObjRef)
         filterWindow = null;
     }
     
+}
+
+function startTrail(ID)
+{
+    dotNetObj.invokeMethodAsync("StartTrail", parseInt(ID));
 }
 
 function futureFeature()

@@ -1,5 +1,6 @@
 [
   {
+    "ID": 0,
     "Lat": 54.7214,
     "Lng": 25.2555,
     "Length": 2.4,
@@ -8,6 +9,7 @@
     "trailType": 0
   },
   {
+    "ID": 1,
     "Lat": 54.6850023616530,
     "Lng": 25.240305662155,
     "Length": 3,
@@ -16,11 +18,21 @@
     "trailType": 1
   },
   {
+    "ID": 2,
     "Lat": 54.6868133,
     "Lng": 25.2905595,
     "Length": 1.4,
     "Diff": 1,
     "GeoJsonData": "sample-data/test2.geojson",
     "trailType": 2
+  },
+  {
+    "ID": 3,
+    "Lat": 54.73226221146,
+    "Lng": 25.20255625247,
+    "Length": 0.2,
+    "Diff": 1,
+    "GeoJsonData": "sample-data/navigationTest.geojson",
+    "trailType": 0
   }
 ]
