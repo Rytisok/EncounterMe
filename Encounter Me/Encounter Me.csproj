@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="blazor-dom-confetti" Version="0.0.0.5" />
+    <PackageReference Include="BlazorCurrentDevice" Version="1.0.7" />
     <PackageReference Include="BlazorGoogleMaps" Version="1.1.5" />
     <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
     <PackageReference Include="BrowserInterop" Version="1.1.2" />

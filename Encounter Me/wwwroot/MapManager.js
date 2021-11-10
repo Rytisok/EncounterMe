@@ -10,7 +10,7 @@ var dotNetObj = null;
 var walkedTrailLine = null;
 var lineToTrail = null;
 
-function initializeTrailMap(Lat, Lng, dotNetObjRef)
+function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
 {
     if (map != null) {
         map.off();
@@ -46,7 +46,10 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef)
         updateMarkerSize();
     });
 
-    UpdatePositionMarker(Lat, Lng);
+    if (drawPosition)
+    {
+        UpdatePositionMarker(Lat, Lng);
+    }
 
     //creates search for trails button and assigns UpdateMarkers method to its onClick event
     let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {

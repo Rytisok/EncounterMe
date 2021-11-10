@@ -124,7 +124,12 @@
                 var navigator = await window.Navigator();
                 geolocationWrapper = navigator.Geolocation;
 
-                await GetLocation();
+                geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
+                {
+                    EnableHighAccuracy = true,
+                    MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+                    TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+                })).Location;
 
                 await GetTrailInProgress(ID);
 
@@ -163,28 +168,18 @@
 
         }
 
-        public async Task GetLocation()
-        {
-            geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
-            {
-                EnableHighAccuracy = true,
-                MaximumAgeTimeSpan = TimeSpan.FromHours(1),
-                TimeoutTimeSpan = TimeSpan.FromMinutes(1)
-            })).Location;
-        }
-
         public async Task WatchPosition()
         {
             geopositionWatcher = await geolocationWrapper.WatchPosition(async (p) =>
             {
-            //might need later to compensate for accuracy problems
-            //positionHistory.Add(p.Location);
+                //might need later to compensate for accuracy problems
+                //positionHistory.Add(p.Location);
 
-            await JSRuntime.InvokeAsync<string>(
-                                            "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
+                await JSRuntime.InvokeAsync<string>(
+                                                "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
 
-            //current allowed deviation is 7 meters
-            if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, trailCoordinateList[0]) < 0.007 && trailCoordinateList.Count > 0)
+                //current allowed deviation is 7 meters
+                if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, trailCoordinateList[0]) < 0.007 && trailCoordinateList.Count > 0)
                 {
                     currentPos++;
                     if (prevCheckpointCoords != null)
@@ -199,12 +194,12 @@
                     TrailFinished();
                 }
 
-            //draw path line
-            await JSRuntime.InvokeAsync<object>(
-                            "drawLines", (object)ListToCoordinateArray(trailCoordinateList));
+                //draw path line
+                await JSRuntime.InvokeAsync<object>(
+                                "drawLines", (object)ListToCoordinateArray(trailCoordinateList));
 
-            //if user is further than 20m to the next checkpoint, draw line to it
-            if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, trailCoordinateList[0]) > 0.02)
+                //if user is further than 20m to the next checkpoint, draw line to it
+                if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, trailCoordinateList[0]) > 0.02)
                 {
                     await JSRuntime.InvokeAsync<object>(
                     "drawLineToTrail", GeolocationCoordinateToArray(p.Location.Coords), GeolocationCoordinateToArray(trailCoordinateList[0]));
