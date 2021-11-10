@@ -33,9 +33,7 @@
             await GetLocation();
 
             await JSRuntime.InvokeAsync<string>(
-            "initialize", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef);
-
-            await WatchPosition();
+            "initializeTrailMap", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef);
         }
         base.OnAfterRender(firstRender);
     }
@@ -48,20 +46,6 @@
             MaximumAgeTimeSpan = TimeSpan.FromHours(1),
             TimeoutTimeSpan = TimeSpan.FromMinutes(1)
         })).Location;
-    }
-
-    public async Task WatchPosition()
-    {
-        geopositionWatcher = await geolocationWrapper.WatchPosition(async (p) =>
-        {
-            //might need later to compensate for accuracy problems
-            //positionHistory.Add(p.Location);
-
-            await JSRuntime.InvokeAsync<string>(
-                "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
-            StateHasChanged();
-        }
-        );
     }
 
 
@@ -129,12 +113,11 @@
 
     public async ValueTask DisposeAsync()
     {
-        await StopWatch();
+        if (geopositionWatcher != null)
+        {
+            await geopositionWatcher.DisposeAsync();
+        }
+
     }
 
-    public async Task StopWatch()
-    {
-        await geopositionWatcher.DisposeAsync();
-        geopositionWatcher = null;
-    }
 }

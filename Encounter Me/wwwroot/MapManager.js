@@ -1,4 +1,4 @@
-﻿var map;
+﻿var map = null;
 var markers = [];
 var trailMarkers = [];
 var geojsonLayer;
@@ -7,9 +7,16 @@ var currentMarker;
 var filterWindow = null;
 var positionMarker = null;
 var dotNetObj = null;
+var walkedTrailLine = null;
+var lineToTrail = null;
 
-function initialize(Lat, Lng, dotNetObjRef)
+function initializeTrailMap(Lat, Lng, dotNetObjRef)
 {
+    if (map != null) {
+        map.off();
+        map.remove();
+    }
+
     map = L.map('map').setView([Lat, Lng], 15);
     dotNetObj = dotNetObjRef;
 
@@ -45,7 +52,11 @@ function initialize(Lat, Lng, dotNetObjRef)
     let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
         dotNetObjRef.invokeMethodAsync("FindTrails");
     }, {
-        position: 'topright'}).addTo(map);
+        position: 'topright'
+    }).addTo(map);
+    trailSearchEasyButton.button.style.border = 'none';
+    trailSearchEasyButton.button.style.borderRadius = '4px';
+    trailSearchEasyButton.button.style.backgroundColor = '#B8EE30';
     trailSearchEasyButton.button.style.width = '200px';
 
     let trailFilterEasyButton = L.easyButton('<img src="Images/filter.png" width="40" height="40">', function (btn, map) {
@@ -57,13 +68,56 @@ function initialize(Lat, Lng, dotNetObjRef)
     trailFilterEasyButton.button.style.height = '40px';
 }
 
+
+function initializeWalkMap(Lat, Lng, dotNetObjRef) {
+
+    if (map != null) {
+        map.off();
+        map.remove();
+    }
+
+    map = L.map('map').setView([Lat, Lng], 15);
+    dotNetObj = dotNetObjRef;
+
+    //mapbox map
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        maxZoom: 25,
+        attribution: "&copy; <a lhref='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
+        tileSize: 512,
+        zoomOffset: -1,
+        detectRetina: true,
+        id: "mapbox/outdoors-v11",
+        accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
+    }).addTo(map);
+
+
+    L.control.scale({ imperial: true, metric: true }).addTo(map);
+
+    map.on('zoomend', function () {
+        updateMarkerSize();
+    });
+
+    let trailFilterEasyButton = L.easyButton('<img src="Images/dots.png" width="40" height="40">', function (btn, map) {
+        dotNetObjRef.invokeMethodAsync("OpenDetails");
+    }, {
+        position: 'topright'
+    }).addTo(map);
+    trailFilterEasyButton.button.style.width = '48px';
+    trailFilterEasyButton.button.style.height = '40px';
+
+    markers = [];
+    positionMarker = null;
+    UpdatePositionMarker(Lat, Lng);
+}
+
+
 //places dot icon on location
 function UpdatePositionMarker(Lat, Lng)
 {
     //if position marker is null, create one
     if (positionMarker == null)
     {
-        CreateUserLocationMarker(Lat, Lng);
+        CreateLocationMarker(Lat, Lng);
     }
     else {
         //just update position markers location
@@ -72,7 +126,7 @@ function UpdatePositionMarker(Lat, Lng)
 
 }
 
-function CreateUserLocationMarker(Lat, Lng)
+function CreateLocationMarker(Lat, Lng)
 {
     var leafletMarker;
 
@@ -271,6 +325,40 @@ function openFilterWindow(dotNetObjRef)
 function startTrail(ID)
 {
     dotNetObj.invokeMethodAsync("StartTrail", parseInt(ID));
+}
+
+function drawLines(polylinePoints)
+{
+    if (walkedTrailLine != null)
+    {
+        map.removeLayer(walkedTrailLine);
+    }
+    walkedTrailLine = L.polyline(polylinePoints, {
+        color: '#25C0C0',
+        weight: 7,
+        opacity: 0.85,
+        smoothFactor: 1
+    }).addTo(map);
+}
+
+function drawLineToTrail(userPoint, trailPoint)
+{
+    removeLineToTrail();
+
+    lineToTrail = L.polyline([userPoint, trailPoint], {
+        color: 'black',
+        weight: 7,
+        opacity: 0.85,
+        smoothFactor: 1,
+        dashArray: '20, 20',
+        dashOffset: '20'
+    }).addTo(map);
+}
+
+function removeLineToTrail() {
+    if (lineToTrail != null) {
+        map.removeLayer(lineToTrail);
+    }
 }
 
 function futureFeature()
