@@ -5,9 +5,44 @@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
+@using BlazorCurrentDevice
 @implements IAsyncDisposable
 
 <div id="map"></div>
+<div class="modal fade @alertModalClass" tabindex="-1" role="dialog" style="display:@alertModalDisplay; overflow-y: auto;" id="alertModal">
+    <div class="d-flex justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                    <div class="modal-header-warning justify-content-center">
+                        <img src="Images/alert.png">
+                    </div>
+                    <div class="modal-body text-center">
+                        <h4>Alert!</h4>
+                        <h5>It is recommended to enable location on your browser for trail browsing.</h5>
+                        <button class="btn btn-success" @onclick="CloseAlert" data-dismiss="modal"><span>Understood</span></button>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade @errorModalClass" tabindex="-1" role="dialog" style="display:@errorModalDisplay; overflow-y: auto;" id="errorModal">
+    <div class="d-flex justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header-error justify-content-center">
+                    <img src="Images/alert.png">
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Error!</h4>
+                    <h5>Trail walking is supported on mobile devices only!</h5>
+                    <button class="btn btn-success" @onclick="CloseError" data-dismiss="modal"><span>Understood</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @code{
 
@@ -20,6 +55,13 @@
 
     private IAsyncDisposable geopositionWatcher;
 
+    [Inject] IBlazorCurrentDeviceService BlazorCurrentDeviceService { get; set; }
+
+    private string alertModalDisplay = "none;";
+    private string alertModalClass = "hide";
+    private string errorModalDisplay = "none;";
+    private string errorModalClass = "hide";
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -30,45 +72,43 @@
             var navigator = await window.Navigator();
             geolocationWrapper = navigator.Geolocation;
 
-            await GetLocation();
+            geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
+            {
+                EnableHighAccuracy = true,
+                MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+                TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+            })).Location;
 
-            await JSRuntime.InvokeAsync<string>(
-            "initialize", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef);
+            if (geolocationPosition == null)
+            {
+                OpenAlert();
+                await JSRuntime.InvokeAsync<string>(
+            "initializeTrailMap", 0, 0, dotNetObjRef, false);
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>(
+            "initializeTrailMap", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef, true);
+            }
 
-            await WatchPosition();
+
         }
         base.OnAfterRender(firstRender);
     }
 
-    public async Task GetLocation()
-    {
-        geolocationPosition = (await geolocationWrapper.GetCurrentPosition(new PositionOptions()
-        {
-            EnableHighAccuracy = true,
-            MaximumAgeTimeSpan = TimeSpan.FromHours(1),
-            TimeoutTimeSpan = TimeSpan.FromMinutes(1)
-        })).Location;
-    }
-
-    public async Task WatchPosition()
-    {
-        geopositionWatcher = await geolocationWrapper.WatchPosition(async (p) =>
-        {
-            //might need later to compensate for accuracy problems
-            //positionHistory.Add(p.Location);
-
-            await JSRuntime.InvokeAsync<string>(
-                "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
-            StateHasChanged();
-        }
-        );
-    }
-
-
     [JSInvokable]
     public async void StartTrail(int trailID)
     {
-        NavManager.NavigateTo("/TrailProgress/" + trailID.ToString());
+        bool mobile = await BlazorCurrentDeviceService.Mobile();
+        if (mobile)
+        {
+            NavManager.NavigateTo("/TrailProgress/" + trailID.ToString());
+        }
+        else
+        {
+            OpenError();
+        }
+
     }
 
     [JSInvokable]
@@ -120,7 +160,7 @@
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
         "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
         "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"startTrail("+ trail.ID.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
+        "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.ID.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
@@ -129,12 +169,37 @@
 
     public async ValueTask DisposeAsync()
     {
-        await StopWatch();
+        if (geopositionWatcher != null)
+        {
+            await geopositionWatcher.DisposeAsync();
+        }
+
     }
 
-    public async Task StopWatch()
+
+    private async void OpenAlert()
     {
-        await geopositionWatcher.DisposeAsync();
-        geopositionWatcher = null;
+        alertModalDisplay = "block;";
+        alertModalClass = "show";
+        StateHasChanged();
     }
+    private async void CloseAlert()
+    {
+        alertModalDisplay = "none;";
+        alertModalClass = "hide;";
+        StateHasChanged();
+    }
+    private async void OpenError()
+    {
+        errorModalDisplay = "block;";
+        errorModalClass = "show";
+        StateHasChanged();
+    }
+    private async void CloseError()
+    {
+        errorModalDisplay = "none;";
+        errorModalClass = "hide";
+        StateHasChanged();
+    }
+
 }
