@@ -12,6 +12,9 @@ using Microsoft.JSInterop;
 using ExtensionMethods;
 using Encounter_Me.Pages;
 using Encounter_Me.Services;
+using Encounter_Me.Authentication;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Encounter_Me
 {
@@ -21,6 +24,11 @@ namespace Encounter_Me
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("#app");
+
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddBlazoredLocalStorage();
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
