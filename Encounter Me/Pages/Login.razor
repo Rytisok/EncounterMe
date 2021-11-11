@@ -1,0 +1,30 @@
+﻿@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
+<h3>Log In</h3>
+ 
+
+
+@code {
+
+    private AuthenticationUserModel loginUser = new ();
+
+    private bool showAuthenticationError = false;
+    private string authenticationErrorText = "";
+    private async Task ExecuteLogin()
+    {
+        showAuthenticationError = false;
+        var result = AuthService.Login(loginUser);
+
+        if(result is not null)
+        {
+            NavManager.NavigateTo("/");
+        }
+        else
+        {
+            authenticationErrorText = "Error while trying to log in.";
+            showAuthenticationError = true;
+        }
+
+    }
+
+}
