@@ -19,6 +19,7 @@ namespace Encounter_Me.Authentication
         {
             _httpClient = httpClient;
             _localStorage = localStorage;
+            _anonymous = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())); // null is not an option
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync() //Are you authenticated?
