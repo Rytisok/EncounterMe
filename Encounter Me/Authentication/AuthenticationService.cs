@@ -31,8 +31,8 @@ namespace Encounter_Me.Authentication
             var data = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant-type", "password"),
-                new KeyValuePair<string, string>("userName", userForAuthentication.Email), /// yes, email as username, can  be changed later thou
-                new KeyValuePair<string, string>("password", userForAuthentication.Passsword)
+                new KeyValuePair<string, string>("userName", userForAuthentication.UserName),
+                new KeyValuePair<string, string>("password", userForAuthentication.Password)
             });
 
             var authResult = await _client.PostAsync("https://localhost:5001/token", data); // to be changed later! Api will be hosted somewhere, not at localhost

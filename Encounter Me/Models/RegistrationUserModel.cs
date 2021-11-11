@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Encounter_Me.Shared
 {
-    public class userInputModel
+    public class RegistrationUserModel
     {
         [Required, StringLength(30, ErrorMessage ="Username must be shorter than 30 characters")]
         public string UserName { get; set; }
