@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Encounter_Me.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211108151006_Initial")]
+    [Migration("20211112185231_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,68 @@ namespace Encounter_Me.Api.Migrations
                             Level = 1,
                             UserName = "obuolys",
                             UserPhotoUrl = "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg"
+                        });
+                });
+
+            modelBuilder.Entity("TrailContainer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Diff")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GeoJsonData")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Length")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Lng")
+                        .HasColumnType("float");
+
+                    b.Property<int>("trailType")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Trails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Diff = 2,
+                            GeoJsonData = "sample-data/test.geojson",
+                            Lat = 54.721400000000003,
+                            Length = 2.3999999999999999,
+                            Lng = 25.255500000000001,
+                            trailType = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Diff = 3,
+                            GeoJsonData = "sample-data/test1.geojson",
+                            Lat = 54.685002361652998,
+                            Length = 3.0,
+                            Lng = 25.240305662154999,
+                            trailType = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Diff = 1,
+                            GeoJsonData = "sample-data/test2.geojson",
+                            Lat = 54.686813299999997,
+                            Length = 1.3999999999999999,
+                            Lng = 25.290559500000001,
+                            trailType = 2
                         });
                 });
 #pragma warning restore 612, 618
