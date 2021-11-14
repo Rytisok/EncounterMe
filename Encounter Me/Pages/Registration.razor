@@ -65,31 +65,17 @@
     [Inject]
     public IUserDataService userDataService { get; set; }
 
-
     void CreateNewUser()
     {
         isRegistrationSuccess = true;
-        Console.WriteLine("New user name is...");
-        var hashSalt = PasswordManager.EncryptPassword(registrationUserModel.Password);
-        var newUser = new UserData(
-            id: 0,
+       
+        userDataService.AddUser(new UserData(
+            id: 0, // FIXME
             userName: registrationUserModel.UserName,
             firstName: registrationUserModel.FirstName,
             lastName: registrationUserModel.LastName,
             email: registrationUserModel.Email,
-            password: hashSalt.Hash,
-            salt: hashSalt.Salt);
-
-        userDataService.AddUser(newUser);
-
-        Console.WriteLine($"Name: {newUser.FirstName}\n" +
-                          $"Surname: {newUser.LastName}\n" +
-                          $"Email: {newUser.Email}\n" +
-                          $"Password: {newUser.Password}\n" +
-                          $"Salt: {newUser.StoredSalt}\n");
+            password: registrationUserModel.Password,
+            salt: null));
     }
-
-
-
-
 }

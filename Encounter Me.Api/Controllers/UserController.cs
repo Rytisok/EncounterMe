@@ -46,6 +46,10 @@ namespace Encounter_Me.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            var hashSalt = PasswordManager.EncryptPassword(user.Password, null);
+            user.Password = hashSalt.Hash;
+            user.StoredSalt = hashSalt.Salt;
+
             var createdUser = _userRepository.AddUser(user);
 
             return Created("user", createdUser);
