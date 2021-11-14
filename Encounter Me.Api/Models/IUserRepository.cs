@@ -14,5 +14,6 @@ namespace Encounter_Me.Api.Models
         UserData AddUser(UserData user);
         UserData UpdateUser(UserData user);
         void DeleteUser(int userId);
+        UserData GetUserByEmail(string Email);
     }
 }

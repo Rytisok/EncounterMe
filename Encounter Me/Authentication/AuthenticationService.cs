@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -30,25 +31,24 @@ namespace Encounter_Me.Authentication
         {
             var data = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("grant-type", "password"),
-                new KeyValuePair<string, string>("userName", userForAuthentication.UserName),
-                new KeyValuePair<string, string>("password", userForAuthentication.Password)
+                new KeyValuePair<string, string>("Email", userForAuthentication.Email),
+                new KeyValuePair<string, string>("Password", userForAuthentication.Password),
             });
 
-            var authResult = await _client.PostAsync("https://localhost:5001/token", data); // to be changed later! Api will be hosted somewhere, not at localhost
+            var authResult = await _client.PostAsync("https://localhost:44340/api/token/authenticate", data); // To be changed later! Api will be hosted somewhere, not at localhost.
 
             var authContent = await authResult.Content.ReadAsStringAsync();
 
             if (authResult.IsSuccessStatusCode == false)
             {
-                return null; // return null if not login = AuthStateProvider will return anonymous 
+                return null; // Return null if not login = AuthStateProvider will return anonymous.
             }
 
             var result = JsonSerializer.Deserialize<AuthenticatedUserModel>(
                 authContent,
-                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }); // take in camelCase json, conver to Pascal case. Ensures that result is correct
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            await _localStorage.SetItemAsStringAsync(key: "authToken", result.Access_Token); // put token, which proves that user is authenticated inside local storage
+            await _localStorage.SetItemAsStringAsync(key: "authToken", result.Access_Token); // Puts token, which proves that user is authenticated inside local storage.
 
             ((AuthStateProvider)_authStateProvider).NotifyUserAuthentication(result.Access_Token);
 
