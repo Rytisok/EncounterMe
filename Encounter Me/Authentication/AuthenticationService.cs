@@ -27,7 +27,7 @@ namespace Encounter_Me.Authentication
             _localStorage = localStorage;
         }
 
-        public async Task<AuthenticatedUserModel> Login(AuthenticationUserModel userForAuthentication)
+        public async Task<AuthenticatedUserModel> Login(LoginUserModel userForAuthentication)
         {
             var data = new FormUrlEncodedContent(new[]
             {

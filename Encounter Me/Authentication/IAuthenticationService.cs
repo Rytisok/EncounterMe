@@ -5,7 +5,7 @@ namespace Encounter_Me.Authentication
 {
     public interface IAuthenticationService
     {
-        Task<AuthenticatedUserModel> Login(AuthenticationUserModel userForAuthentication);
+        Task<AuthenticatedUserModel> Login(LoginUserModel userForAuthentication);
         Task Logout();
     }
 }
