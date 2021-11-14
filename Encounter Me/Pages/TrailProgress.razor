@@ -15,11 +15,11 @@
 </button>
 
 <!-- Info Modal-->
-<div class="modal fade @infoModalClass" tabindex="-1" role="dialog" style="display:@infoModalDisplay; overflow-y: auto;" id="infoModal">
+<div class="modal fade @infoModal.modalClass" tabindex="-1" role="dialog" style="display:@infoModal.modalDisplay; overflow-y: auto;" id="infoModal">
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
-                <button class="close" @onclick="CloseDetails">&times;</button>
+                <button class="close" @onclick="(e => ModalControl.CloseModal(infoModal))">&times;</button>
                 <h5>Time walking: @trailTime hours </h5>
                 <h5>Distance walked: @distanceWalked km</h5>
                 <h5>Trail progress: </h5>
@@ -36,7 +36,7 @@
 
 <!-- Success Modal-->
 
-<div class="modal fade @successModalClass" tabindex="-1" role="dialog" style="display:@successModalDisplay; overflow-y: auto;" id="finnishModal">
+<div class="modal fade @successModal.modalClass" tabindex="-1" role="dialog" style="display:@successModal.modalDisplay; overflow-y: auto;" id="finnishModal">
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -104,10 +104,8 @@
         private string trailProgress = "0%";
         private double trailTime = 0;
 
-        private string successModalDisplay = "none;";
-        private string successModalClass = "";
-        private string infoModalDisplay = "none;";
-        private string infoModalClass = "";
+        private Modal successModal;
+        private Modal infoModal;
 
         [Parameter]
         public int modalStatus { get; set; } = 0;
@@ -271,15 +269,8 @@
 
             trailTime = Math.Round((DateTime.UtcNow - trailStart).TotalHours, 2);
 
-            infoModalDisplay = "block;";
-            infoModalClass = "show";
+            ModalControl.OpenModal(infoModal);
             StateHasChanged();
-        }
-
-        private async void CloseDetails()
-        {
-            infoModalDisplay = "";
-            infoModalClass = "hide";
         }
 
         private async void AbortTrail()
@@ -295,8 +286,7 @@
         public async void TrailFinished()
         {
             //enables success modal
-            successModalDisplay = "block;";
-            successModalClass = "show";
+            ModalControl.OpenModal(successModal);
             //shoots confetti
             blafettis.RaiseConfetti();
             //used to update UI elements
@@ -305,8 +295,7 @@
         }
         private async void CloseFinishModal()
         {
-            successModalDisplay = "";
-            successModalClass = "hide";
+            ModalControl.CloseModal(successModal);
             StateHasChanged();
             NavManager.NavigateTo("/");
         }

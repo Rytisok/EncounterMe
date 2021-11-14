@@ -8,7 +8,7 @@
 @implements IAsyncDisposable
 
 <div id="map"></div>
-<div class="modal fade @alertModalClass" tabindex="-1" role="dialog" style="display:@alertModalDisplay; overflow-y: auto;" id="alertModal">
+<div class="modal fade @alertModal.modalClass" tabindex="-1" role="dialog" style="display:@alertModal.modalDisplay; overflow-y: auto;" id="alertModal">
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -18,14 +18,14 @@
                     <div class="modal-body text-center">
                         <h4>Alert!</h4>
                         <h5>It is recommended to enable location on your browser for trail browsing.</h5>
-                        <button class="btn btn-success" @onclick="CloseAlert" data-dismiss="modal"><span>Understood</span></button>
+                        <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(alertModal);  StateHasChanged();})" data-dismiss="modal"><span>Understood</span></button>
                     </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade @errorModalClass" tabindex="-1" role="dialog" style="display:@errorModalDisplay; overflow-y: auto;" id="errorModal">
+<div class="modal fade @errorModal.modalClass" tabindex="-1" role="dialog" style="display:@errorModal.modalDisplay; overflow-y: auto;" id="errorModal">
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
@@ -35,7 +35,7 @@
                 <div class="modal-body text-center">
                     <h4>Error!</h4>
                     <h5>Trail walking is supported on mobile devices only!</h5>
-                    <button class="btn btn-success" @onclick="CloseError" data-dismiss="modal"><span>Understood</span></button>
+                    <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(errorModal); StateHasChanged(); })" data-dismiss="modal"><span>Understood</span></button>
                 </div>
             </div>
         </div>
@@ -54,10 +54,8 @@
 
     private IAsyncDisposable geopositionWatcher;
 
-    private string alertModalDisplay = "none;";
-    private string alertModalClass = "hide";
-    private string errorModalDisplay = "none;";
-    private string errorModalClass = "hide";
+    private Modal alertModal = new Modal();
+    private Modal errorModal = new Modal();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -76,19 +74,20 @@
                 TimeoutTimeSpan = TimeSpan.FromMinutes(1)
             })).Location;
 
+            //delegate here?
             if (geolocationPosition == null)
             {
-                OpenAlert();
                 await JSRuntime.InvokeAsync<string>(
             "initializeTrailMap", 0, 0, dotNetObjRef, false);
+
+                ModalControl.OpenModal(alertModal);
+                StateHasChanged();
             }
             else
             {
                 await JSRuntime.InvokeAsync<string>(
             "initializeTrailMap", geolocationPosition.Coords.Latitude, geolocationPosition.Coords.Longitude, dotNetObjRef, true);
             }
-
-
         }
         base.OnAfterRender(firstRender);
     }
@@ -105,7 +104,8 @@
         }
         catch
         {
-            OpenError();
+            ModalControl.OpenModal(errorModal);
+            StateHasChanged();
         }
     }
 
@@ -173,31 +173,4 @@
         }
 
     }
-
-
-    private async void OpenAlert()
-    {
-        alertModalDisplay = "block;";
-        alertModalClass = "show";
-        StateHasChanged();
-    }
-    private async void CloseAlert()
-    {
-        alertModalDisplay = "none;";
-        alertModalClass = "hide;";
-        StateHasChanged();
-    }
-    private async void OpenError()
-    {
-        errorModalDisplay = "block;";
-        errorModalClass = "show";
-        StateHasChanged();
-    }
-    private async void CloseError()
-    {
-        errorModalDisplay = "none;";
-        errorModalClass = "hide";
-        StateHasChanged();
-    }
-
 }
