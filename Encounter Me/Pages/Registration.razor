@@ -1,5 +1,6 @@
 ﻿@page "/Registration"
-@using Encounter_Me.Services
+@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
 
 <div class="row justify-content-center">
     <div class="col-md-5">
@@ -59,17 +60,17 @@
 
 @code {
 
-    private RegistrationUserModel registrationUserModel = new RegistrationUserModel();
+    private RegistrationUserModel registrationUserModel = new();
     private bool isRegistrationSuccess = false;
 
     [Inject]
     public IUserDataService userDataService { get; set; }
 
-    void CreateNewUser()
+    private async Task CreateNewUser()
     {
         isRegistrationSuccess = true;
-       
-        userDataService.AddUser(new UserData(
+
+        await userDataService.AddUser(new UserData(
             id: 0, // FIXME
             userName: registrationUserModel.UserName,
             firstName: registrationUserModel.FirstName,
@@ -77,5 +78,9 @@
             email: registrationUserModel.Email,
             password: registrationUserModel.Password,
             salt: null));
+
+        var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
+        //takes some time...
+        NavManager.NavigateTo("/");
     }
 }

@@ -2,33 +2,13 @@
 @inject NavigationManager NavManager
 @attribute [Authorize]
 
-@page "/Logout" 
+@page "/logout"
 
-
-
-<h3>LogOut</h3> 
-<EditForm Model="@logOutUserModel" OnValidSubmit="@ExecuteLogOut" class="card-body bg-light mt-5" autocomplete="on">
-
-    <div class="form-group" align="left">
-        <div class="col-md-12 mb-3">
-            <button type="submit" class="btn btn-primary">Log Out</button>
-        </div>
-    </div>
-
-</EditForm>
 @code {
 
-    // TODO: delete this page, just add logaout button on the bar 
-
-    private AuthenticationUserModel logOutUserModel = new();
-    // private bool showAuthenticationError = false;
-    //private string authenticationErrorText = "";
-    private async Task ExecuteLogOut()
+    protected override async Task OnInitializedAsync()
     {
-        //isRegistrationSuccess = true;
-        //showAuthenticationError = false;
         await AuthService.Logout();
         NavManager.NavigateTo("/");
-
     }
 }
