@@ -36,6 +36,7 @@
                     <h4>Error!</h4>
                     <h5>Trail walking is supported on mobile devices only!</h5>
                     <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(errorModal); StateHasChanged(); })" data-dismiss="modal"><span>Understood</span></button>
+                    <button class="btn btn-cancel" @onclick="(e => TestTrailLoad())" data-dismiss="modal"> <span>Skip warning (development only)</span></button>
                 </div>
             </div>
         </div>
@@ -172,5 +173,11 @@
             await geopositionWatcher.DisposeAsync();
         }
 
+    }
+
+    //test function to test trail walking on pc
+    private async void TestTrailLoad()
+    {
+        NavManager.NavigateTo("/TrailProgress/3");
     }
 }

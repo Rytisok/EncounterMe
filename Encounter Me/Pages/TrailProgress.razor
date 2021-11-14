@@ -104,8 +104,8 @@
         private string trailProgress = "0%";
         private double trailTime = 0;
 
-        private Modal successModal;
-        private Modal infoModal;
+        private Modal successModal = new Modal();
+        private Modal infoModal = new Modal();
 
         [Parameter]
         public int modalStatus { get; set; } = 0;
@@ -300,4 +300,4 @@
             NavManager.NavigateTo("/");
         }
 
-}
+    }
