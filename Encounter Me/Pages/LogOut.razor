@@ -1,10 +1,12 @@
 ﻿@inject IAuthenticationService AuthService
 @inject NavigationManager NavManager
+@attribute [Authorize]
+
+@page "/Logout" 
 
 
-@page "/Logout"
 
-<h3>LogOut</h3>
+<h3>LogOut</h3> 
 <EditForm Model="@logOutUserModel" OnValidSubmit="@ExecuteLogOut" class="card-body bg-light mt-5" autocomplete="on">
 
     <div class="form-group" align="left">
@@ -16,28 +18,17 @@
 </EditForm>
 @code {
 
+    // TODO: delete this page, just add logaout button on the bar 
+
     private AuthenticationUserModel logOutUserModel = new();
-    private bool isRegistrationSuccess = false;
-    private bool showAuthenticationError = false;
-    private string authenticationErrorText = "";
+    // private bool showAuthenticationError = false;
+    //private string authenticationErrorText = "";
     private async Task ExecuteLogOut()
     {
-        isRegistrationSuccess = true;
-        showAuthenticationError = false;
+        //isRegistrationSuccess = true;
+        //showAuthenticationError = false;
         await AuthService.Logout();
         NavManager.NavigateTo("/");
 
-    @*if (result is not null)
-    {
-        NavManager.NavigateTo("/");
     }
-    else
-    {
-        authenticationErrorText = "Error while trying to log in.";
-        showAuthenticationError = true;
-    }*@
-
-    }
-
-
 }

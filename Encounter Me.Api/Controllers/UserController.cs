@@ -38,6 +38,7 @@ namespace Encounter_Me.Api.Controllers
             if (user == null)
                 return BadRequest();
 
+            /// FIXME: errors 
             if (user.FirstName == string.Empty || user.LastName == string.Empty)
             {
                 ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");

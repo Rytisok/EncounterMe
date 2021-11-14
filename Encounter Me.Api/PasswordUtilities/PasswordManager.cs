@@ -6,8 +6,6 @@ namespace Encounter_Me
 {
     public static class PasswordManager
     {
-
-
         // Hash the password using PBKDF2 algorithm.
         public static HashAndSalt EncryptPassword(string password, byte[] storedSalt = null)
         {
