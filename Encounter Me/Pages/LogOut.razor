@@ -1,0 +1,43 @@
+﻿@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
+
+
+@page "/Logout"
+
+<h3>LogOut</h3>
+<EditForm Model="@logOutUserModel" OnValidSubmit="@ExecuteLogOut" class="card-body bg-light mt-5" autocomplete="on">
+
+    <div class="form-group" align="left">
+        <div class="col-md-12 mb-3">
+            <button type="submit" class="btn btn-primary">Log Out</button>
+        </div>
+    </div>
+
+</EditForm>
+@code {
+
+    private AuthenticationUserModel logOutUserModel = new();
+    private bool isRegistrationSuccess = false;
+    private bool showAuthenticationError = false;
+    private string authenticationErrorText = "";
+    private async Task ExecuteLogOut()
+    {
+        isRegistrationSuccess = true;
+        showAuthenticationError = false;
+        await AuthService.Logout();
+        NavManager.NavigateTo("/");
+
+    @*if (result is not null)
+    {
+        NavManager.NavigateTo("/");
+    }
+    else
+    {
+        authenticationErrorText = "Error while trying to log in.";
+        showAuthenticationError = true;
+    }*@
+
+    }
+
+
+}
