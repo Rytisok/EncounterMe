@@ -1,6 +1,5 @@
 ﻿using Encounter_Me.Api.Authentication;
 using Encounter_Me.Api.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +17,7 @@ namespace Encounter_Me.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController : Controller
+    public class TokenController : Microsoft.AspNetCore.Mvc.Controller
     {
         private readonly AppDbContext _context;
         private readonly IUserRepository _userRepository;
@@ -38,27 +38,31 @@ namespace Encounter_Me.Api.Controllers
         }
 
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Create([FromForm]UserCreds user)
+        public async Task<IActionResult> Create([FromForm]UserCreds loginUser)
         {
-            if (await IsValidUsernameAndPassword(user.Email, user.Password))
+            /// Check if user exists in DB here! 
+            UserData user = _userRepository.GetUserByEmail(loginUser.Email);
+
+            if(user is not null)
             {
-                return new ObjectResult(await GenerateToken(user.Email));
+                if (IsValidPassword(user, loginUser.Password))
+                {
+                    return new ObjectResult(await GenerateToken(loginUser.Email));
+                }
+                return BadRequest("Wrong password, try again.");
             }
-            else
-            {
-                return BadRequest(user.Email);
-            }
+            return BadRequest("User with this email does not exist.");
         }
 
-        // FIXME: add verification of password - for it password hashing functionality must be transferred from client to this api.
-        private async Task<bool> IsValidUsernameAndPassword(string username, string password)
+        private Boolean IsValidPassword(UserData user, string password)
         {
-            UserData user = _userRepository.GetUserByEmail(username);
-            if(user is not null)
+           var passwordIsValid = PasswordManager.IsPasswordCorrect(password, user.StoredSalt, user.Password);
+
+            if(passwordIsValid)
             {
                 return true;
             }
-            return false;  
+            return false;
         }
 
         private async Task<dynamic> GenerateToken(string username)

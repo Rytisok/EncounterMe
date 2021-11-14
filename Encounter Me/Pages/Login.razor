@@ -16,7 +16,7 @@
                         <p>@authenticationErrorText</p>
                     </div>
                 }
-                else if(isRegistrationSuccess)
+                @if(isLoginSuccess)
                 {
                     <div class="alert alert-success" role="alert">Login was successful</div>
                 }
@@ -44,31 +44,30 @@
         </div>
     </div>
 </div>
- 
-
 
 @code {
 
     private AuthenticationUserModel loginUserModel = new ();
-    private bool isRegistrationSuccess = false;
     private bool showAuthenticationError = false;
+    private bool isLoginSuccess = false;
+
     private string authenticationErrorText = "";
     private async Task ExecuteLogin()
     {
-        isRegistrationSuccess = true;
         showAuthenticationError = false;
-        AuthenticatedUserModel result = await AuthService.Login(loginUserModel);
+        isLoginSuccess = false;
 
-        if(result is not null)
+        try
         {
+            AuthenticatedUserModel result = await AuthService.Login(loginUserModel);
             NavManager.NavigateTo("/");
+            isLoginSuccess = true;
         }
-        else
+        catch(Exception loginException)
         {
-            authenticationErrorText = "Error while trying to log in.";
+            authenticationErrorText = loginException.Message;
             showAuthenticationError = true;
         }
-
     }
 
 }

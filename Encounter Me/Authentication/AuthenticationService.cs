@@ -41,7 +41,8 @@ namespace Encounter_Me.Authentication
 
             if (authResult.IsSuccessStatusCode == false)
             {
-                return null; // Return null if not login = AuthStateProvider will return anonymous.
+                throw new Exception(authContent);
+                //return null; // Return null if not login = AuthStateProvider will return anonymous.
             }
 
             var result = JsonSerializer.Deserialize<AuthenticatedUserModel>(
