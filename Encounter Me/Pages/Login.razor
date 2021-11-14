@@ -16,31 +16,30 @@
                         <p>@authenticationErrorText</p>
                     </div>
                 }
-                @if(isRegistrationSuccess)
+                else if(isRegistrationSuccess)
                 {
                     <div class="alert alert-success" role="alert">Login was successful</div>
                 }
-                <EditForm Model="@loginUserModel" OnValidSubmit="@ExecuteLogin" class="card-body bg-light mt-5" autocomplete="on">
-            <DataAnnotationsValidator />
-            <div class="col-md-12 mb-3">
-                <label for="Username">Enter Username:</label>
-                <InputText id="Username" placeholder="Username" @bind-Value="loginUserModel.UserName" class="form-control" />
-                <ValidationMessage For="@(() => loginUserModel.UserName)" />
-            </div>
-
-            <div class="col-md-12 mb-3">
-                <label for="Password">Enter Password:</label>
-                <InputText id="Password" placeholder="Password" type="password" @bind-Value="loginUserModel.Password" class="form-control" />
-                <ValidationMessage For="@(() => loginUserModel.Password)" />
-            </div>
-
-            <div class="form-group" align="left">
+            <EditForm Model="@loginUserModel" OnValidSubmit="@ExecuteLogin" class="card-body bg-light mt-5" autocomplete="on">
+                <DataAnnotationsValidator />
                 <div class="col-md-12 mb-3">
-                    <button type="submit" class="btn btn-primary">Log in</button>
+                    <label for="Email">Enter Email:</label>
+                    <InputText id="Username" placeholder="Email" @bind-Value="loginUserModel.Email" class="form-control" />
+                    <ValidationMessage For="@(() => loginUserModel.Email)" />
                 </div>
-            </div>
 
-        </EditForm>
+                <div class="col-md-12 mb-3">
+                    <label for="Password">Enter Password:</label>
+                    <InputText id="Password" placeholder="Password" type="password" @bind-Value="loginUserModel.Password" class="form-control" />
+                    <ValidationMessage For="@(() => loginUserModel.Password)" />
+                </div>
+
+                <div class="form-group" align="left">
+                    <div class="col-md-12 mb-3">
+                        <button type="submit" class="btn btn-primary">Log in</button>
+                    </div>
+                </div>
+            </EditForm>
             </div>
         </div>
     </div>
