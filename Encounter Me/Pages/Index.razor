@@ -5,7 +5,6 @@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
-@using BlazorCurrentDevice
 @implements IAsyncDisposable
 
 <div id="map"></div>
@@ -55,8 +54,6 @@
 
     private IAsyncDisposable geopositionWatcher;
 
-    [Inject] IBlazorCurrentDeviceService BlazorCurrentDeviceService { get; set; }
-
     private string alertModalDisplay = "none;";
     private string alertModalClass = "hide";
     private string errorModalDisplay = "none;";
@@ -99,16 +96,17 @@
     [JSInvokable]
     public async void StartTrail(int trailID)
     {
-        bool mobile = await BlazorCurrentDeviceService.Mobile();
-        if (mobile)
+
+        try
         {
+            DeviceValidator validator = new DeviceValidator();
+            await validator.ValidateDevice();
             NavManager.NavigateTo("/TrailProgress/" + trailID.ToString());
         }
-        else
+        catch
         {
             OpenError();
         }
-
     }
 
     [JSInvokable]
