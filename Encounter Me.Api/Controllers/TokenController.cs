@@ -2,6 +2,7 @@
 using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -20,12 +21,14 @@ namespace Encounter_Me.Api.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IUserRepository _userRepository;
+        private readonly AppSettings _appSettings;
 
 
-        public TokenController(AppDbContext context, IUserRepository userRepository)
+        public TokenController(AppDbContext context, IUserRepository userRepository, IOptions<AppSettings> appSettings)
         {
             _context = context;
             _userRepository = userRepository;
+            _appSettings = appSettings.Value;
         }
 
         [HttpGet]
@@ -75,7 +78,7 @@ namespace Encounter_Me.Api.Controllers
             var token = new JwtSecurityToken(
                 new JwtHeader(
                     new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKeyHereIsVerySecret")), // TODO: add secret to appsetings
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Secret)),
                             SecurityAlgorithms.HmacSha256)),
                 new JwtPayload(claims));
 
