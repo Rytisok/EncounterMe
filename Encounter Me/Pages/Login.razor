@@ -5,9 +5,9 @@
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card mt-10 mb-10">
+        <div class="card mt-5 mb-5">
             <div class="card-header">
-                <h2>Hi there!</h2>
+                <h3>Hi there!</h3>
             </div>
             <div class="card-body">
                 @if (showAuthenticationError)
@@ -20,7 +20,7 @@
                 {
                     <div class="alert alert-success" role="alert">Login was successful</div>
                 }
-            <EditForm Model="@loginUserModel" OnValidSubmit="@ExecuteLogin" class="card-body bg-light mt-5" autocomplete="on">
+            <EditForm Model="@loginUserModel" OnValidSubmit="@ExecuteLogin" class="card-body bg-light mt-0" autocomplete="on">
                 <DataAnnotationsValidator />
                 <div class="col-md-12 mb-3">
                     <label for="Email">Enter Email:</label>

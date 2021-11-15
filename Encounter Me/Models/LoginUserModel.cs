@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me.Models
 {
-    public class LoginUserModel // use as credentials during authentication process
+    public class LoginUserModel
     {
         [Required(ErrorMessage ="Please provide Email.")]
         public string Email { get; set; }

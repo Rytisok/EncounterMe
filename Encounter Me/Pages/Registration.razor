@@ -1,19 +1,19 @@
-﻿@page "/Registration"
+﻿@page "/Sign up"
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavManager
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card mt-10 mb-10">
+        <div class="card mt-5 mb-5">
             <div class="card-header">
-                <h2>User Registration</h2>
+                <h3>Get ready to encounter the city!</h3>
             </div>
             <div class="card-body">
                 @if (isRegistrationSuccess)
                 {
                     <div class="alert alert-success" role="alert">Registration was successful</div>
                 }
-                <EditForm Model="@registrationUserModel" OnValidSubmit="CreateNewUser" autocomplete="off">
+                <EditForm Model="@registrationUserModel" OnValidSubmit="CreateNewUser" class="card-body bg-light mt-0" autocomplete="off">
                     <DataAnnotationsValidator />
                     <div class="col-md-12 mb-3">
                         <label for="Username">User Name</label>
@@ -71,7 +71,7 @@
         isRegistrationSuccess = true;
 
         await userDataService.AddUser(new UserData(
-            id: 0, // FIXME
+            id: 0, // TODO: change to guid
             userName: registrationUserModel.UserName,
             firstName: registrationUserModel.FirstName,
             lastName: registrationUserModel.LastName,
@@ -80,7 +80,7 @@
             salt: null));
 
         var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
-        //takes some time...
+        // Takes some time...
         NavManager.NavigateTo("/");
     }
 }

@@ -42,7 +42,7 @@ namespace Encounter_Me.Services
 
         public async Task DeleteUser(int userId)
         {
-            await _httpClient.DeleteAsync($"api/employee/{userId}"); // employee?
+            await _httpClient.DeleteAsync($"api/employee/{userId}");
         }
 
         public async Task<IEnumerable<UserData>> GetAllUsers()
