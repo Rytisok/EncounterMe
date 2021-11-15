@@ -12,7 +12,7 @@
             <div class="form-group row">
                 <label class="col-sm-4 col-form-label">Picture</label>
                 <div class="col-sm-8">
-                    <img src=@User.UserPhotoUrl width="200" height="200"/>
+                    <img src=@User.UserPhotoUrl width="200" height="200" />
                 </div>
             </div>
 
@@ -50,6 +50,27 @@
                     <label type="text" readonly class="form-control-plaintext">@User.ExperiencePoints</label>
                 </div>
             </div>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Achievement</th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var achievement in dummyUser.Achievements)
+                    {
+                    <tr>
+                        <td><img src=@achievement.ImgUrl width="100" height="100" /></td>
+                        <td>@achievement.AchievementID</td>
+                        <td>@achievement.Name</td>
+                    </tr>
+                    }
+
+                </tbody>
+             </table>
 
 
         </div>
