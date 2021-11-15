@@ -15,6 +15,7 @@ using Encounter_Me.Services;
 using Encounter_Me.Authentication;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
+using Encounter_Me.DataClasses;
 
 namespace Encounter_Me
 {
@@ -29,6 +30,7 @@ namespace Encounter_Me
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+            builder.Services.AddSingleton(new AchievementsManagerService());
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));

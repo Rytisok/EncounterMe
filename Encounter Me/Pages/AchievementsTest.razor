@@ -1,0 +1,38 @@
+﻿@page "/AchievementsTest"
+@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject AchievementsManagerService achievementsManager
+@using ExtensionMethods
+@using Encounter_Me.DataClasses
+
+<h3>AchievementsTest</h3>
+
+<button @onclick="TestLogin"> Test login</button>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            achievementsManager.AchievementUnlocked += (sender, e) =>
+            {
+                AchievementEventArg g = (AchievementEventArg)e;
+                AchievementTest(g.Data.Name);
+            };
+
+        }
+    }
+
+    public void AchievementTest(string info)
+    {
+        Console.WriteLine("achievement! " + info);
+    }
+
+    private void TestLogin()
+    {
+        achievementsManager.RegisterEvent(AchievementType.Login);
+
+        StateHasChanged();
+    }
+}

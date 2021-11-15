@@ -15,7 +15,7 @@ namespace Encounter_Me.DataClasses
         }
     }
 
-    public class AchievementsManager
+    public class AchievementsManagerService
     {
         private Dictionary<AchievementType, List<Achievement>> _achievements;
         private Dictionary<AchievementType, int> _achievementKeeper;
@@ -25,10 +25,14 @@ namespace Encounter_Me.DataClasses
         protected virtual void RaiseAchievementUnlocked(Achievement ach)
         {
             ach.IsUnlocked = true;
-            AchievementUnlocked?.Invoke(this, new AchievementEventArg(ach));
+            var del = AchievementUnlocked as EventHandler;
+            if (del != null)
+            {
+                del(this, new AchievementEventArg(ach));
+            }
         }
 
-        public AchievementsManager()
+        public AchievementsManagerService()
         {
             _achievementKeeper = new Dictionary<AchievementType, int>();
             _achievementKeeper.Add(AchievementType.Login, 0);
@@ -65,7 +69,6 @@ namespace Encounter_Me.DataClasses
                 return;
             }
             _achievementKeeper[type]++;
-
             ParseAchievements(type);
         }
 
@@ -76,13 +79,13 @@ namespace Encounter_Me.DataClasses
             {
                 foreach (var ach in keyValPair.Value.Where(a => a.IsUnlocked == false))
                 {
-                    if (type == AchievementType.GainExpPoints)
+                    /*if (type == AchievementType.GainExpPoints)
                     {
                         if (_achievementKeeper[type] >= ach.CountToUnlock)
                             RaiseAchievementUnlocked(ach);
 
-                    }
-                    if (_achievementKeeper[type] == ach.CountToUnlock)
+                    }*/
+                    if (_achievementKeeper[type] == ach.AchievementID)
                     {
                         RaiseAchievementUnlocked(ach);
                     }
