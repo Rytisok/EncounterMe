@@ -32,18 +32,18 @@ namespace Encounter_Me.Services
             return null;
         }
 
-        public async Task UpdateUser(UserData user)
-        {
-            var userJson =
-                new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
+        //public async Task UpdateUser(UserData user)
+        //{
+        //    var userJson =
+        //        new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync("api/user", userJson);
-        }
+        //    await _httpClient.PutAsync("api/user", userJson);
+        //}
 
-        public async Task DeleteUser(int userId)
-        {
-            await _httpClient.DeleteAsync($"api/user/{userId}");
-        }
+        //public async Task DeleteUser(int userId)
+        //{
+        //    await _httpClient.DeleteAsync($"api/user/{userId}");
+        //}
 
         public async Task<IEnumerable<UserData>> GetAllUsers()
         {
