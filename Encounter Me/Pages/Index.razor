@@ -159,7 +159,7 @@
         "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
         "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
         "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.ID.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
+        "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
         "</div>";
 
         await JSRuntime.InvokeAsync<string>(
