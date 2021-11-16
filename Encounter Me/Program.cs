@@ -10,7 +10,12 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.JSInterop;
 using ExtensionMethods;
+
+using Encounter_Me.Pages;
+using Encounter_Me.Services;
+
 using BlazorCurrentDevice;
+
 
 namespace Encounter_Me
 {
@@ -22,7 +27,12 @@ namespace Encounter_Me
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+
+            builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            builder.Services.AddHttpClient<ITrailService, TrailService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+
             builder.Services.AddBlazorCurrentDevice();
+
 
             await builder.Build().RunAsync();
         }

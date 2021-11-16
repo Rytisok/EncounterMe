@@ -58,6 +58,8 @@
 
 @code {
 
+   
+
     userInputModel userInput = new userInputModel();
     bool isRegistrationSuccess = false;
 
@@ -76,11 +78,15 @@
             salt: hashSalt.Salt);
 
 
+
         Console.WriteLine($"Name: {newUser.FirstName}\n" +
                           $"Surname: {newUser.LastName}\n" +
                           $"Email: {newUser.Email}\n" +
                           $"Password: {newUser.Password}\n" +
                           $"Salt: {newUser.StoredSalt}\n");
     }
+    
+
+
 
 }
