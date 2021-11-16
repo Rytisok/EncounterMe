@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Encounter_Me.Shared
 {
-    public class userInputModel
+    public class RegistrationUserModel
     {
         [Required, StringLength(30, ErrorMessage ="Username must be shorter than 30 characters")]
         public string UserName { get; set; }
@@ -16,7 +16,8 @@ namespace Encounter_Me.Shared
             ErrorMessage = "Surname must start with a capital letter and have only letters")]
         public string LastName { get; set; }
         [Required]
-        [EmailAddress] // TODO : improve this validation as it is not robust enough.
+        [EmailAddress] 
+        // TODO : improve this validation as it is not robust enough.
         public string Email { get; set; }
 
         [Required]

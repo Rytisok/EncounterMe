@@ -20,12 +20,5 @@ namespace Encounter_Me.Pages
             Users = (await UserDataService.GetAllUsers()).ToList();
 
         }
-
-
-        
-
-
-        
-
     }
 }

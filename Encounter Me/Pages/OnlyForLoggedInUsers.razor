@@ -1,0 +1,19 @@
+﻿@page "/TestLogin"
+
+<h3>Only For Logged In Users</h3>
+
+
+<AuthorizeView>
+    <Authorized>
+        <br>
+        <h5>Surprise! (@context.User.FindFirst(System.Security.Claims.ClaimTypes.Name).Value) is logged in! </h5>
+    </Authorized>   
+    <NotAuthorized>
+        <br>
+        <h4>Sorry, got to be logged in to know what's in here.</h4>
+    </NotAuthorized>
+</AuthorizeView> 
+
+@code {
+
+}

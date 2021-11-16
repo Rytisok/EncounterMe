@@ -29,34 +29,34 @@ namespace Encounter_Me.Api.Controllers
         {
             return Ok(_trailRepository.GetTrailById(id));
         }
-        [HttpPost]
-        public IActionResult CreateTrail([FromBody] TrailContainer trail)
-        {
-            if (trail == null)
-                return BadRequest();
+        //[HttpPost]
+        //public IActionResult CreateTrail([FromBody] TrailContainer trail)
+        //{
+        //    if (trail == null)
+        //        return BadRequest();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(ModelState);
 
-            var createdTrail = _trailRepository.AddTrail(trail);
+        //    var createdTrail = _trailRepository.AddTrail(trail);
 
-            return Created("trail", createdTrail);
-        }
+        //    return Created("trail", createdTrail);
+        //}
 
-        [HttpDelete("{id}")]
-        public IActionResult DeleteTrail(int id)
-        {
-            if (id == 0)
-                return BadRequest();
+        //[HttpDelete("{id}")]
+        //public IActionResult DeleteTrail(int id)
+        //{
+        //    if (id == 0)
+        //        return BadRequest();
 
-            var trailToDelete = _trailRepository.GetTrailById(id);
-            if (trailToDelete == null)
-                return NotFound();
+        //    var trailToDelete = _trailRepository.GetTrailById(id);
+        //    if (trailToDelete == null)
+        //        return NotFound();
 
-            _trailRepository.DeleteTrail(id);
+        //    _trailRepository.DeleteTrail(id);
 
-            return NoContent();//success
-        }
+        //    return NoContent();//success
+        //}
 
     }
 }

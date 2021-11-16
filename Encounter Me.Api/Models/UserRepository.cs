@@ -26,6 +26,12 @@ namespace Encounter_Me.Api.Models
             return _appDbContext.Users.FirstOrDefault(c => c.Id == Id);
         }
 
+        public UserData GetUserByEmail(string Email)
+        {
+            return _appDbContext.Users.FirstOrDefault(c => c.Email == Email); ;
+        }
+
+
         public UserData AddUser(UserData user)
         {
             var addedEntity = _appDbContext.Users.Add(user);

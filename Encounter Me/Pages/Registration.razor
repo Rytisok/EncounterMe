@@ -1,47 +1,49 @@
-﻿@page "/Create account"
+﻿@page "/Sign up"
+@inject IAuthenticationService AuthService
+@inject NavigationManager NavManager
 
 <div class="row justify-content-center">
     <div class="col-md-5">
-        <div class="card mt-10 mb-10">
+        <div class="card mt-5 mb-5">
             <div class="card-header">
-                <h2>User Registration</h2>
+                <h3>Get ready to encounter the city!</h3>
             </div>
             <div class="card-body">
                 @if (isRegistrationSuccess)
                 {
                     <div class="alert alert-success" role="alert">Registration was successful</div>
                 }
-                <EditForm Model="@userInput" OnValidSubmit="CreateNewUser" autocomplete="off">
+                <EditForm Model="@registrationUserModel" OnValidSubmit="CreateNewUser" class="card-body bg-light mt-0" autocomplete="off">
                     <DataAnnotationsValidator />
                     <div class="col-md-12 mb-3">
                         <label for="Username">User Name</label>
-                        <InputText id="Username" placeholder="Enter Username" @bind-Value="userInput.UserName" class="form-control" />
-                        <ValidationMessage For="@(() => userInput.UserName)" />
+                        <InputText id="Username" placeholder="Enter Username" @bind-Value="registrationUserModel.UserName" class="form-control" />
+                        <ValidationMessage For="@(() => registrationUserModel.UserName)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="FirstName">First Name</label>
-                        <InputText id="FirstName" placeholder="Enter Name" @bind-Value="userInput.FirstName" class="form-control" />
-                        <ValidationMessage For="@(() => userInput.FirstName)" />
+                        <InputText id="FirstName" placeholder="Enter Name" @bind-Value="registrationUserModel.FirstName" class="form-control" />
+                        <ValidationMessage For="@(() => registrationUserModel.FirstName)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="LastName">Last Name</label>
-                        <InputText id="LastName" placeholder="Enter Surname" @bind-Value="userInput.LastName" class="form-control" />
-                        <ValidationMessage For="@(() =>  userInput.LastName)" />
+                        <InputText id="LastName" placeholder="Enter Surname" @bind-Value="registrationUserModel.LastName" class="form-control" />
+                        <ValidationMessage For="@(() =>  registrationUserModel.LastName)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Email">Email</label>
-                        <InputText id="Email" placeholder="Enter Email" @bind-Value="userInput.Email" class="form-control" />
-                        <ValidationMessage For="@(() => userInput.Email)" />
+                        <InputText id="Email" placeholder="Enter Email" @bind-Value="registrationUserModel.Email" class="form-control" />
+                        <ValidationMessage For="@(() => registrationUserModel.Email)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Password">Password</label>
-                        <InputText id="Password" placeholder="Enter Password" type="password" @bind-Value="userInput.Password" class="form-control" />
-                        <ValidationMessage For="@(() => userInput.Password)" />
+                        <InputText id="Password" placeholder="Enter Password" type="password" @bind-Value="registrationUserModel.Password" class="form-control" />
+                        <ValidationMessage For="@(() => registrationUserModel.Password)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Confirm password">Confirm password</label>
-                        <InputText id="Confirm Password" placeholder="Repeat Password" type="password" @bind-Value="userInput.ConfirmPassword" class="form-control" />
-                        <ValidationMessage For="@(() =>  userInput.ConfirmPassword)" />
+                        <InputText id="Confirm Password" placeholder="Repeat Password" type="password" @bind-Value="registrationUserModel.ConfirmPassword" class="form-control" />
+                        <ValidationMessage For="@(() =>  registrationUserModel.ConfirmPassword)" />
                     </div>
 
                     <div class="form-group" align="left">
@@ -58,35 +60,27 @@
 
 @code {
 
-   
+    private RegistrationUserModel registrationUserModel = new();
+    private bool isRegistrationSuccess = false;
 
-    userInputModel userInput = new userInputModel();
-    bool isRegistrationSuccess = false;
+    [Inject]
+    public IUserDataService userDataService { get; set; }
 
-    void CreateNewUser()
+    private async Task CreateNewUser()
     {
         isRegistrationSuccess = true;
-        Console.WriteLine("New user name is...");
-        var hashSalt = PasswordManager.EncryptPassword(userInput.Password);
-        var newUser = new UserData(
-            id: 0,
-            userName: userInput.UserName,
-            firstName: userInput.FirstName,
-            lastName: userInput.LastName,
-            email: userInput.Email,
-            password: hashSalt.Hash,
-            salt: hashSalt.Salt);
 
+        await userDataService.AddUser(new UserData(
+            id: 0, // TODO: change to guid
+            userName: registrationUserModel.UserName,
+            firstName: registrationUserModel.FirstName,
+            lastName: registrationUserModel.LastName,
+            email: registrationUserModel.Email,
+            password: registrationUserModel.Password,
+            salt: null));
 
-
-        Console.WriteLine($"Name: {newUser.FirstName}\n" +
-                          $"Surname: {newUser.LastName}\n" +
-                          $"Email: {newUser.Email}\n" +
-                          $"Password: {newUser.Password}\n" +
-                          $"Salt: {newUser.StoredSalt}\n");
+        var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
+        // Takes some time...
+        NavManager.NavigateTo("/");
     }
-    
-
-
-
 }

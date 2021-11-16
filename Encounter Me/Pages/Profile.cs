@@ -24,9 +24,5 @@ namespace Encounter_Me.Pages
             User = await UserDataService.GetUserDetails(int.Parse(Id));
 
         }
-
-
-
-
     }
 }

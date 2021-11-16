@@ -14,8 +14,8 @@ namespace Encounter_Me.Services
 
         Task<UserData> AddUser(UserData user);
 
-        Task UpdateUser(UserData user);
+        //Task UpdateUser(UserData user);
 
-        Task DeleteUser(int Id);
+        //Task DeleteUser(int Id);
     }
 }
