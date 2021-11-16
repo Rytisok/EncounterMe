@@ -7,7 +7,7 @@ using Encounter_Me;
 
 namespace Encounter_Me.Api.Models
 {
-    public class UserRepository:IUserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly AppDbContext _appDbContext;
 

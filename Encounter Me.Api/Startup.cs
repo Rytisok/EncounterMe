@@ -35,6 +35,7 @@ namespace Encounter_Me.Api
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ITrailRepository, TrailRepository>();
 
 
             services.AddCors(options =>

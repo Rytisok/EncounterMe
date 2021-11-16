@@ -154,7 +154,7 @@
             List<TrailContainer> trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
             var searchQuery = from trail
                               in trails
-                              where trail.ID == trailID
+                              where trail.Id == trailID
                               select trail;
 
             List<TrailContainer> foundTrails = new List<TrailContainer>();
