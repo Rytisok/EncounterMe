@@ -1,0 +1,49 @@
+﻿@page "/test"
+@using System.Threading
+<h3>Requirement</h3>
+
+<button @onclick="MyMethod">
+    Call my method
+</button>
+<button @onclick="MyMethod">
+    Call my method 2
+</button>
+
+@code {
+    public event EventHandler SampleEvent;
+    bool running = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SampleEvent += MyListener;
+        }
+    }
+
+    void MyMethod()
+    {
+        if (running)
+        {
+            SampleEvent?.Invoke(this, null);
+        }
+        else
+        {
+            Job();
+        }
+
+    }
+
+    async void Job()
+    {
+        running = true;
+        await Task.Delay(1000);
+        Console.WriteLine("Job done");
+        running = false;
+    }
+
+    void MyListener(object sender, EventArgs e)
+    {
+        Console.WriteLine("Job is already running!");
+    }
+}
