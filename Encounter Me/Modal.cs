@@ -2,17 +2,17 @@
 
 public class Modal
 {
-	public string modalDisplay { get; set; }
-	public string modalClass { get; set; }
+	public string ModalDisplay { get; set; }
+	public string ModalClass { get; set; }
 
 	public Modal()
 	{
-		modalDisplay = "none;";
-		modalClass = "";
+		ModalDisplay = "none;";
+		ModalClass = "";
 	}
 	public Modal(string modalDisplay, string modalClass)
 	{
-		this.modalDisplay = modalDisplay;
-		this.modalClass = modalClass;
+		this.ModalDisplay = modalDisplay;
+		this.ModalClass = modalClass;
 	}
 }
