@@ -40,7 +40,7 @@ namespace Encounter_Me.Services
         //    await _httpClient.PutAsync("api/user", userJson);
         //}
 
-        //public async Task DeleteUser(int userId)
+        //public async Task DeleteUser(Guid userId)
         //{
         //    await _httpClient.DeleteAsync($"api/user/{userId}");
         //}
@@ -51,7 +51,7 @@ namespace Encounter_Me.Services
                     (await _httpClient.GetStreamAsync($"api/user"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<UserData> GetUserDetails(int userId)
+        public async Task<UserData> GetUserDetails(Guid userId)
         {
             return await JsonSerializer.DeserializeAsync<UserData>
                 (await _httpClient.GetStreamAsync($"api/user/{userId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });

@@ -27,7 +27,7 @@ namespace Encounter_Me.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetUserById(int id)
+        public IActionResult GetUserById(Guid id)
         {
             return Ok(_userRepository.GetUserById(id));
         }

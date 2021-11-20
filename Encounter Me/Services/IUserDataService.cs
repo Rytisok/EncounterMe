@@ -10,12 +10,12 @@ namespace Encounter_Me.Services
     {
         Task<IEnumerable<UserData>> GetAllUsers();
 
-        Task<UserData> GetUserDetails(int Id);
+        Task<UserData> GetUserDetails(Guid Id);
 
         Task<UserData> AddUser(UserData user);
 
         //Task UpdateUser(UserData user);
 
-        //Task DeleteUser(int Id);
+        //Task DeleteUser(Guid Id);
     }
 }
