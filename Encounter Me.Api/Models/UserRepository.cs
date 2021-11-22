@@ -26,11 +26,21 @@ namespace Encounter_Me.Api.Models
             return _appDbContext.Users.FirstOrDefault(c => c.Id == Id);
         }
 
-        public UserData GetUserByEmail(string Email)
+        public UserData GetUserByEmail(string email)
         {
-            return _appDbContext.Users.FirstOrDefault(c => c.Email == Email); ;
+            return _appDbContext.Users.FirstOrDefault(c => c.Email == email); ;
         }
 
+
+        public bool IsUsernameTaken(string username)
+        {
+            return _appDbContext.Users.Any(u => u.UserName == username);
+        }
+
+        public bool IsEmailTaken(string email)
+        {
+            return _appDbContext.Users.Any(u => u.Email == email);
+        }
 
         public UserData AddUser(UserData user)
         {
