@@ -5,6 +5,7 @@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
+@using System.Security.Claims
 @implements IAsyncDisposable
 
 <div id="map"></div>
@@ -12,14 +13,14 @@
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
-                    <div class="modal-header-warning justify-content-center">
-                        <img src="Images/alert.png">
-                    </div>
-                    <div class="modal-body text-center">
-                        <h4>Alert!</h4>
-                        <h5>It is recommended to enable location on your browser for trail browsing.</h5>
-                        <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(_alertModal);  StateHasChanged();})" data-dismiss="modal"><span>Understood</span></button>
-                    </div>
+                <div class="modal-header-warning justify-content-center">
+                    <img src="Images/alert.png">
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Alert!</h4>
+                    <h5>It is recommended to enable location on your browser for trail browsing.</h5>
+                    <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(_alertModal);  StateHasChanged();})" data-dismiss="modal"><span>Understood</span></button>
+                </div>
             </div>
         </div>
     </div>
@@ -57,6 +58,9 @@
 
     private Modal _alertModal = new Modal();
     private Modal _errorModal = new Modal();
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -153,14 +157,31 @@
 
     private async Task AddMarker(TrailContainer trail)
     {
+
+        var authState = await AuthState;
+
         string difficulty = trail.Diff.ToTrailStars();
 
-        string infoWindowContent = "<div id=content>" +
-        "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
-        "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
-        "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
-        "</div>";
+        string infoWindowContent;
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            infoWindowContent = "<div id=content>" +
+            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
+            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
+            "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
+            "</div>";
+        }
+        else
+        {
+            infoWindowContent = "<div id=content>" +
+            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
+            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "</div>";
+        }
+
+
 
         await JSRuntime.InvokeAsync<string>(
             "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);

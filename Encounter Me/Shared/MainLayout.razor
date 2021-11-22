@@ -11,7 +11,7 @@
 
             <AuthorizeView>
                 <Authorized>
-                    Hi, @context.User.FindFirst(ClaimTypes.NameIdentifier).Value!
+                    Hi, @context.User.FindFirst(ClaimTypes.Name).Value!
                     <a class="btn btn-primary" href="@("/logout")" role="button"> Log out</a>
                 </Authorized> 
                 <NotAuthorized>
