@@ -2,7 +2,6 @@
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
 @inject NavigationManager NavManager
-@*@inject UserDataService userDataService*@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
@@ -25,11 +24,11 @@
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
                 <button class="close" @onclick="(e => ModalControl.CloseModal(_infoModal))">&times;</button>
-                <h5>Time walking: @_trailTime hours </h5>
-                <h5>Distance walked: @_distanceWalked km</h5>
+                <h5>Time walking: @progressStats.TrailTime hours </h5>
+                <h5>Distance walked: @progressStats.DistanceWalked km</h5>
                 <h5>Trail progress: </h5>
                 <div class="progress">
-                    <div class="progress-bar progress-bar-striped active" style="width: @_trailProgress; background-color: #7FE5F0; "></div>
+                    <div class="progress-bar progress-bar-striped active" style="width: @progressStats.TrailProgress; background-color: #7FE5F0; "></div>
                 </div>
                 <div class="d-flex justify-content-center">
                     <button class="btn-cancel" @onclick="AbortTrail">Abort trail</button>
@@ -61,7 +60,7 @@
                 }
                 else if (ModalStatus == 1)
                 {
-                    <h5>Time spent: @_trailTime hours </h5>
+                    <h5>Time spent: @progressStats.TrailTime hours </h5>
                     <h5>Distance walked: @_trailInProgress.Length km</h5>
                     <h5>Xp gained: @LevelAndXp.XpFromTrail(_trailInProgress) </h5>
                     <button class="btn btn-success" @onclick="AdvanceFinishModal" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
@@ -79,7 +78,7 @@
                             <div class="level-bar1 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, (int)currentUser.ExperiencePoints)%; background-color: #7FE5F0; "></div>
                             <div class="level-bar2 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, LevelAndXp.XpFromTrail(_trailInProgress))%; background-color: #5cb85c; "></div>
                         </div>
-                        <h5> @risingNumber / @LevelAndXp.XpToLevelUp(currentUser.Level) xp</h5>
+                        <h5> @(currentUser.ExperiencePoints + LevelAndXp.XpFromTrail(_trailInProgress)) / @LevelAndXp.XpToLevelUp(currentUser.Level) xp</h5>
                         <button class="btn btn-success" @onclick="CloseFinishModal" data-dismiss="modal"><span>Done</span></button>
                     </div>
                 }
@@ -97,16 +96,12 @@
     private GeolocationPosition _geolocationPosition;
 
     private List<GeolocationPosition> _positionHistory = new List<GeolocationPosition>();
-
     private IAsyncDisposable _geopositionWatcher;
     private TrailContainer _trailInProgress;
     private List<GeolocationCoordinates> _trailCoordinateList;
     private int _currentPos = 0;
 
-    private DateTime _trailStart;
-    private double _distanceWalked = 0;
-    private string _trailProgress = "0%";
-    private double _trailTime = 0;
+    private ProgressStats progressStats = new ProgressStats();
 
     private Modal _successModal = new Modal();
     private Modal _infoModal = new Modal();
@@ -114,17 +109,14 @@
 
     private UserData currentUser;
 
-    private int risingNumber = 0;
-
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+    private AuthenticationState authState;
 
     [Parameter]
     public int ModalStatus { get; set; } = 0;
 
     private GeolocationCoordinates _prevCheckpointCoords = null;
-
-    AuthenticationState authState;
 
     [Inject]
     public IUserDataService userDataService { get; set; }
@@ -160,14 +152,13 @@
 
             string geojsonData = await Http.GetStringAsync(_trailInProgress.GeoJsonData);
 
-            _trailCoordinateList = await GetCoords(_trailInProgress.GeoJsonData);
+            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>(_trailInProgress.GeoJsonData);
+            _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
 
             await JSRuntime.InvokeAsync<object>(
                 "drawLines", (object)ListToCoordinateArray(_trailCoordinateList));
 
             await WatchPosition();
-
-            _trailStart = DateTime.UtcNow;
         }
 
         base.OnAfterRender(firstRender);
@@ -205,7 +196,7 @@
             {
                 _currentPos++;
                 if (_prevCheckpointCoords != null)
-                    _distanceWalked += Math.Round(CoordinateMath.GetDistanceBetweenCoords(_trailCoordinateList[0], _prevCheckpointCoords), 2);
+                    progressStats.DistanceWalked += Math.Round(CoordinateMath.GetDistanceBetweenCoords(_trailCoordinateList[0], _prevCheckpointCoords), 2);
 
                 _prevCheckpointCoords = _trailCoordinateList[0];
                 _trailCoordinateList.RemoveAt(0);
@@ -224,7 +215,7 @@
             if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) > 0.02)
             {
                 await JSRuntime.InvokeAsync<object>(
-                "drawLineToTrail", GeolocationCoordinateToArray(p.Location.Coords), GeolocationCoordinateToArray(_trailCoordinateList[0]));
+                "drawLineToTrail", CoordinateConverter.GeolocationCoordinateToArray(p.Location.Coords), CoordinateConverter.GeolocationCoordinateToArray(_trailCoordinateList[0]));
             }
             else
             {
@@ -235,25 +226,6 @@
         }
         );
     }
-
-    public async Task<List<GeolocationCoordinates>> GetCoords(string geojsonUrl)
-    {
-        var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>(geojsonUrl);
-        var coordinatesArr = geoJsonTrailData.Features[0].Geometry.Coordinates;
-
-        var coordinatesList = new List<GeolocationCoordinates>();
-
-        for (int i = 0; i < coordinatesArr.GetLength(0); i++)
-        {
-            var coordinate = new GeolocationCoordinates();
-            coordinate.Latitude = coordinatesArr[i][1];
-            coordinate.Longitude = coordinatesArr[i][0];
-            coordinatesList.Add(coordinate);
-        }
-
-        return coordinatesList;
-    }
-
 
     public async ValueTask DisposeAsync()
     {
@@ -272,26 +244,17 @@
 
         for (int i = 0; i < list.Count; i++)
         {
-            coordinatesArray[i] = GeolocationCoordinateToArray(list[i]);
+            coordinatesArray[i] = CoordinateConverter.GeolocationCoordinateToArray(list[i]);
         }
         return coordinatesArray;
-    }
-
-    public double[] GeolocationCoordinateToArray(GeolocationCoordinates coords)
-    {
-        double[] coordinates = new double[2];
-        coordinates[0] = coords.Latitude;
-        coordinates[1] = coords.Longitude;
-
-        return coordinates;
     }
 
     [JSInvokable]
     public void OpenDetails()
     {
-        _trailProgress = ((_distanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
+        progressStats.TrailProgress = ((progressStats.DistanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
 
-        _trailTime = Math.Round((DateTime.UtcNow - _trailStart).TotalHours, 2);
+        progressStats.TrailTime = Math.Round((DateTime.UtcNow - progressStats.TrailStartTime).TotalHours, 2);
 
         ModalControl.OpenModal(_infoModal);
         StateHasChanged();
@@ -304,8 +267,6 @@
     private async void AdvanceFinishModal()
     {
         ModalStatus++;
-        if (ModalStatus == 2)
-            Counter((int)currentUser.ExperiencePoints, (int)currentUser.ExperiencePoints + LevelAndXp.XpFromTrail(_trailInProgress));
         StateHasChanged();
     }
     [JSInvokable]
@@ -325,38 +286,9 @@
     private async void CloseFinishModal()
     {
         ModalControl.CloseModal(_successModal);
-        UpdateXp();
+        int xpGain = LevelAndXp.XpFromTrail(_trailInProgress);
+        userDataService.UpdateUserXp(currentUser, xpGain);
         StateHasChanged();
         NavManager.NavigateTo("/");
     }
-
-    private async void UpdateXp()
-    {
-        int xpGain = LevelAndXp.XpFromTrail(_trailInProgress);
-        if (currentUser.ExperiencePoints + xpGain >= LevelAndXp.XpToLevelUp(currentUser.Level))
-        {
-            currentUser.ExperiencePoints = currentUser.ExperiencePoints + xpGain - LevelAndXp.XpToLevelUp(currentUser.Level);
-            currentUser.Level++;
-        }
-        else
-        {
-            currentUser.ExperiencePoints += xpGain;
-        }
-
-        await userDataService.UpdateUser(currentUser);
-    }
-
-    async void Counter(int from, int to)
-    {
-        risingNumber = from;
-        await Task.Delay(80);
-        risingNumber++;
-        StateHasChanged();
-        if (risingNumber < to)
-        {
-            Counter(risingNumber, to);
-        }
-    }
-
-
 }

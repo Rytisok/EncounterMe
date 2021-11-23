@@ -17,5 +17,7 @@ namespace Encounter_Me.Services
         Task UpdateUser(UserData user);
 
         Task DeleteUser(Guid Id);
+
+        void UpdateUserXp(UserData user, int xpGain);
     }
 }

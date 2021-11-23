@@ -56,7 +56,20 @@ namespace Encounter_Me.Services
             return await JsonSerializer.DeserializeAsync<UserData>
                 (await _httpClient.GetStreamAsync($"api/user/{userId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
+        public async void UpdateUserXp(UserData user, int xpGain)
+        {
+            if (user.ExperiencePoints + xpGain >= LevelAndXp.XpToLevelUp(user.Level))
+            {
+                user.ExperiencePoints = user.ExperiencePoints + xpGain - LevelAndXp.XpToLevelUp(user.Level);
+                user.Level++;
+            }
+            else
+            {
+                user.ExperiencePoints += xpGain;
+            }
 
+            await UpdateUser(user);
+        }
 
     }
 }
