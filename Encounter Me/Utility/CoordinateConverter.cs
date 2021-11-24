@@ -30,4 +30,14 @@ public static class CoordinateConverter
 
         return coordinates;
     }
+    public static double[][] GeolocationCoordinateListToCoordinateArray(List<GeolocationCoordinates> list)
+    {
+        double[][] coordinatesArray = new double[list.Count][];
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            coordinatesArray[i] = GeolocationCoordinateToArray(list[i]);
+        }
+        return coordinatesArray;
+    }
 }
