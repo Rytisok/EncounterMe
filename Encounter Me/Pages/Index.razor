@@ -69,7 +69,6 @@
     [JSInvokable]
     public async void StartTrail(int trailID)
     {
-
         try
         {
             DeviceValidator validator = new DeviceValidator();
@@ -149,8 +148,6 @@
             "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
             "</div>";
         }
-
-
 
         await JSRuntime.InvokeAsync<string>(
             "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);

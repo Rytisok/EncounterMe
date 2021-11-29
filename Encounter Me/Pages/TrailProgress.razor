@@ -62,7 +62,6 @@
     {
         if (firstRender)
         {
-            Console.WriteLine("does anything work?");
             var dotNetObjRef = DotNetObjectReference.Create(this);
 
             var window = await JSRuntime.Window();
@@ -133,14 +132,8 @@
                 _trailCoordinateList.RemoveAt(0);
             }
 
-            if (_trailCoordinateList.Count <= 1)
-            {
-                TrailFinished();
-            }
-
             //draw path line
-            await JSRuntime.InvokeAsync<object>(
-                                            "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
+            await JSRuntime.InvokeAsync<object>("drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
 
             //if user is further than 20m to the next checkpoint, draw line to it
             if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) > 0.02)
@@ -152,6 +145,10 @@
             {
                 await JSRuntime.InvokeAsync<string>(
                 "removeLineToTrail");
+            }
+            if (_trailCoordinateList.Count <= 1)
+            {
+                TrailFinished();
             }
             StateHasChanged();
         }
@@ -184,6 +181,7 @@
     {
         NavManager.NavigateTo("/");
     }
+
     [JSInvokable]
     public async void TrailFinished()
     {
