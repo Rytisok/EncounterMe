@@ -3,6 +3,7 @@ using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -49,6 +50,7 @@ namespace Encounter_Me.Api.Controllers
                 {
                     return new ObjectResult(await GenerateToken(loginUser.Email));
                 }
+                Log.Error("Authentication failure, wrong password was provided.");
                 return BadRequest("Wrong password, try again.");
             }
             return BadRequest("User with this email does not exist.");
