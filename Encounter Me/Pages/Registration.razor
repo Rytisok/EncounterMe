@@ -12,7 +12,8 @@
                 @if (isRegistrationSuccess)
                 {
                     <div class="alert alert-success" role="alert">Registration was successful</div>
-                    }
+                }
+
                 @if (showSignUpError)
                 {
                     <div class="alert alert-danger" role="alert">
@@ -92,9 +93,7 @@
         }
         catch (Exception e)
         // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response. 
-        // Especialy since getting the username right might take a few tries. 
-        // On the other hand - it's so fast that the message about successfull sign up is not shown...
-
+        // Especialy since getting the username right might take a few tries.
         {
             Console.WriteLine(e.Message);
             showSignUpError = true;

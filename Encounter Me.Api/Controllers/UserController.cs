@@ -38,7 +38,6 @@ namespace Encounter_Me.Api.Controllers
             if (user == null)
                 return BadRequest(); 
 
-            /// FIXME: errors 
             if (_userRepository.IsUsernameTaken(user.UserName))
             {
                 return BadRequest($"Username {user.UserName} is already taken.");
