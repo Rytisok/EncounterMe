@@ -1,0 +1,57 @@
+﻿@inject IJSRuntime JSRuntime
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<div class="modal fade @modal.ModalClass" tabindex="-1" role="dialog" style="display:@modal.ModalDisplay; overflow-y: auto;" id="finnishModal">
+    <div class="d-flex justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                @if (modalStatus == 0)
+                {
+                    <div class="modal-header justify-content-center">
+                        <div class="icon-box">
+                            <img src="Images/route.png">
+                        </div>
+                    </div>
+                    <div class="modal-body text-center">
+                        <h4>Trail completed!</h4>
+                        <p>Trail finished successfuly.</p>
+                        <button class="btn btn-success" @onclick="e => { modalStatus++;}" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
+                    </div>
+                }
+                else if (modalStatus == 1)
+                {
+                    <h5>Time spent: @progressStats.TrailTime hours </h5>
+                    <h5>Distance walked: @trail.Length km</h5>
+                    <h5>Xp gained: @LevelAndXp.XpFromTrail(trail) </h5>
+                    <button class="btn btn-success" @onclick="e => { modalStatus++;}" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
+                }
+                else if (modalStatus == 2)
+                {
+                    <div align="center">
+                        <img src="Images/stockProfile.png" style="display:block; width:50%; height:50%">
+                        <h5>@currentUser.UserName</h5>
+                    </div>
+
+                    <div class="modal-body text-center">
+                        <h4>Level: @currentUser.Level</h4>
+                        <div class="progress">
+                            <div class="level-bar1 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, (int)currentUser.ExperiencePoints)%; background-color: #7FE5F0; "></div>
+                            <div class="level-bar2 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, LevelAndXp.XpFromTrail(trail))%; background-color: #5cb85c; "></div>
+                        </div>
+                        <h5> @(currentUser.ExperiencePoints + LevelAndXp.XpFromTrail(trail)) / @LevelAndXp.XpToLevelUp(currentUser.Level) xp</h5>
+                        <button class="btn btn-success" @onclick="e => { NavManager.NavigateTo(g); }" data-dismiss="modal"><span>Done</span></button>
+                    </div>
+                    }
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+    [Parameter] public Modal modal { get; set; }
+    [Parameter] public UserData currentUser { get; set; }
+    [Parameter] public TrailContainer trail { get; set; }
+    [Parameter] public ProgressStats progressStats { get; set; }
+    private int modalStatus = 0;
+    string g = "/";
+}

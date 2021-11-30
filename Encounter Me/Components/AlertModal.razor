@@ -1,0 +1,21 @@
+﻿<div class="modal fade @modal.ModalClass" tabindex="-1" role="dialog" style="display: @modal.ModalDisplay; overflow-y: auto;" id="alertModal">
+    <div class="d-flex justify-content-center">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header-warning justify-content-center">
+                    <img src="Images/alert.png">
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Alert!</h4>
+                    <h5> @modalText</h5>
+                    <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(modal);  StateHasChanged();})" data-dismiss="modal"><span>Understood</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Modal modal { get; set; }
+    [Parameter] public string modalText { get; set; }
+}

@@ -57,21 +57,21 @@ namespace Encounter_Me.Api.Controllers
             return Created("user", createdUser);
         }
 
-        [HttpPut]
-        public IActionResult UpdateUser([FromBody] UserData user)
-        {
-            if (user == null)
-                return BadRequest();
-
-            if (user.FirstName == string.Empty || user.LastName == string.Empty)
+            [HttpPut]
+            public IActionResult UpdateUser([FromBody] UserData user)
             {
-                ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
-            }
+                if (user == null)
+                    return BadRequest();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                if (user.FirstName == string.Empty || user.LastName == string.Empty)
+                {
+                    ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
+                }
 
-            var userToUpdate = _userRepository.GetUserById(user.Id);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var userToUpdate = _userRepository.GetUserById(user.Id);
 
             if (userToUpdate == null)
                 return NotFound();
@@ -81,19 +81,19 @@ namespace Encounter_Me.Api.Controllers
             return NoContent(); //success
         }
 
-        //    [HttpDelete("{id}")]
-        //    public IActionResult DeleteUser(int id)
-        //    {
-        //        if (id == 0)
-        //            return BadRequest();
+            [HttpDelete("{id}")]
+            public IActionResult DeleteUser(Guid id)
+            {
+                if (id == null)
+                    return BadRequest();
 
-        //        var userToDelete = _userRepository.GetUserById(id);
-        //        if (userToDelete == null)
-        //            return NotFound();
+                   var userToDelete = _userRepository.GetUserById(id);
+                if (userToDelete == null)
+                    return NotFound();
 
-        //        _userRepository.DeleteUser(id);
+                _userRepository.DeleteUser(id);
 
-        //        return NoContent();//success
-        //    }
+                return NoContent();//success
+            }
     }
 }
