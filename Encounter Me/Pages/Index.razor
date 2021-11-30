@@ -5,44 +5,14 @@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
+@using System.Security.Claims
 @implements IAsyncDisposable
 
 <div id="map"></div>
-<div class="modal fade @_alertModal.ModalClass" tabindex="-1" role="dialog" style="display:@_alertModal.ModalDisplay; overflow-y: auto;" id="alertModal">
-    <div class="d-flex justify-content-center">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                    <div class="modal-header-warning justify-content-center">
-                        <img src="Images/alert.png">
-                    </div>
-                    <div class="modal-body text-center">
-                        <h4>Alert!</h4>
-                        <h5>It is recommended to enable location on your browser for trail browsing.</h5>
-                        <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(_alertModal);  StateHasChanged();})" data-dismiss="modal"><span>Understood</span></button>
-                    </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade @_errorModal.ModalClass" tabindex="-1" role="dialog" style="display:@_errorModal.ModalDisplay; overflow-y: auto;" id="errorModal">
-    <div class="d-flex justify-content-center">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <div class="modal-header-error justify-content-center">
-                    <img src="Images/alert.png">
-                </div>
-                <div class="modal-body text-center">
-                    <h4>Error!</h4>
-                    <h5>Trail walking is supported on mobile devices only!</h5>
-                    <button class="btn btn-success" @onclick="(e => { ModalControl.CloseModal(_errorModal); StateHasChanged(); })" data-dismiss="modal"><span>Understood</span></button>
-                    <button class="btn btn-cancel" @onclick="(e => TestTrailLoad())" data-dismiss="modal"> <span>Skip warning (development only)</span></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<Encounter_Me.Components.AlertModal modal=@_alertModal modalText="It is recommended to turn on location services for the best experience"></Encounter_Me.Components.AlertModal>
 
+<Encounter_Me.Components.ErrorModal modal=@_errorModal modalText="Trail walking is supported on mobile devices only!" devButtonAction=@TestTrailLoad></Encounter_Me.Components.ErrorModal>
 
 @code{
 
@@ -57,6 +27,9 @@
 
     private Modal _alertModal = new Modal();
     private Modal _errorModal = new Modal();
+
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -96,7 +69,6 @@
     [JSInvokable]
     public async void StartTrail(int trailID)
     {
-
         try
         {
             DeviceValidator validator = new DeviceValidator();
@@ -153,14 +125,29 @@
 
     private async Task AddMarker(TrailContainer trail)
     {
+
+        var authState = await AuthState;
+
         string difficulty = trail.Diff.ToTrailStars();
 
-        string infoWindowContent = "<div id=content>" +
-        "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
-        "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
-        "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-        "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
-        "</div>";
+        string infoWindowContent;
+
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            infoWindowContent = "<div id=content>" +
+            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
+            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
+            "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
+            "</div>";
+        }
+        else
+        {
+            infoWindowContent = "<div id=content>" +
+            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
+            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "</div>";
+        }
 
         await JSRuntime.InvokeAsync<string>(
             "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);

@@ -249,6 +249,21 @@ mapText {
 }
 
 
+@property --num {
+    syntax: "<integer>";
+    initial-value: 0;
+    inherits: false;
+}
+
+.counter {
+    transition: --num 20s;
+    counter-reset: num var(--num);
+}
+.counter::after {
+    content: counter(num);
+}
+
+
 @-webkit-keyframes animate-positive {
     0% {
         width: 0;
