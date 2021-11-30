@@ -23,7 +23,7 @@ namespace Encounter_Me.Api.Models
 
             
 
-            modelBuilder.Entity<UserData>().HasData(new UserData
+            /*modelBuilder.Entity<UserData>().HasData(new UserData
             {
                 Id = Guid.NewGuid(),
                 UserName = "obuolys",
@@ -33,7 +33,7 @@ namespace Encounter_Me.Api.Models
                 Level = 1,
                 UserPhotoUrl = "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg"
 
-            }) ;
+            }) ;*/
 
 
 
