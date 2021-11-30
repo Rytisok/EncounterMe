@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Encounter_Me.Api.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -29,8 +29,7 @@ namespace Encounter_Me.Api.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -59,7 +58,7 @@ namespace Encounter_Me.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Email", "ExperiencePoints", "FirstName", "LastName", "Level", "Password", "StoredSalt", "UserName", "UserPhotoUrl" },
-                values: new object[] { 1, "dz@mail.lt", 0.0, "Dominykas", "Zagreckas", 1, null, null, "obuolys", "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg" });
+                values: new object[] { new Guid("90b94449-31aa-4caa-8e9c-69c46a7128f5"), "dz@mail.lt", 0.0, "Dominykas", "Zagreckas", 1, null, null, "obuolys", "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

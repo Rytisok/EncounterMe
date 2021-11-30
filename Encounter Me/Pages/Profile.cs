@@ -21,7 +21,7 @@ namespace Encounter_Me.Pages
         protected async override Task OnInitializedAsync()
         {
 
-            User = await UserDataService.GetUserDetails(int.Parse(Id));
+            User = await UserDataService.GetUserDetails(Guid.Parse(Id));
 
         }
     }

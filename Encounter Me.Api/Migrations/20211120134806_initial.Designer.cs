@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Encounter_Me.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211112185231_Initial")]
-    partial class Initial
+    [Migration("20211120134806_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,10 +23,9 @@ namespace Encounter_Me.Api.Migrations
 
             modelBuilder.Entity("Encounter_Me.UserData", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
@@ -62,7 +61,7 @@ namespace Encounter_Me.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("90b94449-31aa-4caa-8e9c-69c46a7128f5"),
                             Email = "dz@mail.lt",
                             ExperiencePoints = 0.0,
                             FirstName = "Dominykas",

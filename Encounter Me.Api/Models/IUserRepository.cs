@@ -10,10 +10,10 @@ namespace Encounter_Me.Api.Models
     public interface IUserRepository
     {
         IEnumerable<UserData> GetAllUsers();
-        UserData GetUserById(int userId);
+        UserData GetUserById(Guid userId);
         UserData AddUser(UserData user);
         UserData UpdateUser(UserData user);
-        void DeleteUser(int userId);
+        void DeleteUser(Guid userId);
         UserData GetUserByEmail(string Email);
     }
 }

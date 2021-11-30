@@ -23,9 +23,9 @@ namespace Encounter_Me.Api.Models
 
             
 
-            modelBuilder.Entity<UserData>().HasData(new UserData
+            /*modelBuilder.Entity<UserData>().HasData(new UserData
             {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 UserName = "obuolys",
                 FirstName = "Dominykas",
                 LastName = "Zagreckas",
@@ -33,7 +33,13 @@ namespace Encounter_Me.Api.Models
                 Level = 1,
                 UserPhotoUrl = "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg"
 
-            }) ;
+            }) ;*/
+
+
+
+
+
+
             modelBuilder.Entity<TrailContainer>().HasData(new TrailContainer
             {
                 Id = 1,

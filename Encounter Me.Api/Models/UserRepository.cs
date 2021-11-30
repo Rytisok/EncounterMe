@@ -21,7 +21,7 @@ namespace Encounter_Me.Api.Models
             return _appDbContext.Users;
         }
 
-        public UserData GetUserById(int Id)
+        public UserData GetUserById(Guid Id)
         {
             return _appDbContext.Users.FirstOrDefault(c => c.Id == Id);
         }
@@ -63,7 +63,7 @@ namespace Encounter_Me.Api.Models
             return null;
         }
 
-        public void DeleteUser(int Id)
+        public void DeleteUser(Guid Id)
         {
             var foundUser = _appDbContext.Users.FirstOrDefault(e => e.Id == Id);
             if (foundUser == null) return;
