@@ -71,7 +71,7 @@
         isRegistrationSuccess = true;
 
         await userDataService.AddUser(new UserData(
-            id: Guid.NewGuid(), // TODO: change to guid
+            id: Guid.NewGuid(),
             userName: registrationUserModel.UserName,
             firstName: registrationUserModel.FirstName,
             lastName: registrationUserModel.LastName,
