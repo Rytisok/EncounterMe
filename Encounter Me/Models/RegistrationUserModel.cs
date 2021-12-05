@@ -3,13 +3,19 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Encounter_Me.Shared
 {
+    public enum Fractions { Red, Green, Blue, Yellow };
     public class RegistrationUserModel
     {
-        [Required, StringLength(30, ErrorMessage ="Username must be shorter than 30 characters")]
+        [Required, StringLength(30, ErrorMessage = "Username must be shorter than 30 characters")]
         public string UserName { get; set; }
+
+        [Required(ErrorMessage ="Select a fraction"), EnumDataType(typeof(Fractions))]
+        public Fractions? Fraction { get; set; }
+
         [Required]
         [RegularExpression(@"^\p{Lu}[ \p{L}'-]*[\p{Ll}]$",
             ErrorMessage = "Name must start with a capital letter, and have only letters")]
+
         public string FirstName { get; set; }
         [Required]
         [RegularExpression(@"^\p{Lu}[ \p{L}'-]*[\p{Ll}]$",

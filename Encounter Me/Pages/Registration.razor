@@ -2,6 +2,14 @@
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavManager
 
+@*<style>
+        .inputRadio {
+            display: none;
+        }
+
+    </style>*@
+
+
 <div class="row justify-content-center">
     <div class="col-md-5">
         <div class="card mt-5 mb-5">
@@ -13,6 +21,7 @@
                 {
                     <div class="alert alert-success" role="alert">Registration was successful</div>
                 }
+
                 <EditForm Model="@registrationUserModel" OnValidSubmit="CreateNewUser" class="card-body bg-light mt-0" autocomplete="off">
                     <DataAnnotationsValidator />
                     <div class="col-md-12 mb-3">
@@ -20,6 +29,52 @@
                         <InputText id="Username" placeholder="Enter Username" @bind-Value="registrationUserModel.UserName" class="form-control" />
                         <ValidationMessage For="@(() => registrationUserModel.UserName)" />
                     </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label for="Fraction">Fraction</label><br>
+                        <div class="btn-group" role="group">
+                            <InputRadioGroup Name="Fraction" @bind-Value="registrationUserModel.Fraction" class="form-check-inline" id="Fraction">
+                                <label class="btn btn-outline-warning">
+                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Yellow" autocomplete="off" /> Yellow
+                                </label>
+                                <label class="btn btn-outline-primary">
+                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Blue" autocomplete="off" />Blue <br>
+                                </label>
+                                <label class="btn btn-outline-danger">
+                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Red" autocomplete="off" />Red <br>
+                                </label>
+                                <label class="btn btn-outline-success">
+                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Green" autocomplete="off" />Green <br>
+                                </label>
+                            </InputRadioGroup>
+                        </div>
+                        <ValidationMessage For="@(() => registrationUserModel.Fraction)" />
+                    </div>
+
+                    @*<InputSelect id="Fraction" placeholder="Select fraction" @bind-Value="fractionID" class="form-control">
+                            <option class="bg-warning text-white" value="1">Yellow</option>
+                            <option class="bg-info text-white" value="2">Blue</option>
+                            <option class="bg-danger text-white" value="3">Red</option>
+                            <option class="bg-success text-white" value="4">Green</option>
+                        </InputSelect>*@
+
+                    @*</div>*@
+                    @*<div class="col-md-12 mb-3">
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-outline-warning">
+                                    <input type="radio" class="form-check-input" name="fraction" @bind="@registrationUserModel.Fraction" @onclick="@((e) => { registrationUserModel.Fraction = Fractions.Yellow;})" id="option1" required=""> Yellow
+                                </label>
+                                <label class="btn btn-outline-primary">
+                                    <input type="radio" class="form-check-input" name="fraction" @bind="@registrationUserModel.Fraction" @onclick="@((e) => { registrationUserModel.Fraction = Fractions.Blue;})" id="option2" required=""> Blue
+                                </label>
+                                <label class="btn btn-outline-danger">
+                                    <input type="radio" class="form-check-input" name="fraction" @bind="@registrationUserModel.Fraction" @onclick="@((e) => { registrationUserModel.Fraction=Fractions.Red;})" id="option3" required=""> Red
+                                </label>
+                                <label class="btn btn-outline-success">
+                                    <input type="radio" class="form-check-input" name="fraction" @bind="@registrationUserModel.Fraction" @onclick="@((e) => {registrationUserModel.Fraction=Fractions.Green;})" id="option4" required=""> Green
+                                </label>
+                            </div>
+                        </div>*@
                     <div class="col-md-12 mb-3">
                         <label for="FirstName">First Name</label>
                         <InputText id="FirstName" placeholder="Enter Name" @bind-Value="registrationUserModel.FirstName" class="form-control" />
@@ -63,24 +118,28 @@
     private RegistrationUserModel registrationUserModel = new();
     private bool isRegistrationSuccess = false;
 
+    enum Choices { Red, Green, Blue, Yellow };
+    private Choices currentChoice = Choices.Red;
+
     [Inject]
     public IUserDataService userDataService { get; set; }
 
     private async Task CreateNewUser()
     {
-        isRegistrationSuccess = true;
+        Console.WriteLine(registrationUserModel.Fraction);
+        @*isRegistrationSuccess = true;
 
-        await userDataService.AddUser(new UserData(
-            id: Guid.NewGuid(),
-            userName: registrationUserModel.UserName,
-            firstName: registrationUserModel.FirstName,
-            lastName: registrationUserModel.LastName,
-            email: registrationUserModel.Email,
-            password: registrationUserModel.Password,
-            salt: null));
+            await userDataService.AddUser(new UserData(
+                id: Guid.NewGuid(),
+                userName: registrationUserModel.UserName,
+                firstName: registrationUserModel.FirstName,
+                lastName: registrationUserModel.LastName,
+                email: registrationUserModel.Email,
+                password: registrationUserModel.Password,
+                salt: null));
 
-        var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
-        // Takes some time...
-        NavManager.NavigateTo("/");
+            var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
+            // Takes some time...
+            NavManager.NavigateTo("/");*@
     }
 }
