@@ -7,8 +7,7 @@
             display: none;
         }
 
-    </style>*@
-
+</style>*@
 
 <div class="row justify-content-center">
     <div class="col-md-5">
@@ -31,34 +30,26 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="Fraction">Fraction</label><br>
+                        <label for="Faction">Fraction</label><br>
                         <div class="btn-group" role="group">
-                            <InputRadioGroup Name="Fraction" @bind-Value="registrationUserModel.Fraction" class="form-check-inline" id="Fraction">
+                            <InputRadioGroup Name="Faction" @bind-Value="registrationUserModel.Faction" class="form-check-inline" id="Faction">
                                 <label class="btn btn-outline-warning">
-                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Yellow" autocomplete="off" /> Yellow
+                                    <InputRadio Name="Faction" class="inputRadio" Value="Factions.Yellow" autocomplete="off" /> Yellow
                                 </label>
                                 <label class="btn btn-outline-primary">
-                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Blue" autocomplete="off" />Blue <br>
+                                    <InputRadio Name="Faction" class="inputRadio" Value="Factions.Blue" autocomplete="off" />Blue <br>
                                 </label>
                                 <label class="btn btn-outline-danger">
-                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Red" autocomplete="off" />Red <br>
+                                    <InputRadio Name="Faction" class="inputRadio" Value="Factions.Red" autocomplete="off" />Red <br>
                                 </label>
                                 <label class="btn btn-outline-success">
-                                    <InputRadio Name="Fraction" class="inputRadio" Value="Fractions.Green" autocomplete="off" />Green <br>
+                                    <InputRadio Name="Faction" class="inputRadio" Value="Factions.Green" autocomplete="off" />Green <br>
                                 </label>
                             </InputRadioGroup>
                         </div>
-                        <ValidationMessage For="@(() => registrationUserModel.Fraction)" />
+                        <ValidationMessage For="@(() => registrationUserModel.Faction)" />
                     </div>
 
-                    @*<InputSelect id="Fraction" placeholder="Select fraction" @bind-Value="fractionID" class="form-control">
-                            <option class="bg-warning text-white" value="1">Yellow</option>
-                            <option class="bg-info text-white" value="2">Blue</option>
-                            <option class="bg-danger text-white" value="3">Red</option>
-                            <option class="bg-success text-white" value="4">Green</option>
-                        </InputSelect>*@
-
-                    @*</div>*@
                     @*<div class="col-md-12 mb-3">
                             <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-outline-warning">
@@ -118,19 +109,16 @@
     private RegistrationUserModel registrationUserModel = new();
     private bool isRegistrationSuccess = false;
 
-    enum Choices { Red, Green, Blue, Yellow };
-    private Choices currentChoice = Choices.Red;
-
     [Inject]
     public IUserDataService userDataService { get; set; }
 
     private async Task CreateNewUser()
     {
-        Console.WriteLine(registrationUserModel.Fraction);
-        @*isRegistrationSuccess = true;
+        isRegistrationSuccess = true;
 
             await userDataService.AddUser(new UserData(
                 id: Guid.NewGuid(),
+                faction: (Factions)registrationUserModel.Faction,
                 userName: registrationUserModel.UserName,
                 firstName: registrationUserModel.FirstName,
                 lastName: registrationUserModel.LastName,
@@ -140,6 +128,6 @@
 
             var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
             // Takes some time...
-            NavManager.NavigateTo("/");*@
+            NavManager.NavigateTo("/");
     }
 }
