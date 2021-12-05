@@ -28,8 +28,10 @@ namespace Encounter_Me.Services
             {
                 return await JsonSerializer.DeserializeAsync<UserData>(await response.Content.ReadAsStreamAsync());
             }
-
-            return null;
+            else
+            {
+                throw new Exception(await response.Content.ReadAsStringAsync());
+            }
         }
 
         public async Task UpdateUser(UserData user)
