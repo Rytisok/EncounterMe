@@ -16,6 +16,8 @@ using Encounter_Me.Authentication;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using BlazorCurrentDevice;
+using Serilog;
+using Destructurama;
 
 namespace Encounter_Me
 {
@@ -23,8 +25,15 @@ namespace Encounter_Me
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            var builder = WebAssemblyHostBuilder.CreateDefault(args); ;
             builder.RootComponents.Add<App>("#app");
+
+            builder.Logging.SetMinimumLevel(LogLevel.Debug); ///Can set minimal logging level
+
+            Log.Logger = new LoggerConfiguration() //only logs to console for now. There is a possibility to log to server but it is a bit complicated
+            .Destructure.UsingAttributes()
+            .WriteTo.BrowserConsole()
+            .CreateLogger();
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddBlazoredLocalStorage();
