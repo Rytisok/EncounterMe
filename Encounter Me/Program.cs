@@ -28,12 +28,14 @@ namespace Encounter_Me
             var builder = WebAssemblyHostBuilder.CreateDefault(args); ;
             builder.RootComponents.Add<App>("#app");
 
-            builder.Logging.SetMinimumLevel(LogLevel.Debug); ///Can set minimal logging level
+           
+            Log.Logger = new LoggerConfiguration() //Only logs to console for now. There is a possibility to log to server but it is a bit complicated
+           .Destructure.UsingAttributes()
+           .WriteTo.BrowserConsole()
+           .CreateLogger();
 
-            Log.Logger = new LoggerConfiguration() //only logs to console for now. There is a possibility to log to server but it is a bit complicated
-            .Destructure.UsingAttributes()
-            .WriteTo.BrowserConsole()
-            .CreateLogger();
+
+            //builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddBlazoredLocalStorage();
