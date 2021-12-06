@@ -320,7 +320,7 @@ function openFilterWindow(dotNetObjRef)
 
 function startTrail(ID)
 {
-    alert(ID);
+    //alert(ID);
     dotNetObj.invokeMethodAsync("StartTrail", ID);
 }
 
