@@ -18,7 +18,6 @@ namespace Encounter_Me.Pages
         protected async override Task OnInitializedAsync()
         {
             Users = (await UserDataService.GetAllUsers()).ToList();
-
         }
     }
 }

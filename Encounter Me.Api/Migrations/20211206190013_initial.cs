@@ -31,6 +31,7 @@ namespace Encounter_Me.Api.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Faction = table.Column<int>(type: "int", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -48,17 +49,17 @@ namespace Encounter_Me.Api.Migrations
             migrationBuilder.InsertData(
                 table: "Trails",
                 columns: new[] { "Id", "Diff", "GeoJsonData", "Lat", "Length", "Lng", "trailType" },
-                values: new object[,]
-                {
-                    { 1, 2, "sample-data/test.geojson", 54.721400000000003, 2.3999999999999999, 25.255500000000001, 0 },
-                    { 2, 3, "sample-data/test1.geojson", 54.685002361652998, 3.0, 25.240305662154999, 1 },
-                    { 3, 1, "sample-data/test2.geojson", 54.686813299999997, 1.3999999999999999, 25.290559500000001, 2 }
-                });
+                values: new object[] { 1, 2, "sample-data/test.geojson", 54.721400000000003, 2.3999999999999999, 25.255500000000001, 0 });
 
             migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Email", "ExperiencePoints", "FirstName", "LastName", "Level", "Password", "StoredSalt", "UserName", "UserPhotoUrl" },
-                values: new object[] { new Guid("90b94449-31aa-4caa-8e9c-69c46a7128f5"), "dz@mail.lt", 0.0, "Dominykas", "Zagreckas", 1, null, null, "obuolys", "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg" });
+                table: "Trails",
+                columns: new[] { "Id", "Diff", "GeoJsonData", "Lat", "Length", "Lng", "trailType" },
+                values: new object[] { 2, 3, "sample-data/test1.geojson", 54.685002361652998, 3.0, 25.240305662154999, 1 });
+
+            migrationBuilder.InsertData(
+                table: "Trails",
+                columns: new[] { "Id", "Diff", "GeoJsonData", "Lat", "Length", "Lng", "trailType" },
+                values: new object[] { 3, 1, "sample-data/test2.geojson", 54.686813299999997, 1.3999999999999999, 25.290559500000001, 2 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

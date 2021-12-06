@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Encounter_Me.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211205180243_add_factions_to_user_data")]
-    partial class add_factions_to_user_data
+    [Migration("20211206190013_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
