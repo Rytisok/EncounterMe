@@ -1,57 +1,116 @@
 ﻿@page "/Profile/{Id}"
 
-<h1 class="page-title">Profile of @User.FirstName @User.LastName </h1>
-<div class="col-12 row">
+
+@if (User.Faction == Factions.Blue)
+{
+    <style>
+
+        body {
+            background: -webkit-linear-gradient(left, #3931af, #00c6ff);
+        }
+    </style>
+}
+else if (User.Faction == Factions.Green)
+{
+    <style>
+
+        body {
+            background: -webkit-linear-gradient(left, #4faf31, #116e0d);
+        }
+    </style>
+}
+else if (User.Faction == Factions.Red)
+{
+    <style>
+
+        body {
+            background: -webkit-linear-gradient(left, #af3131, #88310c);
+        }
+    </style>
+}
+else if (User.Faction == Factions.Yellow)
+{
+    <style>
+
+        body {
+            background: -webkit-linear-gradient(left, #eae618, #f3f2c9);
+        }
+    </style>
+}
 
 
-    <div class="col-10 row">
-        <div class="col-xs-12 col-sm-8">
 
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Picture</label>
-                <div class="col-sm-8">
-                    <img src=@User.UserPhotoUrl width="200" height="200"/>
+<div class="container emp-profile">
+    <form method="post">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-img">
+                    <img src=@User.UserPhotoUrl alt="" />
+                    <!--<div class="file btn btn-lg btn-primary">
+                    Change Photo
+                    <input type="file" name="file" />
+                                </div>-->
                 </div>
             </div>
+            <div class="col-md-6">
+                <div class="profile-head">
+                    <h5>
+                        @User.UserName
+                    </h5>
+                    <h6>
+                        @User.FirstName @User.LastName
+                    </h6>
+                    <p class="proile-rating">Faction : <span>@User.Faction</span></p>
+                    <p class="proile-rating">Level : <span>@User.Level</span></p>
+                    <p class="proile-rating">Exp : <span>@User.ExperiencePoints</span></p>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="home-tab" data-toggle="tab" role="tab" aria-controls="home" aria-selected="true">About</a>
+                        </li>
 
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">First name</label>
-                <div class="col-sm-8">
-                    <label type="text" readonly class="form-control-plaintext">@User.FirstName</label>
+                    </ul>
                 </div>
             </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Last name</label>
-                <div class="col-sm-8">
-                    <label type="text" readonly class="form-control-plaintext">@User.LastName</label>
-                </div>
+            <div class="col-md-2">
+                <input type="submit" class="profile-edit-btn" name="btnAddMore" value="Edit Profile" />
             </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Email Adress</label>
-                <div class="col-sm-8">
-                    <label type="text" readonly class="form-control-plaintext">@User.Email</label>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Level</label>
-                <div class="col-sm-8">
-                    <label type="text" readonly class="form-control-plaintext">@User.Level</label>
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <label class="col-sm-4 col-form-label">Xp</label>
-                <div class="col-sm-8">
-                    <label type="text" readonly class="form-control-plaintext">@User.ExperiencePoints</label>
-                </div>
-            </div>
-
-
         </div>
-    </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="profile-work">
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="tab-content profile-tab" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>First Name</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>@User.FirstName</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Last Name</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>@User.LastName</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Email</label>
+                            </div>
+                            <div class="col-md-6">
+                                <p>@User.Email</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
-
-
