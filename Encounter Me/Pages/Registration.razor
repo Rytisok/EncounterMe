@@ -21,6 +21,12 @@
                     <div class="alert alert-success" role="alert">Registration was successful</div>
                 }
 
+                @if (showSignUpError)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <p>@signUpErrorText</p>
+                    </div>
+                }
                 <EditForm Model="@registrationUserModel" OnValidSubmit="CreateNewUser" class="card-body bg-light mt-0" autocomplete="off">
                     <DataAnnotationsValidator />
                     <div class="col-md-12 mb-3">
@@ -74,7 +80,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="LastName">Last Name</label>
                         <InputText id="LastName" placeholder="Enter Surname" @bind-Value="registrationUserModel.LastName" class="form-control" />
-                        <ValidationMessage For="@(() =>  registrationUserModel.LastName)" />
+                        <ValidationMessage For="@(() => registrationUserModel.LastName)" />
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Email">Email</label>
@@ -89,7 +95,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="Confirm password">Confirm password</label>
                         <InputText id="Confirm Password" placeholder="Repeat Password" type="password" @bind-Value="registrationUserModel.ConfirmPassword" class="form-control" />
-                        <ValidationMessage For="@(() =>  registrationUserModel.ConfirmPassword)" />
+                        <ValidationMessage For="@(() => registrationUserModel.ConfirmPassword)" />
                     </div>
 
                     <div class="form-group" align="left">
@@ -108,26 +114,45 @@
 
     private RegistrationUserModel registrationUserModel = new();
     private bool isRegistrationSuccess = false;
+    private bool showSignUpError = false;
+    private string signUpErrorText = "";
+
 
     [Inject]
     public IUserDataService userDataService { get; set; }
 
     private async Task CreateNewUser()
     {
-        isRegistrationSuccess = true;
-
+        isRegistrationSuccess = false;
+        showSignUpError = false;
+        try
+        {
             await userDataService.AddUser(new UserData(
-                id: Guid.NewGuid(),
-                faction: (Factions)registrationUserModel.Faction,
-                userName: registrationUserModel.UserName,
-                firstName: registrationUserModel.FirstName,
-                lastName: registrationUserModel.LastName,
-                email: registrationUserModel.Email,
-                password: registrationUserModel.Password,
-                salt: null));
+            id: Guid.NewGuid(),
+            userName: registrationUserModel.UserName,
+            faction: (Factions)registrationUserModel.Faction,
+            firstName: registrationUserModel.FirstName,
+            lastName: registrationUserModel.LastName,
+            email: registrationUserModel.Email,
+            password: registrationUserModel.Password,
+            salt: null));
+        }
+        catch (Exception e)
+        // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response. 
+        // Especialy since getting the username right might take a few tries.
+        {
+            Console.WriteLine(e.Message);
+            showSignUpError = true;
+            signUpErrorText = e.Message;
+        }
 
+
+        if(showSignUpError is false)
+        {
+            isRegistrationSuccess = true;
             var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
-            // Takes some time...
             NavManager.NavigateTo("/");
+        }
+
     }
 }
