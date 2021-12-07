@@ -64,7 +64,7 @@ namespace Encounter_Me.Api.Controllers
             {
                 Coordinate coord = coordinates.ToArray()[i];
 
-                trailResultGeojson += ("[" + coord.Lon.ToString() + ", " + coord.Lat.ToString() + "]");
+                trailResultGeojson += ("[" + coord.Lon.ToString().Replace(',', '.') + ", " + coord.Lat.ToString().Replace(',', '.') + "]");
 
                 if (i != coordinates.Count()-1)
                 {
