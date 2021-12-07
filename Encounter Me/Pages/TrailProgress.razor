@@ -8,6 +8,7 @@
 @using System.Security.Claims
 @using System.Collections.Generic
 @using System.Linq;
+@using System.Text.Json;
 @implements IAsyncDisposable
 @attribute [Authorize]
 
@@ -53,6 +54,9 @@
     [Inject]
     public IUserDataService userDataService { get; set; }
 
+    [Inject]
+    public ITrailService trailService { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         authState = await AuthState;
@@ -81,9 +85,8 @@
             await JSRuntime.InvokeAsync<string>(
             "initializeWalkMap", _trailInProgress.Lat, _trailInProgress.Lng, dotNetObjRef);
 
-            string geojsonData = await Http.GetStringAsync(_trailInProgress.GeoJsonData);
+            var geoJsonTrailData = await trailService.GenerateTrail(_trailInProgress.Lat, _trailInProgress.Lng, _trailInProgress.Diff);
 
-            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>(_trailInProgress.GeoJsonData);
             _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
 
             await JSRuntime.InvokeAsync<object>(

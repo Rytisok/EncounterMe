@@ -247,7 +247,7 @@ function showTrailOnly()
 //loads and displays geojson with the specified name
 function showGeojson(geoJsonUrl)
 {
-    fetch(geoJsonUrl)
+    /*fetch(geoJsonUrl)
         .then(function (response) {
             return response.json();
         })
@@ -262,7 +262,7 @@ function showGeojson(geoJsonUrl)
             });
 
             geojsonLayer.addTo(map);
-        });
+        });*/
 }
 
 function removeGeojson() {

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
+using BrowserInterop.Geolocation;
 
 namespace Encounter_Me.Services
 {
@@ -48,5 +49,15 @@ namespace Encounter_Me.Services
             return await JsonSerializer.DeserializeAsync<TrailContainer>
                  (await _httpClient.GetStreamAsync($"api/trail/{Id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
+
+        public async Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty)
+        {
+            string _lat = Lat.ToString().Replace(',', '.');
+            string _lon = Lon.ToString().Replace(',', '.');
+
+            return await JsonSerializer.DeserializeAsync<RooTobject>
+                 (await _httpClient.GetStreamAsync($"api/TrailGeneration/{_lat}/{_lon}/{difficulty}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        }
+
     }
 }
