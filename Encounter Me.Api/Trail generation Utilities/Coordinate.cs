@@ -18,7 +18,7 @@ namespace Encounter_Me.Api.Trail_generation_Utilities
 
         public override string ToString()
         {
-            return Lat.ToString() + "," + Lon.ToString();
+            return Lat.ToString().Replace(',', '.') + "," + Lon.ToString().Replace(',', '.');
         }
 
         public override bool Equals(object obj)
