@@ -1,4 +1,5 @@
 using Encounter_Me.Api.Authentication;
+using Encounter_Me.Api.Logging;
 using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -72,9 +73,10 @@ namespace Encounter_Me.Api
 
             app.UseHttpsRedirection();
 
-            app.UseSerilogRequestLogging();
-
             app.UseRouting();
+
+            app.UseRequestResponseLogging();
+            app.UseSerilogRequestLogging(opts => opts.EnrichDiagnosticContext = LogHelper.EnrichFromRequest);
 
             app.UseCors("Open");
 

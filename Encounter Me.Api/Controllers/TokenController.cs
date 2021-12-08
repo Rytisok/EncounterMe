@@ -50,7 +50,6 @@ namespace Encounter_Me.Api.Controllers
                 {
                     return new ObjectResult(await GenerateToken(loginUser.Email));
                 }
-                Log.Error("Authentication failure, wrong password was provided.");
                 return BadRequest("Wrong password, try again.");
             }
             return BadRequest("User with this email does not exist.");
