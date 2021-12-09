@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,12 +18,11 @@ namespace Encounter_Me.Api.Models
       
     public DbSet<TrailContainer> Trails { get; set; }
     public DbSet<UserData> Users { get; set; }
+    public DbSet<CapturePoint> CapturePoints { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
             base.OnModelCreating(modelBuilder);
-
-            
 
             /*modelBuilder.Entity<UserData>().HasData(new UserData
             {
@@ -34,11 +35,6 @@ namespace Encounter_Me.Api.Models
                 UserPhotoUrl = "https://i.pinimg.com/originals/83/6d/69/836d69f49e80af2825c7db264be44af0.jpg"
 
             }) ;*/
-
-
-
-
-
 
             modelBuilder.Entity<TrailContainer>().HasData(new TrailContainer
             {
@@ -75,21 +71,19 @@ namespace Encounter_Me.Api.Models
                 Diff = 1,
                 GeoJsonData = "sample-data/test2.geojson",
                 trailType = TrailType.Historic
-
-
-
             });
 
+            List<CapturePoint> capturePoints = new List<CapturePoint>();
+            using (StreamReader r = new StreamReader("CapturePoints.json"))
+            {
+                string json = r.ReadToEnd();
+                capturePoints = JsonConvert.DeserializeObject<List<CapturePoint>>(json);
+            }
+            foreach (CapturePoint capturePoint in capturePoints)
+            {
+                modelBuilder.Entity<CapturePoint>().HasData(capturePoint);
+            }
         }
-
-
-
-
-
-
-
-
-
 
     }
     

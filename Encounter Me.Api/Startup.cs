@@ -36,6 +36,7 @@ namespace Encounter_Me.Api
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITrailRepository, TrailRepository>();
+            services.AddScoped<ICapturePointRepository, CapturePointRepository>();
 
 
             services.AddCors(options =>
