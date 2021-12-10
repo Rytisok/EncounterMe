@@ -35,6 +35,26 @@ namespace Encounter_Me.Api.Controllers
         {
             return Ok(_capturePointRepository.GetCapturePointById(id));
         }
+
+        [HttpPut]
+        public IActionResult UpdateCapturePoint([FromBody] CapturePoint capturePoint)
+        {
+            if (capturePoint == null)
+                return BadRequest();
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var capturePointToUpdate = _capturePointRepository.GetCapturePointById(capturePoint.guid);
+
+            if (capturePointToUpdate == null)
+                return NotFound();
+
+            if (_capturePointRepository.UpdateCapturePoint(capturePoint) == null)
+                return BadRequest();
+
+            return NoContent(); //success
+        }
     }
 }
 

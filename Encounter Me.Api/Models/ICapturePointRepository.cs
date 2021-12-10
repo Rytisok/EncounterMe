@@ -13,5 +13,6 @@ namespace Encounter_Me.Api.Models
     {
         IEnumerable<CapturePoint> GetCapturePointsInView(double Lat1, double Lon1, double Lat2, double Lon2);
         CapturePoint GetCapturePointById(Guid guid);
+        CapturePoint UpdateCapturePoint(CapturePoint capturePoint);
     }
 }

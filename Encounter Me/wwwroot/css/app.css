@@ -36,6 +36,12 @@ mapText {
     width: 40%;
     font-size: 18px;
 }
+.btn-popup {
+    display: inline-block;
+    width: 50%;
+    border: none;
+    font-size: 22px;
+}
 
 .content {
     padding-top: 0rem;
@@ -262,7 +268,12 @@ mapText {
 .counter::after {
     content: counter(num);
 }
-
+.popupCustom .leaflet-popup-tip,
+.popupCustom .leaflet-popup-content-wrapper {
+    background: #1D2D2D;
+    color: #fff;
+    font-family: 'source_code_promedium';
+}
 
 @-webkit-keyframes animate-positive {
     0% {
@@ -276,6 +287,12 @@ mapText {
     }
 }
 
+@font-face {
+    font-family: 'source_code_promedium';
+    src: url('Fonts/sourcecodepro-medium-webfont.woff2') format('woff2'), url('Fonts/sourcecodepro-medium-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
 #blazor-error-ui {
     background: lightyellow;

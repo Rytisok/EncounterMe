@@ -24,11 +24,7 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     L.tileLayer('https://api.mapbox.com/styles/v1/rytisok/ckw68k17e2czt14o5uyi97e52/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ', {
         maxZoom: 18,
         attribution: "&copy; <a lhref='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
-        //tileSize: 256,
-        //zoomOffset: -1,
         detectRetina: true,
-        //id: "mapbox/outdoors-v11",
-        //accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
     }).addTo(map);
 
     //default open street maps map - blurry
@@ -61,16 +57,9 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     }).addTo(map);
     trailSearchEasyButton.button.style.border = 'none';
     trailSearchEasyButton.button.style.borderRadius = '4px';
-    trailSearchEasyButton.button.style.backgroundColor = '#B8EE30';
-    trailSearchEasyButton.button.style.width = '200px';
-
-    let trailFilterEasyButton = L.easyButton('<img src="Images/filter.png" width="40" height="40">', function (btn, map) {
-        openFilterWindow(dotNetObjRef);
-    }, {
-        position: 'topright'
-    }).addTo(map);
-    trailFilterEasyButton.button.style.width = '48px';
-    trailFilterEasyButton.button.style.height = '40px';
+    trailSearchEasyButton.button.style.backgroundColor = '#31E2A4';
+    trailSearchEasyButton.button.style.width = '300px';
+    trailSearchEasyButton.button.style.fontFamily = 'source_code_promedium';
 }
 
 
@@ -85,14 +74,10 @@ function initializeWalkMap(Lat, Lng, dotNetObjRef) {
     dotNetObj = dotNetObjRef;
 
     //mapbox map
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    L.tileLayer('https://api.mapbox.com/styles/v1/rytisok/ckw68k17e2czt14o5uyi97e52/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ', {
         maxZoom: 25,
         attribution: "&copy; <a lhref='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
-        tileSize: 512,
-        zoomOffset: -1,
         detectRetina: true,
-        id: "mapbox/outdoors-v11",
-        accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
     }).addTo(map);
 
 
@@ -192,10 +177,10 @@ function addMarker(Lat, Lng, text, trailType)
             trailIconUrl = 'Images/capture point red.png';
             break;
         case 2:
-            trailIconUrl = 'Images/capture point blue.png';
+            trailIconUrl = 'Images/capture point green.png';
             break;
         case 3:
-            trailIconUrl = 'Images/capture point green.png';
+            trailIconUrl = 'Images/capture point blue.png';
             break;
         case 4:
             trailIconUrl = 'Images/capture point yeallow.png';
@@ -207,9 +192,14 @@ function addMarker(Lat, Lng, text, trailType)
 
     var markerIcon = new icon({ iconUrl: trailIconUrl});
     var leafletMarker = L.marker([Lat, Lng], { icon: markerIcon });
+    var customOptions =
+    {
+        'className': 'popupCustom'
+    }
+
 
     //assign trail information text
-    leafletMarker.bindPopup(text);
+    leafletMarker.bindPopup(text, customOptions);
 
     var marker = {
         marker: leafletMarker,
@@ -320,7 +310,6 @@ function openFilterWindow(dotNetObjRef)
 
 function startTrail(ID)
 {
-    //alert(ID);
     dotNetObj.invokeMethodAsync("StartTrail", ID);
 }
 
@@ -331,7 +320,7 @@ function drawLines(polylinePoints)
         map.removeLayer(walkedTrailLine);
     }
     walkedTrailLine = L.polyline(polylinePoints, {
-        color: '#25C0C0',
+        color: '#00E1FF',
         weight: 7,
         opacity: 0.85,
         smoothFactor: 1
@@ -343,7 +332,7 @@ function drawLineToTrail(userPoint, trailPoint)
     removeLineToTrail();
 
     lineToTrail = L.polyline([userPoint, trailPoint], {
-        color: 'black',
+        color: 'white',
         weight: 7,
         opacity: 0.85,
         smoothFactor: 1,

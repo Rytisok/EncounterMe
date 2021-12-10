@@ -73,13 +73,13 @@ namespace Encounter_Me.Api.Controllers
 
                 var userToUpdate = _userRepository.GetUserById(user.Id);
 
-            if (userToUpdate == null)
-                return NotFound();
+                if (userToUpdate == null)
+                    return NotFound();
 
-            _userRepository.UpdateUser(user);
+                _userRepository.UpdateUser(user);
 
-            return NoContent(); //success
-        }
+                return NoContent(); //success
+            }
 
             [HttpDelete("{id}")]
             public IActionResult DeleteUser(Guid id)
