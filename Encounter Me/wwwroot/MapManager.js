@@ -134,7 +134,8 @@ function CreateLocationMarker(Lat, Lng)
 
     var marker = {
         marker: leafletMarker,
-        size: 28,
+        sizeX: 28,
+        sizeY: 28,
         geojson: null
     };
     positionMarker = marker;
@@ -160,8 +161,8 @@ function addMarker(Lat, Lng, text, trailType)
     var sizeMultiplier = currentZoom * iconSizeMultiplier;
     var icon = L.Icon.extend({
         options: {
-            iconSize: [50 * sizeMultiplier, 50 * sizeMultiplier],
-            iconAnchor: [25 * sizeMultiplier, 25 * sizeMultiplier],
+            iconSize: [40 * sizeMultiplier, 56 * sizeMultiplier],
+            iconAnchor: [20 * sizeMultiplier, 28 * sizeMultiplier],
             popupAnchor: [0, (sizeMultiplier * -4 / currentZoom)]
         }
     });
@@ -203,7 +204,8 @@ function addMarker(Lat, Lng, text, trailType)
 
     var marker = {
         marker: leafletMarker,
-        size: 50,
+        sizeX: 40,
+        sizeY: 56,
         geojson: null
     };
 
@@ -262,9 +264,9 @@ function updateMarkerSize() {
         var icon = element.marker.options.icon;
         var sizeMultiplier = currentZoom * iconSizeMultiplier;
 
-        icon.options.iconSize = [element.size * sizeMultiplier, element.size * sizeMultiplier];
-        icon.options.iconAnchor = [element.size * sizeMultiplier / 2, element.size * sizeMultiplier / 2];
-        icon.options.popupAnchor = [0, (element.size * -4 / currentZoom)];
+        icon.options.iconSize = [element.sizeX * sizeMultiplier, element.sizeY * sizeMultiplier];
+        icon.options.iconAnchor = [element.sizeX * sizeMultiplier / 2, element.sizeY * sizeMultiplier / 2];
+        icon.options.popupAnchor = [0, (element.sizeY * -4 / currentZoom)];
         element.marker.setIcon(icon);
     });
 }
