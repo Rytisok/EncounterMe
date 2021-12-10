@@ -19,12 +19,6 @@ namespace Encounter_Me.Api.Controllers
             _capturePointRepository = capturePointRepository;
         }
 
-        [HttpGet]
-        public IActionResult GetAllTokens()
-        {
-            return Ok("Here you go."); // For testing only
-        }
-
         [HttpGet("{Lat1}/{Lon1}/{Lat2}/{Lon2}")]
         public IActionResult GetCapturePointsInView(double Lat1, double Lon1, double Lat2, double Lon2)
         {
