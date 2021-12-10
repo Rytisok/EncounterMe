@@ -1,4 +1,5 @@
-﻿using Destructurama.Attributed;
+﻿using Encounter_Me.Shared;
+using Destructurama.Attributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace Encounter_Me
     {
         public Guid Id { get; set; } 
         public string UserName { get; set; }
+        public Factions? Faction { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -47,9 +49,10 @@ namespace Encounter_Me
             }
         }
 
-        public UserData(Guid id, string userName, string firstName, string lastName, string email, string password, byte[] salt = null, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
+        public UserData(Guid id, Factions faction, string userName, string firstName, string lastName, string email, string password, byte[] salt = null, string userPhotoUrl = "https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png")
         {
             this.Id = id;
+            this.Faction = faction;
             this.UserName = userName;
             this.FirstName = firstName;
             this.LastName = lastName;

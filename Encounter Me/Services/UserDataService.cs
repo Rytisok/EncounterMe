@@ -34,18 +34,18 @@ namespace Encounter_Me.Services
             }
         }
 
-        //public async Task UpdateUser(UserData user)
-        //{
-        //    var userJson =
-        //        new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
+        public async Task UpdateUser(UserData user)
+        {
+            var userJson =
+                new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
 
-        //    await _httpClient.PutAsync("api/user", userJson);
-        //}
+            await _httpClient.PutAsync("api/user", userJson);
+        }
 
-        //public async Task DeleteUser(Guid userId)
-        //{
-        //    await _httpClient.DeleteAsync($"api/user/{userId}");
-        //}
+        public async Task DeleteUser(Guid userId)
+        {
+            await _httpClient.DeleteAsync($"api/user/{userId}");
+        }
 
         public async Task<IEnumerable<UserData>> GetAllUsers()
         {
@@ -58,7 +58,20 @@ namespace Encounter_Me.Services
             return await JsonSerializer.DeserializeAsync<UserData>
                 (await _httpClient.GetStreamAsync($"api/user/{userId}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
+        public async void UpdateUserXp(UserData user, int xpGain)
+        {
+            if (user.ExperiencePoints + xpGain >= LevelAndXp.XpToLevelUp(user.Level))
+            {
+                user.ExperiencePoints = user.ExperiencePoints + xpGain - LevelAndXp.XpToLevelUp(user.Level);
+                user.Level++;
+            }
+            else
+            {
+                user.ExperiencePoints += xpGain;
+            }
 
+            await UpdateUser(user);
+        }
 
     }
 }

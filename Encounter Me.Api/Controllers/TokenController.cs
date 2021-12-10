@@ -74,8 +74,8 @@ namespace Encounter_Me.Api.Controllers
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.NameIdentifier, user.FirstName), //should be user id. 
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.UserData, user.Id.ToString()), //should be user id. 
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString()),
             };

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BrowserInterop.Geolocation;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,5 +16,7 @@ namespace Encounter_Me.Services
         Task<TrailContainer> AddTrail(TrailContainer trail);
 
         Task DeleteTrail(int Id);
+
+        Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty);
     }
 }

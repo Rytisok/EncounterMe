@@ -5,8 +5,12 @@
 @using ExtensionMethods
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
-@using BlafettisLib
+@using System.Security.Claims
+@using System.Collections.Generic
+@using System.Linq;
+@using System.Text.Json;
 @implements IAsyncDisposable
+@attribute [Authorize]
 
 <div id="map"></div>
 
@@ -14,290 +18,184 @@
     TestFinish
 </button>
 
-<!-- Info Modal-->
-<div class="modal fade @_infoModal.ModalClass" tabindex="-1" role="dialog" style="display:@_infoModal.ModalDisplay; overflow-y: auto;" id="infoModal">
-    <div class="d-flex justify-content-center">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                <button class="close" @onclick="(e => ModalControl.CloseModal(_infoModal))">&times;</button>
-                <h5>Time walking: @_trailTime hours </h5>
-                <h5>Distance walked: @_distanceWalked km</h5>
-                <h5>Trail progress: </h5>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped active" style="width: @_trailProgress; background-color: #7FE5F0; "></div>
-                </div>
-                <div class="d-flex justify-content-center">
-                    <button class="btn-cancel" @onclick="AbortTrail">Abort trail</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
+<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@currentUser trail=@_trailInProgress progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
-<!-- Success Modal-->
+@code{
 
-<div class="modal fade @_successModal.ModalClass" tabindex="-1" role="dialog" style="display:@_successModal.ModalDisplay; overflow-y: auto;" id="finnishModal">
-    <div class="d-flex justify-content-center">
-        <div class="modal-dialog modal-confirm">
-            <div class="modal-content">
-                @if (ModalStatus == 0)
-                {
-                    <div class="modal-header justify-content-center">
-                        <div class="icon-box">
-                            <img src="Images/route.png">
-                        </div>
-                    </div>
-                    <div class="modal-body text-center">
-                        <h4>Trail completed!</h4>
-                        <p>Trail finished successfuly.</p>
-                        <button class="btn btn-success" @onclick="AdvanceFinishModal" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
-                    </div>
-                    <Blafettis @ref="_blafettis" />
-                }
-                else if (ModalStatus == 1)
-                {
-                    <h5>Time spent: @_trailTime hours </h5>
-                    <h5>Distance walked: @_trailInProgress.Length km</h5>
-                    <h5>Xp gained: @(_trailInProgress.Length * _trailInProgress.Diff * 10/ 2) </h5>
-                    <button class="btn btn-success" @onclick="AdvanceFinishModal" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
-                }
-                else if (ModalStatus == 2)
-                {
-                <div align="center">
-                    <img src="Images/stockProfile.png" style="display:block; width:50%; height:50%">
-                    <h5>userName</h5>
-                </div>
+    [Parameter]
+    public int ID { get; set; }
 
-                <div class="modal-body text-center">
-                    <h4>Level: 2</h4>
-                    <div class="progress">
-                        <div class="level-bar1 linear active" style="width: 20%; background-color: #7FE5F0; "></div>
-                        <div class="level-bar2 linear active" style="width: 40%; background-color: #5cb85c; "></div>
-                    </div>
-                    <h5>99/300 xp</h5>
-                    <button class="btn btn-success" @onclick="CloseFinishModal" data-dismiss="modal"><span>Done</span></button>
-                </div>
-                }
-            </div>
-            </div>
-        </div>
-    </div>
+    private WindowNavigatorGeolocation _geolocationWrapper;
+    private GeolocationPosition _geolocationPosition;
 
-    @code{
+    private List<GeolocationPosition> _positionHistory = new List<GeolocationPosition>();
+    private IAsyncDisposable _geopositionWatcher;
+    private TrailContainer _trailInProgress;
+    private List<GeolocationCoordinates> _trailCoordinateList;
+    private int _currentPos = 0;
 
-        [Parameter]
-        public int ID { get; set; }
+    private ProgressStats progressStats = new ProgressStats();
 
-        private WindowNavigatorGeolocation _geolocationWrapper;
-        private GeolocationPosition _geolocationPosition;
+    private Modal _successModal = new Modal();
+    private Modal _infoModal = new Modal();
 
-        private List<GeolocationPosition> _positionHistory = new List<GeolocationPosition>();
+    private UserData currentUser;
 
-        private IAsyncDisposable _geopositionWatcher;
-        private TrailContainer _trailInProgress;
-        private List<GeolocationCoordinates> _trailCoordinateList;
-        private int _currentPos = 0;
+    [CascadingParameter]
+    public Task<AuthenticationState> AuthState { get; set; }
+    private AuthenticationState authState;
 
-        private DateTime _trailStart;
-        private double _distanceWalked = 0;
-        private string _trailProgress = "0%";
-        private double _trailTime = 0;
+    [Parameter]
+    public int ModalStatus { get; set; } = 0;
 
-        private Modal _successModal = new Modal();
-        private Modal _infoModal = new Modal();
-        protected Blafettis _blafettis;
+    private GeolocationCoordinates _prevCheckpointCoords = null;
 
-        [Parameter]
-        public int ModalStatus { get; set; } = 0;
+    [Inject]
+    public IUserDataService userDataService { get; set; }
 
-        private GeolocationCoordinates _prevCheckpointCoords = null;
+    [Inject]
+    public ITrailService trailService { get; set; }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthState;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
         {
-            if (firstRender)
+            var dotNetObjRef = DotNetObjectReference.Create(this);
+
+            var window = await JSRuntime.Window();
+            var navigator = await window.Navigator();
+
+            _geolocationWrapper = navigator.Geolocation;
+
+            _geolocationPosition = (await _geolocationWrapper.GetCurrentPosition(new PositionOptions()
             {
-                var dotNetObjRef = DotNetObjectReference.Create(this);
+                EnableHighAccuracy = true,
+                MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+                TimeoutTimeSpan = TimeSpan.FromMinutes(1)
+            })).Location;
 
-                var window = await JSRuntime.Window();
-                var navigator = await window.Navigator();
-                _geolocationWrapper = navigator.Geolocation;
+            await GetTrailInProgress(ID);
 
-                _geolocationPosition = (await _geolocationWrapper.GetCurrentPosition(new PositionOptions()
-                {
-                    EnableHighAccuracy = true,
-                    MaximumAgeTimeSpan = TimeSpan.FromHours(1),
-                    TimeoutTimeSpan = TimeSpan.FromMinutes(1)
-                })).Location;
+            await JSRuntime.InvokeAsync<string>(
+            "initializeWalkMap", _trailInProgress.Lat, _trailInProgress.Lng, dotNetObjRef);
 
-                await GetTrailInProgress(ID);
+            var geoJsonTrailData = await trailService.GenerateTrail(_trailInProgress.Lat, _trailInProgress.Lng, _trailInProgress.Diff);
 
-                await JSRuntime.InvokeAsync<string>(
-                "initializeWalkMap", _trailInProgress.Lat, _trailInProgress.Lng, dotNetObjRef);
+            _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
 
-                string geojsonData = await Http.GetStringAsync(_trailInProgress.GeoJsonData);
+            await JSRuntime.InvokeAsync<object>(
+                "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
 
-                _trailCoordinateList = await GetCoords(_trailInProgress.GeoJsonData);
-
-                await JSRuntime.InvokeAsync<object>(
-                    "drawLines", (object)ListToCoordinateArray(_trailCoordinateList));
-
-                await WatchPosition();
-
-                _trailStart = DateTime.UtcNow;
-            }
-
-            base.OnAfterRender(firstRender);
+            await WatchPosition();
         }
 
-        private async Task GetTrailInProgress(int trailID)
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task GetTrailInProgress(int trailID)
+    {
+        List<TrailContainer> trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
+        var searchQuery = from trail
+                          in trails
+                          where trail.Id == trailID
+                          select trail;
+
+        List<TrailContainer> foundTrails = new List<TrailContainer>();
+
+        foreach (var trail in searchQuery)
         {
-            List<TrailContainer> trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
-            var searchQuery = from trail
-                              in trails
-                              where trail.Id == trailID
-                              select trail;
-
-            List<TrailContainer> foundTrails = new List<TrailContainer>();
-
-            foreach (var trail in searchQuery)
-            {
-                _trailInProgress = trail;
-            }
-
-        }
-
-        public async Task WatchPosition()
-        {
-            _geopositionWatcher = await _geolocationWrapper.WatchPosition(async (p) =>
-            {
-                //might need later to compensate for accuracy problems
-                //positionHistory.Add(p.Location);
-
-                await JSRuntime.InvokeAsync<string>(
-                                                "UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
-
-                //current allowed deviation is 7 meters
-                if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) < 0.007 && _trailCoordinateList.Count > 0)
-                {
-                    _currentPos++;
-                    if (_prevCheckpointCoords != null)
-                        _distanceWalked += Math.Round(CoordinateMath.GetDistanceBetweenCoords(_trailCoordinateList[0], _prevCheckpointCoords), 2);
-
-                    _prevCheckpointCoords = _trailCoordinateList[0];
-                    _trailCoordinateList.RemoveAt(0);
-                }
-
-                if (_trailCoordinateList.Count <= 1)
-                {
-                    TrailFinished();
-                }
-
-                //draw path line
-                await JSRuntime.InvokeAsync<object>(
-                                "drawLines", (object)ListToCoordinateArray(_trailCoordinateList));
-
-                //if user is further than 20m to the next checkpoint, draw line to it
-                if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) > 0.02)
-                {
-                    await JSRuntime.InvokeAsync<object>(
-                    "drawLineToTrail", GeolocationCoordinateToArray(p.Location.Coords), GeolocationCoordinateToArray(_trailCoordinateList[0]));
-                }
-                else
-                {
-                    await JSRuntime.InvokeAsync<string>(
-                    "removeLineToTrail");
-                }
-                StateHasChanged();
-            }
-            );
-        }
-
-        public async Task<List<GeolocationCoordinates>> GetCoords(string geojsonUrl)
-        {
-            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>(geojsonUrl);
-            var coordinatesArr = geoJsonTrailData.Features[0].Geometry.Coordinates;
-
-            var coordinatesList = new List<GeolocationCoordinates>();
-
-            for (int i = 0; i < coordinatesArr.GetLength(0); i++)
-            {
-                var coordinate = new GeolocationCoordinates();
-                coordinate.Latitude = coordinatesArr[i][1];
-                coordinate.Longitude = coordinatesArr[i][0];
-                coordinatesList.Add(coordinate);
-            }
-
-            return coordinatesList;
-        }
-
-
-        public async ValueTask DisposeAsync()
-        {
-            await StopWatch();
-        }
-
-        public async Task StopWatch()
-        {
-            await _geopositionWatcher.DisposeAsync();
-            _geopositionWatcher = null;
-        }
-
-        private double[][] ListToCoordinateArray(List<GeolocationCoordinates> list)
-        {
-            double[][] coordinatesArray = new double[list.Count][];
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                coordinatesArray[i] = GeolocationCoordinateToArray(list[i]);
-            }
-            return coordinatesArray;
-        }
-
-        public double[] GeolocationCoordinateToArray(GeolocationCoordinates coords)
-        {
-            double[] coordinates = new double[2];
-            coordinates[0] = coords.Latitude;
-            coordinates[1] = coords.Longitude;
-
-            return coordinates;
-        }
-
-        [JSInvokable]
-        public void OpenDetails()
-        {
-            _trailProgress = ((_distanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
-
-            _trailTime = Math.Round((DateTime.UtcNow - _trailStart).TotalHours, 2);
-
-            ModalControl.OpenModal(_infoModal);
-            StateHasChanged();
-        }
-
-        private async void AbortTrail()
-        {
-            NavManager.NavigateTo("/");
-        }
-        private async void AdvanceFinishModal()
-        {
-            ModalStatus++;
-            StateHasChanged();
-        }
-        [JSInvokable]
-        public async void TrailFinished()
-        {
-            //enables success modal
-            ModalControl.OpenModal(_successModal);
-            //shoots confetti
-            _blafettis.RaiseConfetti();
-            //used to update UI elements
-            //something to do with position being checked constatntly
-            StateHasChanged();
-        }
-        private async void CloseFinishModal()
-        {
-            ModalControl.CloseModal(_successModal);
-            StateHasChanged();
-            NavManager.NavigateTo("/");
+            _trailInProgress = trail;
         }
 
     }
+
+    public async Task WatchPosition()
+    {
+        _geopositionWatcher = await _geolocationWrapper.WatchPosition(async (p) =>
+        {
+            //might need later to compensate for accuracy problems
+            //positionHistory.Add(p.Location);
+
+            await JSRuntime.InvokeAsync<string>("UpdatePositionMarker", p.Location.Coords.Latitude, p.Location.Coords.Longitude);
+
+            //current allowed deviation is 7 meters
+            if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) < 0.007 && _trailCoordinateList.Count > 0)
+            {
+                _currentPos++;
+                if (_prevCheckpointCoords != null)
+                    progressStats.DistanceWalked += Math.Round(CoordinateMath.GetDistanceBetweenCoords(_trailCoordinateList[0], _prevCheckpointCoords), 2);
+
+                _prevCheckpointCoords = _trailCoordinateList[0];
+                _trailCoordinateList.RemoveAt(0);
+            }
+
+            //draw path line
+            await JSRuntime.InvokeAsync<object>("drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
+
+            //if user is further than 20m to the next checkpoint, draw line to it
+            if (CoordinateMath.GetDistanceBetweenCoords(p.Location.Coords, _trailCoordinateList[0]) > 0.02)
+            {
+                await JSRuntime.InvokeAsync<object>(
+                "drawLineToTrail", CoordinateConverter.GeolocationCoordinateToArray(p.Location.Coords), CoordinateConverter.GeolocationCoordinateToArray(_trailCoordinateList[0]));
+            }
+            else
+            {
+                await JSRuntime.InvokeAsync<string>(
+                "removeLineToTrail");
+            }
+            if (_trailCoordinateList.Count <= 1)
+            {
+                TrailFinished();
+            }
+            StateHasChanged();
+        }
+        );
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await StopWatch();
+    }
+
+    public async Task StopWatch()
+    {
+        await _geopositionWatcher.DisposeAsync();
+        _geopositionWatcher = null;
+    }
+
+    [JSInvokable]
+    public void OpenDetails()
+    {
+        progressStats.TrailProgress = ((progressStats.DistanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
+
+        progressStats.TrailTime = Math.Round((DateTime.UtcNow - progressStats.TrailStartTime).TotalHours, 2);
+
+        ModalControl.OpenModal(_infoModal);
+        StateHasChanged();
+    }
+
+    private async void AbortTrail()
+    {
+        NavManager.NavigateTo("/");
+    }
+
+    [JSInvokable]
+    public async void TrailFinished()
+    {
+        Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+        currentUser = await userDataService.GetUserDetails(userId);
+
+        //enables success modal
+        ModalControl.OpenModal(_successModal);
+        //used to update UI elements
+        StateHasChanged();
+        int xpGain = LevelAndXp.XpFromTrail(_trailInProgress);
+        userDataService.UpdateUserXp(currentUser, xpGain);
+    }
+}

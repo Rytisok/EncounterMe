@@ -21,14 +21,14 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     dotNetObj = dotNetObjRef;
 
     //mapbox map
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    L.tileLayer('https://api.mapbox.com/styles/v1/rytisok/ckw68k17e2czt14o5uyi97e52/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ', {
         maxZoom: 18,
         attribution: "&copy; <a lhref='http://www.openstreetmap.org/copyright'>OpenStreetMap</a>",
-        tileSize: 512,
-        zoomOffset: -1,
+        //tileSize: 256,
+        //zoomOffset: -1,
         detectRetina: true,
-        id: "mapbox/outdoors-v11",
-        accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
+        //id: "mapbox/outdoors-v11",
+        //accessToken: 'pk.eyJ1Ijoicnl0aXNvayIsImEiOiJja3R3b20wbGEybTl3MzBtcGdhZG96MnhqIn0.GIdSHPlZoTkmFHavTZZOqQ'
     }).addTo(map);
 
     //default open street maps map - blurry
@@ -247,7 +247,7 @@ function showTrailOnly()
 //loads and displays geojson with the specified name
 function showGeojson(geoJsonUrl)
 {
-    fetch(geoJsonUrl)
+    /*fetch(geoJsonUrl)
         .then(function (response) {
             return response.json();
         })
@@ -262,7 +262,7 @@ function showGeojson(geoJsonUrl)
             });
 
             geojsonLayer.addTo(map);
-        });
+        });*/
 }
 
 function removeGeojson() {
