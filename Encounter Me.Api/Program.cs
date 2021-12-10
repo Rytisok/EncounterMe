@@ -3,9 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using Serilog.Events;
-using Serilog.Filters;
-using Serilog.Formatting.Compact;
 using System;
 
 namespace Encounter_Me.Api
@@ -14,16 +11,6 @@ namespace Encounter_Me.Api
     {
         public static void Main(string[] args)
         {
-
-            //Log.Logger = new LoggerConfiguration()
-            //    .MinimumLevel.Debug()
-            //    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            //    .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-            //    .Enrich.FromLogContext()
-            //    .WriteTo.Console()
-            //    .WriteTo.File("log-.txt", rollingInterval: RollingInterval.Day)
-            //    .CreateLogger();
-
             try
             {
                 var host = CreateHostBuilder(args).Build();
