@@ -53,7 +53,9 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
 
     //creates search for trails button and assigns UpdateMarkers method to its onClick event
     let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
-        dotNetObjRef.invokeMethodAsync("FindTrails");
+        var bounds = map.getBounds();
+        removeMarkers();
+        dotNetObjRef.invokeMethodAsync("FindTrails", bounds.getSouthWest().lat, bounds.getSouthWest().lng, bounds.getNorthEast().lat, bounds.getNorthEast().lng);
     }, {
         position: 'topright'
     }).addTo(map);
@@ -167,7 +169,7 @@ function clearMarkers()
     trailMarkers = [];
 }
 
-function addMarker(Lat, Lng, text, trailType, geoJsonUrl)
+function addMarker(Lat, Lng, text, trailType)
 {
     var currentZoom = map.getZoom();
     var sizeMultiplier = currentZoom * iconSizeMultiplier;
@@ -187,13 +189,19 @@ function addMarker(Lat, Lng, text, trailType, geoJsonUrl)
     switch (trailType)
     {
         case 1:
-            trailIconUrl = 'Images/forest.png';
+            trailIconUrl = 'Images/capture point red.png';
             break;
         case 2:
-            trailIconUrl = 'Images/temple.png';
+            trailIconUrl = 'Images/capture point blue.png';
+            break;
+        case 3:
+            trailIconUrl = 'Images/capture point green.png';
+            break;
+        case 4:
+            trailIconUrl = 'Images/capture point yeallow.png';
             break;
         default:
-            trailIconUrl = 'Images/footprint.png';
+            trailIconUrl = 'Images/capture point neutral.png';
             break;
     }
 
@@ -206,14 +214,14 @@ function addMarker(Lat, Lng, text, trailType, geoJsonUrl)
     var marker = {
         marker: leafletMarker,
         size: 50,
-        geojson: geoJsonUrl
+        geojson: null
     };
 
     //show geojson on marker click
     leafletMarker.on('click',
         function (e)
         {
-            showGeojson(geoJsonUrl);
+            //showGeojson(geoJsonUrl);
             //in case of clicking same marker while pop up is open, pop up is closed and marker click event is called again
             //calling open popup again prevents from geojson trail staying without popup staying open
             openPopUp(leafletMarker);
@@ -238,31 +246,16 @@ function openPopUp(marker)
     }
 }
 
+function removeMarkers() {
+    trailMarkers.forEach(function (element) {
+        map.removeLayer(element);
+    });
+}
+
 function showTrailOnly()
 {
     map.closePopup();
-    showGeojson(currentMarker.geojson);
-}
-
-//loads and displays geojson with the specified name
-function showGeojson(geoJsonUrl)
-{
-    /*fetch(geoJsonUrl)
-        .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-
-            removeGeojson();
-            geojsonLayer = L.geoJSON(data);
-
-            geojsonLayer.setStyle({
-                color: '#25C0C0',
-                weight: 7
-            });
-
-            geojsonLayer.addTo(map);
-        });*/
+    //showGeojson(currentMarker.geojson);
 }
 
 function removeGeojson() {
@@ -327,7 +320,8 @@ function openFilterWindow(dotNetObjRef)
 
 function startTrail(ID)
 {
-    dotNetObj.invokeMethodAsync("StartTrail", parseInt(ID));
+    //alert(ID);
+    dotNetObj.invokeMethodAsync("StartTrail", ID);
 }
 
 function drawLines(polylinePoints)

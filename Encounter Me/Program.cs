@@ -34,6 +34,7 @@ namespace Encounter_Me
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
             builder.Services.AddHttpClient<ITrailService, TrailService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            builder.Services.AddHttpClient<ICapturePointService, CapturePointService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
             builder.Services.AddBlazorCurrentDevice();
             await builder.Build().RunAsync();
         }
