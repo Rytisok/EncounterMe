@@ -1,6 +1,7 @@
 ﻿@page "/Sign up"
 @inject IAuthenticationService AuthService
 @inject NavigationManager NavManager
+@using Serilog
 
 @*<style>
         .inputRadio {
@@ -127,7 +128,7 @@
         showSignUpError = false;
         try
         {
-            await userDataService.AddUser(new UserData(
+            var newUser = new UserData(
             id: Guid.NewGuid(),
             userName: registrationUserModel.UserName,
             faction: (Factions)registrationUserModel.Faction,
@@ -135,10 +136,13 @@
             lastName: registrationUserModel.LastName,
             email: registrationUserModel.Email,
             password: registrationUserModel.Password,
-            salt: null));
+            salt: null);
+            await userDataService.AddUser(newUser);
+
+            Log.Information("Created new user {@model}", newUser);
         }
         catch (Exception e)
-        // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response. 
+        // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response.
         // Especialy since getting the username right might take a few tries.
         {
             Console.WriteLine(e.Message);
@@ -147,7 +151,7 @@
         }
 
 
-        if(showSignUpError is false)
+        if (showSignUpError is false)
         {
             isRegistrationSuccess = true;
             var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));

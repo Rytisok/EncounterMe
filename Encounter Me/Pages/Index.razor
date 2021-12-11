@@ -51,6 +51,9 @@
         }
     }
 
+    [Inject]
+    public ICapturePointService capturePointService { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -195,6 +198,7 @@
             "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() +"')\" > "+ possibleAction +"</button>" +
             "</div>"+
             "</div>";
+            Console.WriteLine(infoWindowContent);
         }
         else
         {

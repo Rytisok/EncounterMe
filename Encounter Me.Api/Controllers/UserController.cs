@@ -1,5 +1,6 @@
 ﻿using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace Encounter_Me.Api.Controllers
 
             var createdUser = _userRepository.AddUser(user);
 
+            Log.Information("Created new user: {@model}", createdUser);
             return Created("user", createdUser);
         }
 
