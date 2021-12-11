@@ -11,6 +11,18 @@ public static class CoordinateMath
         return Haversine(posA, posB);
     }
 
+    public static double CalculateOverallDistance(GeolocationCoordinates[] coordinateArray)
+    {
+        double finalDist = 0;
+
+        for (int i = 0; i < coordinateArray.Length-1; i++)
+        {
+            finalDist += GetDistanceBetweenCoords(coordinateArray[i], coordinateArray[i + 1]);
+        }
+
+        return finalDist;
+    }
+
     private static double Haversine(GeolocationCoordinates pos1, GeolocationCoordinates pos2)
     {
         double R = 6371;

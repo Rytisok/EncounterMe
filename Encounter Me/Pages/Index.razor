@@ -68,7 +68,6 @@
                 TimeoutTimeSpan = TimeSpan.FromMinutes(1)
             })).Location;
 
-            //delegate here?
             if (_geolocationPosition == null)
             {
                 await JSRuntime.InvokeAsync<string>(

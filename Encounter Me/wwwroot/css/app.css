@@ -41,6 +41,7 @@ mapText {
     width: 50%;
     border: none;
     font-size: 22px;
+    border-radius: 4px;
 }
 
 .content {
@@ -124,7 +125,7 @@ mapText {
 }
 
 .modal-confirm {
-    color: #434e65;
+    color: white;
     width: 90%;
 }
 
@@ -133,6 +134,7 @@ mapText {
     font-size: 16px;
     border-radius: 5px;
     border: none;
+    background: #1D2D2D;
 }
 
 .modal-confirm .modal-header {
@@ -211,7 +213,7 @@ mapText {
 
 .progress {
     height: 30px;
-    background: #fff;
+    background: #4A7272;
     border-radius: 0;
     margin-bottom: 25px;
     overflow: visible;

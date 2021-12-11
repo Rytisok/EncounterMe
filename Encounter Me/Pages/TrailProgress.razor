@@ -96,6 +96,8 @@
 
             _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
 
+            progressStats.overallDistance = Math.Round(CoordinateMath.CalculateOverallDistance(_trailCoordinateList.ToArray()), 2);
+
             await JSRuntime.InvokeAsync<object>(
                 "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
 
@@ -170,7 +172,7 @@
     [JSInvokable]
     public void OpenDetails()
     {
-        //progressStats.TrailProgress = ((progressStats.DistanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
+        progressStats.TrailProgress = ((progressStats.DistanceWalked / progressStats.overallDistance * 100) + 1).ToString() + "%";
 
         progressStats.TrailTime = Math.Round((DateTime.UtcNow - progressStats.TrailStartTime).TotalHours, 2);
 

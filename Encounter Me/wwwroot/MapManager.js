@@ -44,6 +44,7 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
 
     if (drawPosition)
     {
+        positionMarker = null;
         UpdatePositionMarker(Lat, Lng);
     }
 
@@ -60,6 +61,11 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     trailSearchEasyButton.button.style.backgroundColor = '#31E2A4';
     trailSearchEasyButton.button.style.width = '300px';
     trailSearchEasyButton.button.style.fontFamily = 'source_code_promedium';
+
+    //find trails in view on map init
+    var bounds = map.getBounds();
+    removeMarkers();
+    dotNetObjRef.invokeMethodAsync("FindTrails", bounds.getSouthWest().lat, bounds.getSouthWest().lng, bounds.getNorthEast().lat, bounds.getNorthEast().lng);
 }
 
 
