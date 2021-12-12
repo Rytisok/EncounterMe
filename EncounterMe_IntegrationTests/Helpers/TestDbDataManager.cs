@@ -3,6 +3,7 @@ using Encounter_Me.Api.Models;
 using Encounter_Me.Shared;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace EncounterMe_IntegrationTests.Helpers
 {
@@ -26,10 +27,6 @@ namespace EncounterMe_IntegrationTests.Helpers
             };
         }
 
-
-        /// <summary>
-        /// Methods that modify the testing DB can be called only in transactions!
-        /// </summary>
         public static void ReinitializeEmptyDbForTests(AppDbContext db)
         {
             db.Users.RemoveRange(db.Users);
@@ -37,5 +34,11 @@ namespace EncounterMe_IntegrationTests.Helpers
             db.SaveChanges();
         }
 
+        public static void ReinitializeDbForTests(AppDbContext db)
+        {
+            ReinitializeEmptyDbForTests(db);
+            InitializeDbForTests(db);
+            db.SaveChanges();
+        }
     }
 }

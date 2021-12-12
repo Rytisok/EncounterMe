@@ -24,15 +24,9 @@ namespace EncounterMe_IntegrationTests
             Connection.Open();
         }
 
-        public AppDbContext CreateContext(DbTransaction transaction = null)
+        public AppDbContext CreateContext()
         {
             var testingDb = new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlServer(Connection).Options);
-
-            if (transaction != null)
-            {
-                testingDb.Database.UseTransaction(transaction);
-            }
-
             return testingDb;
         }
 
@@ -50,8 +44,15 @@ namespace EncounterMe_IntegrationTests
                         TestDbDataManager.InitializeDbForTests(db);
                         DbContext = db;
                     }
-
                     _databaseInitialized = true;
+                }
+                else
+                {
+                    using (var db = CreateContext())
+                    {
+                        TestDbDataManager.ReinitializeDbForTests(db);
+                        DbContext = db;
+                    }
                 }
             }
         }

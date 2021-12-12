@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Encounter Me", "Encounter M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Encounter Me.Api", "Encounter Me.Api\Encounter Me.Api.csproj", "{00FF6410-40EE-4DA5-9364-6E9EA9CDD38A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncounterMeUnitTests", "EncounterMeUnitTests\EncounterMeUnitTests.csproj", "{8CF5507D-3935-4D91-8213-5929759F0056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncounterMe_IntegrationTests", "EncounterMe_IntegrationTests\EncounterMe_IntegrationTests.csproj", "{03DB8F59-220B-454F-A6A2-787CD7AFF533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EncounterMe_IntegrationTests", "EncounterMe_IntegrationTests\EncounterMe_IntegrationTests.csproj", "{03DB8F59-220B-454F-A6A2-787CD7AFF533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EncounterMe_UnitTests", "EncounterMe_UnitTests\EncounterMe_UnitTests.csproj", "{0906CEB8-C448-40DC-98E3-17A0EA1E3225}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,14 @@ Global
 		{00FF6410-40EE-4DA5-9364-6E9EA9CDD38A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00FF6410-40EE-4DA5-9364-6E9EA9CDD38A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00FF6410-40EE-4DA5-9364-6E9EA9CDD38A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8CF5507D-3935-4D91-8213-5929759F0056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8CF5507D-3935-4D91-8213-5929759F0056}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8CF5507D-3935-4D91-8213-5929759F0056}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8CF5507D-3935-4D91-8213-5929759F0056}.Release|Any CPU.Build.0 = Release|Any CPU
 		{03DB8F59-220B-454F-A6A2-787CD7AFF533}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{03DB8F59-220B-454F-A6A2-787CD7AFF533}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03DB8F59-220B-454F-A6A2-787CD7AFF533}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03DB8F59-220B-454F-A6A2-787CD7AFF533}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0906CEB8-C448-40DC-98E3-17A0EA1E3225}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0906CEB8-C448-40DC-98E3-17A0EA1E3225}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0906CEB8-C448-40DC-98E3-17A0EA1E3225}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0906CEB8-C448-40DC-98E3-17A0EA1E3225}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

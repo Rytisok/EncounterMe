@@ -13,15 +13,16 @@ using Xunit;
 
 namespace EncounterMe_IntegrationTests
 {
-    public class UserDataControllerIntegrationTests : IClassFixture<TestingWebApplicationFactory<Startup>>, IClassFixture<DatabaseFixture>
+    public class UserDataControllerIntegrationTests : IClassFixture<TestingWebApplicationFactory<Startup>>, IClassFixture<DatabaseFixture>,
+        IDisposable
     {
         private readonly HttpClient _httpClient;
         readonly DatabaseFixture Fixture;
 
-        public UserDataControllerIntegrationTests(TestingWebApplicationFactory<Startup> factory, DatabaseFixture fixture)
+        public UserDataControllerIntegrationTests(TestingWebApplicationFactory<Startup> factory)
         {
             _httpClient = factory.CreateClient();
-            Fixture = fixture;
+            Fixture =  new DatabaseFixture();
         }
 
         [Fact]
@@ -49,7 +50,7 @@ namespace EncounterMe_IntegrationTests
 
             //Assert
             Assert.Equal("application/json; charset=utf-8", response.Content.Headers.ContentType.ToString());
-            Assert.Contains("userName@mail", responseString);
+            Assert.Contains("userName@mail", responseString);   
         }
 
         [Fact]
@@ -75,9 +76,7 @@ namespace EncounterMe_IntegrationTests
         [Fact]
         public async Task CreateUser_GotValidData_AddsUserToDatabase()
         {
-            using var transaction = Fixture.Connection.BeginTransaction();
-            using var context = Fixture.CreateContext(transaction);
-
+            using var context = Fixture.CreateContext();
             //Arrange
             TestDbDataManager.ReinitializeEmptyDbForTests(context);
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/user");
@@ -98,33 +97,26 @@ namespace EncounterMe_IntegrationTests
         [Fact]
         public async Task UpdateUser_GotValidData_UpdatesRightUserData()
         {
-            using (var transaction = Fixture.Connection.BeginTransaction())
-            {
-                using var context = Fixture.CreateContext(transaction);
+            using var context = Fixture.CreateContext();
+            //Arrange
+            var putRequest = new HttpRequestMessage(HttpMethod.Put, "api/user");
+            var oldUser = context.Users.First<UserData>();
+            var testUser = new UserData(Guid.Parse("d68ba044-95a1-442b-8754-e329410c766b"), (Factions)2, "ChangedUserName", "Fn", "Ln", "userName@mail", oldUser.Password, oldUser.StoredSalt);
+            putRequest.Content = new StringContent(JsonSerializer.Serialize(testUser), Encoding.UTF8, "application/json");
 
-                //Arrange
-                var putRequest = new HttpRequestMessage(HttpMethod.Put, "api/user");
-                var oldUser = context.Users.First<UserData>();
-                var testUser = new UserData(Guid.Parse("d68ba044-95a1-442b-8754-e329410c766b"), (Factions)2, "ChangedUserName", "Fn", "Ln", "userName@mail", oldUser.Password, oldUser.StoredSalt);
-                putRequest.Content = new StringContent(JsonSerializer.Serialize(testUser), Encoding.UTF8, "application/json");
+            //Act
+            var response = await _httpClient.SendAsync(putRequest);
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
 
-
-                //Act
-                var response = await _httpClient.SendAsync(putRequest);
-                response.EnsureSuccessStatusCode();
-                var responseString = await response.Content.ReadAsStringAsync();
-
-                //Assert
-                Assert.True(context.Users.Any(u => u.UserName == "ChangedUserName"));
-            }
+            //Assert
+            Assert.True(context.Users.Any(u => u.UserName == "ChangedUserName"));
         }
 
         [Fact]
         public async Task UpdateUser_GotExistingUsername_ReturnsBadRequest()
         {
-            // Assert.True(context.Users.Any(u => u.UserName == "ChangedUserName"));
-            using var transaction = Fixture.Connection.BeginTransaction();
-            using var context = Fixture.CreateContext(transaction);
+            using var context = Fixture.CreateContext();
             //Arrange
             var postRequest = new HttpRequestMessage(HttpMethod.Post, "api/user");
             var sameUser = context.Users.First<UserData>();
@@ -142,9 +134,7 @@ namespace EncounterMe_IntegrationTests
         [Fact]
         public async Task DeleteUser_GotValidGuid_DeletesUserData()
         {
-            using var transaction = Fixture.Connection.BeginTransaction();
-            using var context = Fixture.CreateContext(transaction);
-
+            using var context = Fixture.CreateContext();
             //Arrange
             var deleteRequest = new HttpRequestMessage(HttpMethod.Delete, "api/user/d68ba044-95a1-442b-8754-e329410c766b");
             var deletedUserId = Guid.Parse("d68ba044-95a1-442b-8754-e329410c766b");
@@ -157,9 +147,10 @@ namespace EncounterMe_IntegrationTests
             Assert.False(context.Users.Any(x => x.Id.Equals(deletedUserId)));
         }
 
-        ///TODO :
-        /// Written test (it would be theory) to check if all get methods return Ok_status response and correct content type back...
-        /// Problem - trailContainer was change to capturePoint, I need to get newest data from main.
+        public void Dispose()
+        {
+            Fixture.Dispose();
+        }
     }
 
 
