@@ -56,7 +56,7 @@ namespace EncounterMeTests
             var notFoundResult = _userController.GetUserById(Guid.NewGuid());
 
             //Assert
-            Assert.IsType<NotFoundResult>(notFoundResult);
+            Assert.IsType<NotFoundObjectResult>(notFoundResult);
         }
 
         [Fact]
@@ -174,11 +174,14 @@ namespace EncounterMeTests
         public void UpdateUser_GotDataWithTakenUserName_ReturnsBadRequestResult()
         {
             //Arrange
-            var testUser = new UserData(Guid.NewGuid(), Factions.Red, "Usrname", "Fn", "Ln", "e@mail", "Psword1");
-            _mockUserRepository.Setup(repos => repos.IsUsernameTaken("Usrname")).Returns(true);
+            var testUserOld = new UserData(Guid.NewGuid(), Factions.Red, "Usrname", "Fn", "Ln", "e@mail", "Psword1");
+            var testUserNew = new UserData(testUserOld.Id, Factions.Red, "TakenUsername", "Fn", "Ln", "e@mail", "Psword1");
+
+            _mockUserRepository.Setup(repos => repos.GetUserById(testUserNew.Id)).Returns(testUserOld);
+            _mockUserRepository.Setup(repos => repos.IsUsernameTaken("TakenUsername")).Returns(true);
 
             //Act
-            var badRequest = _userController.UpdateUser(testUser);
+            var badRequest = _userController.UpdateUser(testUserNew);
 
             //Assert
             Assert.IsType<BadRequestObjectResult>(badRequest);
@@ -188,11 +191,13 @@ namespace EncounterMeTests
         public void UpdateUser_GotDataWithTakenEmail_ReturnsBadRequestResult()
         {
             //Arrange
-            var testUser = new UserData(Guid.NewGuid(), Factions.Red, "Usrname", "Fn", "Ln", "e@mail", "Psword1");
-            _mockUserRepository.Setup(repos => repos.IsEmailTaken("e@mail")).Returns(true);
+            var testUserOld = new UserData(Guid.NewGuid(), Factions.Red, "Usrname", "Fn", "Ln", "e@mail", "Psword1");
+            var testUserNew = new UserData(testUserOld.Id, Factions.Red, "Usrname", "Fn", "Ln", "Taken@mail", "Psword1");
+            _mockUserRepository.Setup(repos => repos.GetUserById(testUserNew.Id)).Returns(testUserOld);
+            _mockUserRepository.Setup(repos => repos.IsEmailTaken("Taken@mail")).Returns(true);
 
             //Act
-            var badRequest = _userController.UpdateUser(testUser);
+            var badRequest = _userController.UpdateUser(testUserNew);
 
             //Assert
             Assert.IsType<BadRequestObjectResult>(badRequest);
