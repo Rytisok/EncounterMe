@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace EncounterMeTests
+namespace EncounterMe_UnitTests
 {
     public class UserDataControllerTests
     {
