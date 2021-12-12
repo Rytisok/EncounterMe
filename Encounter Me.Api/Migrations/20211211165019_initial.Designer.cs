@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Encounter_Me.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20211207115851_initial")]
+    [Migration("20211211165019_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1924,6 +1924,9 @@ namespace Encounter_Me.Api.Migrations
 
                     b.Property<double>("ExperiencePoints")
                         .HasColumnType("float");
+
+                    b.Property<int?>("Faction")
+                        .HasColumnType("int");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");

@@ -24,9 +24,11 @@ namespace Encounter_Me.Services
                   (await _httpClient.GetStreamAsync($"api/capturepoint/{Id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public Task UpdateCapturePoint(CapturePoint capturePoint)
+        public async Task UpdateCapturePoint(CapturePoint capturePoint)
         {
-            throw new NotImplementedException();
+            var capturePointJson =
+                new StringContent(JsonSerializer.Serialize(capturePoint), Encoding.UTF8, "application/json");
+            await _httpClient.PutAsync("api/capturepoint", capturePointJson);
         }
 
         public async Task<IEnumerable<CapturePoint>> GetCapturePointsInView(double Lat1, double Lon1, double Lat2, double Lon2)

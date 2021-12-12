@@ -29,11 +29,27 @@
     private Modal _alertModal = new Modal();
     private Modal _errorModal = new Modal();
 
+    private UserData currentUser;
+
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+    private AuthenticationState authState;
 
     [Inject]
     public ICapturePointService capturePointService { get; set; }
+
+    [Inject]
+    public IUserDataService userDataService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            currentUser = await userDataService.GetUserDetails(userId);
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -52,7 +68,6 @@
                 TimeoutTimeSpan = TimeSpan.FromMinutes(1)
             })).Location;
 
-            //delegate here?
             if (_geolocationPosition == null)
             {
                 await JSRuntime.InvokeAsync<string>(
@@ -82,9 +97,12 @@
         catch
         {
             ModalControl.OpenModal(_errorModal);
+            testTrailID = trailID;
             StateHasChanged();
         }
     }
+
+    public string testTrailID = "";
 
     [JSInvokable]
     public async void FindTrails(double Lat1, double Lon1, double Lat2, double Lon2)
@@ -135,23 +153,55 @@
 
         var authState = await AuthState;
 
-        string difficulty = capturePoint.DefenseLevel.ToTrailStars();
-
         string infoWindowContent;
+
+        string alegiance;
+
+        if (capturePoint.faction == 0)
+        {
+            alegiance = "Neutral";
+        }
+        else
+        {
+            alegiance = ((Factions)capturePoint.faction - 1).ToString();
+        }
 
         if (authState.User.Identity.IsAuthenticated)
         {
+            Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            currentUser = await userDataService.GetUserDetails(userId);
+
+            string possibleAction;
+
+
+            //could be done cleaner
+            if (capturePoint.faction == 0)
+            {
+                possibleAction = "Capture";
+            }
+            else if ((capturePoint.faction - 1) == (int)currentUser.Faction.Value)
+            {
+                possibleAction = "Reinforce";
+            }
+            else
+            {
+                possibleAction = "Attack";
+            }
+
             infoWindowContent = "<div id=content>" +
-            "<p style=\"font-size:25px\"> Level: " + difficulty + "</p>" +
-            "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-            "<button title=\"Walk the trail\" onclick = \"startTrail('"+ capturePoint.guid.ToString() +"')\" ><img src = \"Images/walk.png\" ></button>" +
+            "<h1 style=\"font-size:25px\"> "+ alegiance +" capture point</h1>" +
+            "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
+            "<div class=\"text-center\">"+
+            "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() +"')\" > "+ possibleAction +"</button>" +
+            "</div>"+
             "</div>";
             Console.WriteLine(infoWindowContent);
         }
         else
         {
             infoWindowContent = "<div id=content>" +
-            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "<h1 style=\"font-size:25px\"> " + alegiance + " capture point</h1>" +
+            "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
             "</div>";
         }
 
@@ -171,6 +221,6 @@
     //test function to test trail walking on pc
     private async void TestTrailLoad()
     {
-        NavManager.NavigateTo("/TrailProgress/ab839ca1-9e91-4b21-ad40-618e85080eaf");
+        NavManager.NavigateTo("/TrailProgress/" + testTrailID);
     }
 }

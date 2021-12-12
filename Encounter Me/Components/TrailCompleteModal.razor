@@ -6,24 +6,24 @@
     <div class="d-flex justify-content-center">
         <div class="modal-dialog modal-confirm">
             <div class="modal-content">
-                @if (modalStatus == 0)
-                {
-                    <div class="modal-header justify-content-center">
-                        <div class="icon-box">
-                            <img src="Images/route.png">
-                        </div>
-                    </div>
-                    <div class="modal-body text-center">
-                        <h4>Trail completed!</h4>
-                        <p>Trail finished successfuly.</p>
-                        <button class="btn btn-success" @onclick="e => { modalStatus++;}" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
-                    </div>
-                }
-                else if (modalStatus == 1)
-                {<!--
-                    <h5>Time spent: @progressStats.TrailTime hours </h5>
-            <h5>Distance walked: @trail.Length km</h5>
-            <h5>Xp gained: @LevelAndXp.XpFromTrail(trail) </h5>-->
+        @if (modalStatus == 0)
+        {
+            <div class="modal-header justify-content-center">
+                <div class="icon-box">
+                    <img src="Images/checked.png">
+                </div>
+                </div>
+                <div class="modal-body text-center">
+                    <h4>Mission completed!</h4>
+                    <p>Mission finished successfuly.</p>
+                    <button class="btn btn-success" @onclick="e => { modalStatus++;}" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
+                </div>
+        }
+        else if (modalStatus == 1)
+        {
+            <h5>Time spent: @progressStats.TrailTime hours </h5>
+            <h5>Distance walked: @progressStats.overallDistance km</h5>
+            <h5>Xp gained: @LevelAndXp.XpFromTrail(capturePoint) </h5>
             <button class="btn btn-success" @onclick="e => { modalStatus++;}" data-dismiss="modal"><span>Next</span> <i class="material-icons">&#x279C;</i></button>
         }
         else if (modalStatus == 2)
@@ -36,10 +36,8 @@
             <div class="modal-body text-center">
                 <h4>Level: @currentUser.Level</h4>
                 <div class="progress">
-                    <div class="level-bar1 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, (int)currentUser.ExperiencePoints)%; background-color: #7FE5F0; "></div>
-                    <!--
-                    <div class="level-bar2 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, LevelAndXp.XpFromTrail(trail))%; background-color: #5cb85c; "></div>
-                        -->
+                    <div class="level-bar1 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, (int)currentUser.ExperiencePoints)%; background-color: #3AAFC1; "></div>
+                    <div class="level-bar2 linear active" style="width: @LevelAndXp.XpPercentageOfLevel(currentUser.Level, LevelAndXp.XpFromTrail(capturePoint))%; background-color: #FFAF1D; "></div>
                 </div>
                 <!--
     <h5> @(currentUser.ExperiencePoints + LevelAndXp.XpFromTrail(trail)) / @LevelAndXp.XpToLevelUp(currentUser.Level) xp</h5>
