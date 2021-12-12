@@ -1,4 +1,5 @@
 ﻿using Encounter_Me.Shared;
+using Destructurama.Attributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace Encounter_Me
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        [NotLogged]
         public string Password { get; set; }
         public byte[] StoredSalt { get; set; }
 

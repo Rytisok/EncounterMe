@@ -16,6 +16,8 @@ using Encounter_Me.Authentication;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using BlazorCurrentDevice;
+using Serilog;
+using Destructurama;
 
 namespace Encounter_Me
 {
@@ -23,8 +25,17 @@ namespace Encounter_Me
     {
         public static async Task Main(string[] args)
         {
-            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            var builder = WebAssemblyHostBuilder.CreateDefault(args); ;
             builder.RootComponents.Add<App>("#app");
+
+           
+            Log.Logger = new LoggerConfiguration() //Only logs to console for now. There is a possibility to log to server but it is a bit complicated
+           .Destructure.UsingAttributes()
+           .WriteTo.BrowserConsole()
+           .CreateLogger();
+
+
+            //builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddBlazoredLocalStorage();
@@ -34,6 +45,7 @@ namespace Encounter_Me
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
             builder.Services.AddHttpClient<ITrailService, TrailService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            builder.Services.AddHttpClient<ICapturePointService, CapturePointService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
             builder.Services.AddBlazorCurrentDevice();
             await builder.Build().RunAsync();
         }

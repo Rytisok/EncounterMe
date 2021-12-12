@@ -44,7 +44,7 @@ namespace Encounter_Me.Api.Controllers
             List<Coordinate> randomPoints = new List<Coordinate>();
             string polyline = "";
 
-            double maxDist = 450 * difficulty;
+            double maxDist = 450 + 300 * difficulty;
             randomPoints = RandomCoordinates.RandomPoints(maxDist, center, 2);
 
             string directionData = Get("https://maps.googleapis.com/maps/api/directions/json?origin=" +
