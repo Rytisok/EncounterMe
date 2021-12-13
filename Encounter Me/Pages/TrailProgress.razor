@@ -42,8 +42,8 @@
     private Modal _successModal = new Modal();
     private Modal _infoModal = new Modal();
 
-    private UserData currentUser;
-    private UserData userDataSnapshot;
+    private UserData _currentUser;
+    private UserData _userDataSnapshot;
     private CapturePoint _capturePointInProgressSnapshot;
 
     [CascadingParameter]
@@ -104,7 +104,7 @@
                 "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
 
             Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
-            currentUser = await userDataService.GetUserDetails(userId);
+            _currentUser = await userDataService.GetUserDetails(userId);
 
             await WatchPosition();
         }
@@ -191,7 +191,7 @@
     public async void TrailFinished()
     {
         //create a clone of previous user data
-        userDataSnapshot = (UserData)currentUser.Clone();
+        _userDataSnapshot = (UserData)_currentUser.Clone();
         _capturePointInProgressSnapshot = (CapturePoint)_capturePointInProgress.Clone();
         //enables success modal
         ModalControl.OpenModal(_successModal);
@@ -199,14 +199,14 @@
         StateHasChanged();
 
         int xpGain = LevelAndXp.XpFromTrail(_capturePointInProgress.DefenseLevel);
-        userDataService.UpdateUserXp(currentUser, xpGain);
+        userDataService.UpdateUserXp(_currentUser, xpGain);
 
         if (_capturePointInProgress.faction == 0)
         {
-            _capturePointInProgress.faction = (int)(currentUser.Faction) + 1;
+            _capturePointInProgress.faction = (int)(_currentUser.Faction) + 1;
             _capturePointInProgress.DefenseLevel = 1;
         }
-        else if (_capturePointInProgress.faction == ((int)(currentUser.Faction) + 1))
+        else if (_capturePointInProgress.faction == ((int)(_currentUser.Faction) + 1))
         {
             if (_capturePointInProgress.DefenseLevel < 5)
                 _capturePointInProgress.DefenseLevel++;
