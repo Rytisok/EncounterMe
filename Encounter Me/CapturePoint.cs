@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Encounter_Me
 {
-	public class CapturePoint
+	public class CapturePoint : ICloneable
 	{
 		public string Name { get; set; }
 		[Key]
@@ -21,5 +21,11 @@ namespace Encounter_Me
 			this.faction = faction;
 			this.guid = Guid.NewGuid();
 		}
-	}
+
+        public object Clone()
+        {
+			var capturePoint = (CapturePoint)MemberwiseClone();
+			return capturePoint;
+		}
+    }
 }
