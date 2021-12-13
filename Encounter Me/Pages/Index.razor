@@ -155,16 +155,6 @@
 
         string infoWindowContent;
 
-        string alegiance;
-
-        if (capturePoint.faction == 0)
-        {
-            alegiance = "Neutral";
-        }
-        else
-        {
-            alegiance = ((Factions)capturePoint.faction - 1).ToString();
-        }
 
         if (authState.User.Identity.IsAuthenticated)
         {
@@ -179,7 +169,7 @@
             {
                 possibleAction = "Capture";
             }
-            else if ((capturePoint.faction - 1) == (int)currentUser.Faction.Value)
+            else if (capturePoint.faction == (int)currentUser.Faction.Value)
             {
                 possibleAction = "Reinforce";
             }
@@ -189,7 +179,7 @@
             }
 
             infoWindowContent = "<div id=content>" +
-            "<h1 style=\"font-size:25px\"> " + alegiance + " capture point</h1>" +
+            "<h1 style=\"font-size:25px\"> "+ (Factions)capturePoint.faction +" capture point</h1>" +
             "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
             "<div class=\"text-center\">" +
             "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() + "')\" > " + possibleAction + "</button>" +
@@ -200,7 +190,7 @@
         else
         {
             infoWindowContent = "<div id=content>" +
-            "<h1 style=\"font-size:25px\"> " + alegiance + " capture point</h1>" +
+            "<h1 style=\"font-size:25px\"> " + (Factions)capturePoint.faction + " capture point</h1>" +
             "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
             "</div>";
         }
