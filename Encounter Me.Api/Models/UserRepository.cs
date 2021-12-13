@@ -55,6 +55,8 @@ namespace Encounter_Me.Api.Models
 
             if (foundUser != null)
             {
+                foundUser.UserName = user.UserName;
+                foundUser.Faction = user.Faction;
                 foundUser.FirstName = user.FirstName;
                 foundUser.LastName = user.LastName;
                 foundUser.Email = user.Email;
@@ -63,7 +65,6 @@ namespace Encounter_Me.Api.Models
                 foundUser.UserPhotoUrl = user.UserPhotoUrl;
                 foundUser.Level = user.Level;
                 foundUser.ExperiencePoints = user.ExperiencePoints;
-
 
                 _appDbContext.SaveChanges();
 
@@ -79,7 +80,6 @@ namespace Encounter_Me.Api.Models
             if (foundUser == null) return;
 
             _appDbContext.Users.Remove(foundUser);
-            _appDbContext.SaveChanges();
-        
+            _appDbContext.SaveChanges();   
     }}
 }

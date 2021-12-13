@@ -17,6 +17,6 @@ namespace Encounter_Me.Services
 
         Task DeleteTrail(int Id);
 
-        Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty);
+        Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty, double userLat = 0, double userLon = 0);
     }
 }
