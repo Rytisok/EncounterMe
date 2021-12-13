@@ -76,8 +76,8 @@ namespace Encounter_Me.Api.Controllers
 
             var userToUpdate = _userRepository.GetUserById(user.Id);
 
-            if (userToUpdate == null)
-                return NotFound();
+                if (userToUpdate == null)
+                    return NotFound();
 
             var IsUsernameNew = !_userRepository.GetUserById(user.Id).UserName.Equals(user.UserName);
             if (IsUsernameNew is true && _userRepository.IsUsernameTaken(user.UserName))
@@ -93,8 +93,8 @@ namespace Encounter_Me.Api.Controllers
 
             _userRepository.UpdateUser(user);
 
-            return NoContent(); //success
-        }
+                return NoContent(); //success
+            }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(Guid id)

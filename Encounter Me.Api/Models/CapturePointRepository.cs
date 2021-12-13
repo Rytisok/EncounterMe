@@ -28,5 +28,22 @@ namespace Encounter_Me.Api.Models
                 t.Lon > Lon1 &&
                 t.Lon < Lon2).ToList();
         }
+
+        public CapturePoint UpdateCapturePoint(CapturePoint capturePoint)
+        {
+            var foundCapturePoint = _appDbContext.CapturePoints.FirstOrDefault(e => e.guid.Equals(capturePoint.guid));
+
+            if (foundCapturePoint != null)
+            {
+                foundCapturePoint.faction = capturePoint.faction;
+                foundCapturePoint.DefenseLevel = capturePoint.DefenseLevel;
+
+                _appDbContext.SaveChanges();
+
+                return foundCapturePoint;
+            }
+
+            return null;
+        }
     }
 }
