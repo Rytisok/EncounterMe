@@ -200,10 +200,10 @@
 
         if (_capturePointInProgress.faction == 0)
         {
-            _capturePointInProgress.faction = (int)(currentUser.Faction) + 1;
+            _capturePointInProgress.faction = (int)(currentUser.Faction);
             _capturePointInProgress.DefenseLevel = 1;
         }
-        else if (_capturePointInProgress.faction == ((int)(currentUser.Faction) + 1))
+        else if (_capturePointInProgress.faction == (int)(currentUser.Faction))
         {
             if (_capturePointInProgress.DefenseLevel < 5)
                 _capturePointInProgress.DefenseLevel++;

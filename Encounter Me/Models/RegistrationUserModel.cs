@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Encounter_Me.Shared
 {
-    public enum Factions { Red, Green, Blue, Yellow };
+    public enum Factions { Neutral, Red, Green, Blue, Yellow };
     public class RegistrationUserModel
     {
         [Required, StringLength(30, ErrorMessage = "Username must be shorter than 30 characters")]
