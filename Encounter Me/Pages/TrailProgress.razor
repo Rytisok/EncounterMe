@@ -14,11 +14,7 @@
 
 <div id="map"></div>
 
-<button @onclick="TrailFinished">
-    TestFinish
-</button>
-
-<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
+<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail finishTrailAction=TrailFinished></Encounter_Me.Components.InfoModal>
 <Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@currentUser capturePoint=@_capturePointInProgress progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
 @code{
@@ -188,6 +184,7 @@
     [JSInvokable]
     public async void TrailFinished()
     {
+        ModalControl.CloseModal(_infoModal);
         //enables success modal
         ModalControl.OpenModal(_successModal);
         //used to update UI elements
