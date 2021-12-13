@@ -13,8 +13,8 @@ public static class LevelAndXp
 		int percentage = (int)((double)xp / (double)XpToLevelUp(level) * 100);
 		return percentage;
     }
-	public static int XpFromTrail(CapturePoint capturePoint)
+	public static int XpFromTrail(int difficulty)
     {
-		return (int)(50 + (20 * capturePoint.DefenseLevel));
+		return difficulty * 20 + 30;
     }
 }

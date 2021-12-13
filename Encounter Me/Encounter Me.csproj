@@ -12,6 +12,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="compilerconfig.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="compilerconfig.json" />
+    <None Include="wwwroot\Styles\Glitch.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="4.1.5" />
     <PackageReference Include="BlazorGoogleMaps" Version="1.1.5" />
     <PackageReference Include="Destructurama.Attributed" Version="3.0.0" />

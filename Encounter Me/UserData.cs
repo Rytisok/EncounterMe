@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me
 {
-    public class UserData : IComparable<UserData>
+    public class UserData : IComparable<UserData>, ICloneable
     {
         public Guid Id { get; set; } 
         public string UserName { get; set; }
@@ -76,6 +76,12 @@ namespace Encounter_Me
                 return other.ExperiencePoints.CompareTo(this.ExperiencePoints);
             }else
                 return other.Level.CompareTo(this.Level);
+        }
+
+        public object Clone()
+        {
+            var user = (UserData)MemberwiseClone();
+            return user;
         }
     }
 }

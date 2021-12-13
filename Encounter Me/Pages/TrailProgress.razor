@@ -19,7 +19,7 @@
 </button>
 
 <Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
-<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@currentUser capturePoint=@_capturePointInProgress progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
+<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
 @code{
 
@@ -42,7 +42,9 @@
     private Modal _successModal = new Modal();
     private Modal _infoModal = new Modal();
 
-    private UserData currentUser;
+    private UserData _currentUser;
+    private UserData _userDataSnapshot;
+    private CapturePoint _capturePointInProgressSnapshot;
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
@@ -104,7 +106,7 @@
                 "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
 
             Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
-            currentUser = await userDataService.GetUserDetails(userId);
+            _currentUser = await userDataService.GetUserDetails(userId);
 
             await WatchPosition();
         }
@@ -190,13 +192,16 @@
     [JSInvokable]
     public async void TrailFinished()
     {
+        //create a clone of previous user data
+        _userDataSnapshot = (UserData)_currentUser.Clone();
+        _capturePointInProgressSnapshot = (CapturePoint)_capturePointInProgress.Clone();
         //enables success modal
         ModalControl.OpenModal(_successModal);
         //used to update UI elements
         StateHasChanged();
-        //int xpGain = LevelAndXp.XpFromTrail(_trailInProgress);
-        int xpGain = _capturePointInProgress.DefenseLevel * 50 + 100;
-        userDataService.UpdateUserXp(currentUser, xpGain);
+
+        int xpGain = LevelAndXp.XpFromTrail(_capturePointInProgress.DefenseLevel);
+        userDataService.UpdateUserXp(_currentUser, xpGain);
 
         if (_capturePointInProgress.faction == 0)
         {
