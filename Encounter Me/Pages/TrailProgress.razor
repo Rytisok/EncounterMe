@@ -19,7 +19,7 @@
 </button>
 
 <Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
-<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
+<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@_userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
 @code{
 
@@ -205,10 +205,10 @@
 
         if (_capturePointInProgress.faction == 0)
         {
-            _capturePointInProgress.faction = (int)(currentUser.Faction);
+            _capturePointInProgress.faction = (int)(_currentUser.Faction);
             _capturePointInProgress.DefenseLevel = 1;
         }
-        else if (_capturePointInProgress.faction == (int)(currentUser.Faction))
+        else if (_capturePointInProgress.faction == (int)(_currentUser.Faction))
         {
             if (_capturePointInProgress.DefenseLevel < 5)
                 _capturePointInProgress.DefenseLevel++;
