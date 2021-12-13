@@ -50,13 +50,15 @@ namespace Encounter_Me.Services
                  (await _httpClient.GetStreamAsync($"api/trail/{Id}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
-        public async Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty)
+        public async Task<RooTobject> GenerateTrail(double Lat, double Lon, int difficulty, double userLat=0, double userLon=0)
         {
             string _lat = Lat.ToString().Replace(',', '.');
             string _lon = Lon.ToString().Replace(',', '.');
+            string _userLat = userLat.ToString().Replace(',', '.');
+            string _userLon = userLon.ToString().Replace(',', '.');
 
             return await JsonSerializer.DeserializeAsync<RooTobject>
-                 (await _httpClient.GetStreamAsync($"api/TrailGeneration/{_lat}/{_lon}/{difficulty}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+                 (await _httpClient.GetStreamAsync($"api/TrailGeneration/{_lat}/{_lon}/{difficulty}/{_userLat}/{_userLon}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
 
     }

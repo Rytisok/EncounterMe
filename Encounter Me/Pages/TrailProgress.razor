@@ -92,7 +92,9 @@
             await JSRuntime.InvokeAsync<string>(
             "initializeWalkMap", _capturePointInProgress.Lat, _capturePointInProgress.Lon, dotNetObjRef);
 
-            var geoJsonTrailData = await trailService.GenerateTrail(_capturePointInProgress.Lat, _capturePointInProgress.Lon, _capturePointInProgress.DefenseLevel);
+            var geoJsonTrailData = await trailService.GenerateTrail(_capturePointInProgress.Lat, _capturePointInProgress.Lon, 
+                _capturePointInProgress.DefenseLevel, 
+                _geolocationPosition.Coords.Latitude, _geolocationPosition.Coords.Longitude);
 
             _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
 

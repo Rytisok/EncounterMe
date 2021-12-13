@@ -16,11 +16,12 @@ namespace Encounter_Me.Api.Controllers
     [ApiController]
     public class TrailGenerationController : Controller
     {
-        [HttpGet("{Lat}/{Lon}/{Diff}")]
-        public IActionResult GenerateTrail(double Lat, double Lon, int Diff)
+        [HttpGet("{Lat}/{Lon}/{Diff}/{UserLat}/{UserLon}")]
+        public IActionResult GenerateTrail(double Lat, double Lon, int Diff, double UserLat, double UserLon)
         {
-            Coordinate coord = new Coordinate(Lat, Lon);
-            return Ok(GenerateTrail(coord, Diff));
+            Coordinate centerCoord = new Coordinate(Lat, Lon);
+            Coordinate userCoord = new Coordinate(UserLat, UserLon);
+            return Ok(GenerateTrail(centerCoord, Diff, userCoord));
         }
 
         public static string Get(string uri)
@@ -38,7 +39,7 @@ namespace Encounter_Me.Api.Controllers
             }
         }
 
-        public static string GenerateTrail(Coordinate center, int difficulty)
+        public static string GenerateTrail(Coordinate center, int difficulty, Coordinate userCoords = null)
         {
             IEnumerable<Coordinate> coordinates = null;
             List<Coordinate> randomPoints = new List<Coordinate>();
@@ -46,6 +47,18 @@ namespace Encounter_Me.Api.Controllers
 
             double maxDist = 450 + 300 * difficulty;
             randomPoints = RandomCoordinates.RandomPoints(maxDist, center, 2);
+
+            if (userCoords != null)
+            {
+                //if first coordinate is further from user than second, switch them around
+                if (Trail_generation_Utilities.CoordinateMath.GetDistanceBetweenCoords(userCoords, randomPoints[0]) >
+                    Trail_generation_Utilities.CoordinateMath.GetDistanceBetweenCoords(userCoords, randomPoints[1]))
+                {
+                    Coordinate temp = randomPoints[1];
+                    randomPoints[1] = randomPoints[0];
+                    randomPoints[0] = temp;
+                }
+            }
 
             string directionData = Get("https://maps.googleapis.com/maps/api/directions/json?origin=" +
                     randomPoints[0].ToString() +
