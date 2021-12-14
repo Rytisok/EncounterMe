@@ -14,11 +14,7 @@
 
 <div id="map"></div>
 
-<button @onclick="TrailFinished">
-    TestFinish
-</button>
-
-<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
+<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail finishTrailAction=TrailFinished></Encounter_Me.Components.InfoModal>
 <Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@_userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
 @code{
@@ -192,6 +188,7 @@
     [JSInvokable]
     public async void TrailFinished()
     {
+        ModalControl.CloseModal(_infoModal);
         //create a clone of previous user data
         _userDataSnapshot = (UserData)_currentUser.Clone();
         _capturePointInProgressSnapshot = (CapturePoint)_capturePointInProgress.Clone();

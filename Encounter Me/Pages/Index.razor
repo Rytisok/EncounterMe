@@ -9,10 +9,10 @@
 @using System.Linq
 @implements IAsyncDisposable
 
-<div id="map"></div>
-
+<div class="d-flex justify-content-center">
+    <div id="map"></div>
+</div>
 <Encounter_Me.Components.AlertModal modal=@_alertModal modalText="It is recommended to turn on location services for the best experience"></Encounter_Me.Components.AlertModal>
-
 <Encounter_Me.Components.ErrorModal modal=@_errorModal modalText="Trail walking is supported on mobile devices only!" devButtonAction=@TestTrailLoad></Encounter_Me.Components.ErrorModal>
 
 @code{
@@ -181,9 +181,9 @@
             infoWindowContent = "<div id=content>" +
             "<h1 style=\"font-size:25px\"> "+ (Factions)capturePoint.faction +" capture point</h1>" +
             "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
-            "<div class=\"text-center\">"+
-            "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() +"')\" > "+ possibleAction +"</button>" +
-            "</div>"+
+            "<div class=\"text-center\">" +
+            "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() + "')\" > " + possibleAction + "</button>" +
+            "</div>" +
             "</div>";
             Console.WriteLine(infoWindowContent);
         }
