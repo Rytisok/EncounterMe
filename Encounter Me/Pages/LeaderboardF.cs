@@ -14,7 +14,7 @@ namespace Encounter_Me.Pages
         public IEnumerable<UserData> Users { get; set; }
         public IEnumerable<IGrouping<int,UserData>> FctionsGroup { get; set; }
 
-        Factions x;
+        Factions x = Factions.Red;
 
         [Inject]
         public IUserDataService UserDataService { get; set; }
