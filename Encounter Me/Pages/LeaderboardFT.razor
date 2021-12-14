@@ -1,0 +1,83 @@
+﻿@page "/Leaderboard/Factions"
+
+
+@if (Users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container" style="margin-top:10%">
+        <div class="row">
+            <div style="margin:auto">
+                <a href="@($"Leaderboard")" style="">Users</a>
+                |
+                <a href="@($"Leaderboard/ByFactions")">Faction View</a>
+                |
+                <a href="@($"Leaderboard/Factions")">Factions</a>
+            </div>
+            <div class="col-lg-12">
+                <div class="main-box clearfix">
+                    <div class="table-responsive;">
+                        <table class="table user-list">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><span>Faction</span></th>
+                                    <th class="text-center"><span>Members</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+
+                                    <td class="text-center">
+                                        <span class="label label-default" style="color:#e00e0e">Team Red</span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="label label-default">@RedCount</span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                    <td class="text-center">
+                                        <span class="label label-default" style="color:#05a40e">Team Green</span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="label label-default">@GreenCount</span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                    <td class="text-center">
+                                        <span class="label label-default" style="color:#06039d">Team Blue</span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="label label-default">@BlueCount</span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+
+                                    <td class="text-center">
+                                        <span class="label label-default" style="color:#dfbd04">Team Yellow</span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <span class="label label-default">@YellowCount</span>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}

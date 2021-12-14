@@ -1,0 +1,101 @@
+﻿@page "/Leaderboard/ByFactions"
+
+
+@if (Users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="container" style="margin-top:10%">
+        <div class="row">
+            <div style="margin:auto">
+                <a href="@($"Leaderboard")" style="">Users</a>
+                |
+                <a href="@($"Leaderboard/ByFactions")">Faction View</a>
+                |
+                <a href="@($"Leaderboard/Factions")">Factions</a>
+            </div>
+            <div style="margin-right:5%">
+                <select style="width:50px;float:right">
+                    <option value=1>1</option>
+                </select>
+                Factions:
+                <select style="width:70px;float:right" @onclick="@(() => ShowFactionsMembers(x))" @bind=@x>
+                    <option value=@Factions.Red>Red</option>
+                    <option value=@Factions.Green>Green</option>
+                    <option value=@Factions.Blue>Blue</option>
+                    <option value=@Factions.Yellow>Yellow</option>
+                </select>
+            </div>
+            <div class="col-lg-12">
+                <div class="main-box clearfix">
+                    <div class="table-responsive;">
+                        <table class="table user-list">
+                            <thead>
+                                <tr>
+                                    <th class="text-center"><span>#</span></th>
+                                    <th><span>User</span></th>
+                                    <th class="text-center"><span>Faction</span></th>
+                                    <th class="text-center"><span>Level</span></th>
+                                    <th class="text-center"><span>Xp</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var group in FctionsGroup)
+                                    foreach (var user in group)
+                                    {
+                                        <tr>
+                                            <td style="width:50px;">
+                                                <span class="label label-default" style="font-size:20px"> </span>
+                                            </td>
+                                            <td>
+                                                <img src=@user.UserPhotoUrl alt="">
+                                                <a href="@($"profile/{user.Id}")" class="user-link">@user.UserName</a>
+                                            </td>
+                                            @if (user.Faction == Factions.Red)
+                                            {
+                                                <td class="text-center">
+                                                    <span class="label label-default" style="color:#e00e0e">Red</span>
+                                                </td>
+
+                                            }
+                                            else if (user.Faction == Factions.Blue)
+                                            {
+                                                <td class="text-center">
+                                                    <span class="label label-default" style="color:#06039d">Blue</span>
+                                                </td>
+                                            }
+                                            else if (user.Faction == Factions.Green)
+                                            {
+                                                <td class="text-center">
+                                                    <span class="label label-default" style="color:#05a40e">Green</span>
+                                                </td>
+                                            }
+                                            else if (user.Faction == Factions.Yellow)
+                                            {
+                                                <td class="text-center">
+                                                    <span class="label label-default" style="color:#dfbd04">Yellow</span>
+                                                </td>
+                                            }
+
+                                            <td class="text-center">
+                                                @user.Level
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="label label-default">@user.ExperiencePoints</span>
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
