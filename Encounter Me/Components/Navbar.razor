@@ -1,11 +1,11 @@
 ﻿<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" style="font-size: 1.6rem;">Encounter Me</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarColor02">
+        <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
                     <a class="nav-link" href=@("/")>Map</a>
@@ -20,9 +20,6 @@
             <form class="d-flex">
                 <AuthorizeView>
                     <Authorized>
-                        @*<div style="height: 100%; display: table-cell;margin-right:20px;">
-                            <h5 style="font-size: 1.6rem;"> Hi, @context.User.FindFirst(ClaimTypes.Name).Value!</h5>
-                        </div>*@
                         <a class="navbar-brand" href=@("https://localhost:5001/profile/" + context.User.FindFirst(ClaimTypes.UserData).Value.ToString())>Hi, @context.User.FindFirst(ClaimTypes.Name).Value!</a>
                         <a class="btn btn-dark" href="@("/logout")" role="button"> Log out</a>
                     </Authorized>
