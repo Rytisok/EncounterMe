@@ -1,4 +1,5 @@
 ﻿using Encounter_Me.Shared;
+using Destructurama.Attributed;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me
 {
-    public class UserData : IComparable<UserData>
+    public class UserData : IComparable<UserData>, ICloneable
     {
         public Guid Id { get; set; } 
         public string UserName { get; set; }
@@ -14,6 +15,7 @@ namespace Encounter_Me
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
+        [NotLogged]
         public string Password { get; set; }
         public byte[] StoredSalt { get; set; }
 
@@ -74,6 +76,12 @@ namespace Encounter_Me
                 return other.ExperiencePoints.CompareTo(this.ExperiencePoints);
             }else
                 return other.Level.CompareTo(this.Level);
+        }
+
+        public object Clone()
+        {
+            var user = (UserData)MemberwiseClone();
+            return user;
         }
     }
 }

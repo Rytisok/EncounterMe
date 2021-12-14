@@ -1,19 +1,17 @@
 using Encounter_Me.Api.Authentication;
+using Encounter_Me.Api.Logging;
 using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Encounter_Me.Api
 {
@@ -36,6 +34,7 @@ namespace Encounter_Me.Api
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ITrailRepository, TrailRepository>();
+            services.AddScoped<ICapturePointRepository, CapturePointRepository>();
 
 
             services.AddCors(options =>
@@ -77,10 +76,13 @@ namespace Encounter_Me.Api
 
             app.UseRouting();
 
-            app.UseAuthorization();
-            app.UseAuthentication();
+            app.UseRequestResponseLogging();
+            app.UseSerilogRequestLogging(opts => opts.EnrichDiagnosticContext = LogHelper.EnrichFromRequest);
 
             app.UseCors("Open");
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

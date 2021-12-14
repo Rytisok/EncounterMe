@@ -9,6 +9,7 @@ public class ProgressStats
     public double DistanceWalked;
     public string TrailProgress;
     public double TrailTime;
+    public double overallDistance;
 
     public ProgressStats()
     {
@@ -16,5 +17,6 @@ public class ProgressStats
         DistanceWalked = 0;
         TrailProgress = "0%";
         TrailTime = 0;
+        overallDistance = 0;
     }
 }

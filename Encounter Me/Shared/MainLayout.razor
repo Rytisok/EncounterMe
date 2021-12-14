@@ -1,38 +1,11 @@
 ﻿@inherits LayoutComponentBase
-
+@using Encounter_Me.Components;
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
     <div class="main">
-        <!-- <div class="top-row px-4">
-
-         <AuthorizeView>
-             <Authorized>
-                 Hi, @context.User.FindFirst(ClaimTypes.Name).Value!
-                 <a class="btn btn-primary" href="@("/logout")" role="button"> Log out</a>
-             </Authorized>
-             <NotAuthorized>
-                 <a class="btn btn-primary" href="@("/login")" role="button"> Log In</a>
-                 <a class="btn btn-secondary" href="@("/sign up")" role="button"> Sign Up</a>
-             </NotAuthorized>
-         </AuthorizeView>
-        @*<a>  </a>
-        <a href="@($"profile/0")" class="ml-md-auto">
-        <img src="https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png" width="30" height="30"/>
-        </a>*@
-
-    </div>-->
-        <div class="content px-4">
+        <Navbar></Navbar>
+        <div class="content p-0 m-0">
             @Body
         </div>
     </div>
 </div>
-
-@code{
-
-    
-
-}

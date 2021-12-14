@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Encounter_Me;
+using System;
 
 public static class LevelAndXp
 {
@@ -12,8 +13,8 @@ public static class LevelAndXp
 		int percentage = (int)((double)xp / (double)XpToLevelUp(level) * 100);
 		return percentage;
     }
-	public static int XpFromTrail(TrailContainer trail)
+	public static int XpFromTrail(int difficulty)
     {
-		return (int)(trail.Length * 40 + (20 * trail.Diff));
+		return difficulty * 20 + 30;
     }
 }

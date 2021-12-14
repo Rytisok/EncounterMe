@@ -1,5 +1,6 @@
 ﻿using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,23 +30,33 @@ namespace Encounter_Me.Api.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUserById(Guid id)
         {
-            return Ok(_userRepository.GetUserById(id));
+            var user = _userRepository.GetUserById(id);
+            if (user is not null)
+                return Ok(_userRepository.GetUserById(id));
+            else
+                return NotFound("User with given Id doesn't exist.");
         }
 
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserData user)
         {
             if (user == null)
-                return BadRequest();
+                return BadRequest(); 
 
-            /// FIXME: errors 
-            if (user.FirstName == string.Empty || user.LastName == string.Empty)
+            if (_userRepository.IsUsernameTaken(user.UserName))
             {
-                ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
+                return BadRequest($"Username {user.UserName} is already taken.");
             }
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (_userRepository.IsEmailTaken(user.Email))
+            {
+                return BadRequest($"Email adress {user.Email} is already taken.");
+            }
+
+            if (user.FirstName == string.Empty || user.LastName == string.Empty || user.Faction is null || user.Email is null || user.Id.Equals(Guid.Empty))
+            {
+                return BadRequest("Wrong data provided.");
+            }
 
             var hashSalt = PasswordManager.EncryptPassword(user.Password, null);
             user.Password = hashSalt.Hash;
@@ -53,46 +64,50 @@ namespace Encounter_Me.Api.Controllers
 
             var createdUser = _userRepository.AddUser(user);
 
+            Log.Information("Created new user: {@model}", createdUser);
             return Created("user", createdUser);
         }
 
-            [HttpPut]
-            public IActionResult UpdateUser([FromBody] UserData user)
-            {
-                if (user == null)
-                    return BadRequest();
+        [HttpPut]
+        public IActionResult UpdateUser([FromBody] UserData user)
+        {
+            if (user == null)
+                return BadRequest();
 
-                if (user.FirstName == string.Empty || user.LastName == string.Empty)
-                {
-                    ModelState.AddModelError("Name/FirstName", "The name or first name shouldn't be empty");
-                }
-
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
-
-                var userToUpdate = _userRepository.GetUserById(user.Id);
+            var userToUpdate = _userRepository.GetUserById(user.Id);
 
                 if (userToUpdate == null)
                     return NotFound();
 
-                _userRepository.UpdateUser(user);
+            var IsUsernameNew = !_userRepository.GetUserById(user.Id).UserName.Equals(user.UserName);
+            if (IsUsernameNew is true && _userRepository.IsUsernameTaken(user.UserName))
+            {
+                return BadRequest($"Username {user.UserName} is already taken.");
+            }
+
+            var IsEmailNew = !_userRepository.GetUserById(user.Id).Email.Equals(user.Email);
+            if (IsEmailNew is true && _userRepository.IsEmailTaken(user.Email))
+            {
+                return BadRequest($"Email adress {user.Email} is already taken.");
+            }
+
+            _userRepository.UpdateUser(user);
 
                 return NoContent(); //success
             }
 
-            [HttpDelete("{id}")]
-            public IActionResult DeleteUser(Guid id)
-            {
-                if (id == null)
-                    return BadRequest();
+        [HttpDelete("{id}")]
+        public IActionResult DeleteUser(Guid id)
+        {
+            if (id.Equals(Guid.Empty))
+                return BadRequest("Error - got empty Guid.");
 
-                   var userToDelete = _userRepository.GetUserById(id);
-                if (userToDelete == null)
-                    return NotFound();
+            if (_userRepository.GetUserById(id) is null)
+                return NotFound();
 
-                _userRepository.DeleteUser(id);
+            _userRepository.DeleteUser(id);
 
-                return NoContent();//success
-            }
+            return NoContent();//success
+        }
     }
 }

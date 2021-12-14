@@ -6,17 +6,18 @@
 @using BrowserInterop.Extensions
 @using BrowserInterop.Geolocation
 @using System.Security.Claims
+@using System.Linq
 @implements IAsyncDisposable
 
-<div id="map"></div>
-
+<div class="d-flex justify-content-center">
+    <div id="map"></div>
+</div>
 <Encounter_Me.Components.AlertModal modal=@_alertModal modalText="It is recommended to turn on location services for the best experience"></Encounter_Me.Components.AlertModal>
-
 <Encounter_Me.Components.ErrorModal modal=@_errorModal modalText="Trail walking is supported on mobile devices only!" devButtonAction=@TestTrailLoad></Encounter_Me.Components.ErrorModal>
 
 @code{
 
-    private List<TrailContainer> _trails = new List<TrailContainer>();
+    private List<CapturePoint> _capturePoints = new List<CapturePoint>();
 
     private WindowNavigatorGeolocation _geolocationWrapper;
     private GeolocationPosition _geolocationPosition;
@@ -28,8 +29,27 @@
     private Modal _alertModal = new Modal();
     private Modal _errorModal = new Modal();
 
+    private UserData currentUser;
+
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
+    private AuthenticationState authState;
+
+    [Inject]
+    public ICapturePointService capturePointService { get; set; }
+
+    [Inject]
+    public IUserDataService userDataService { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await AuthState;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            currentUser = await userDataService.GetUserDetails(userId);
+        }
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -48,7 +68,6 @@
                 TimeoutTimeSpan = TimeSpan.FromMinutes(1)
             })).Location;
 
-            //delegate here?
             if (_geolocationPosition == null)
             {
                 await JSRuntime.InvokeAsync<string>(
@@ -67,47 +86,53 @@
     }
 
     [JSInvokable]
-    public async void StartTrail(int trailID)
+    public async void StartTrail(string trailID)
     {
         try
         {
             DeviceValidator validator = new DeviceValidator();
             await validator.ValidateDevice();
-            NavManager.NavigateTo("/TrailProgress/" + trailID.ToString());
+            NavManager.NavigateTo("/TrailProgress/" + trailID);
         }
         catch
         {
             ModalControl.OpenModal(_errorModal);
+            testTrailID = trailID;
             StateHasChanged();
         }
     }
 
+    public string testTrailID = "";
+
     [JSInvokable]
-    public async void FindTrails()
+    public async void FindTrails(double Lat1, double Lon1, double Lat2, double Lon2)
     {
-        _trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
+
+        IEnumerable<CapturePoint> receivedCapturePoints = (await capturePointService.GetCapturePointsInView(Lat1, Lon1, Lat2, Lon2));
+        _capturePoints = receivedCapturePoints.ToList();
 
         UpdateMarkers();
     }
 
     public async void UpdateMarkers()
     {
-        foreach (TrailContainer trail in _trails)
+        foreach (CapturePoint capturePoint in _capturePoints)
         {
-            await AddMarker(trail);
+            await AddMarker(capturePoint);
         }
     }
 
+    /*
     [JSInvokable]
     public async void FilterMarkers(int difficulty, int length)
     {
-        _trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
+        _capturePoints = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
 
         await JSRuntime.InvokeAsync<string>(
         "clearMarkers");
 
         var filterQuery = from trail
-                          in _trails
+                          in _capturePoints
                           where trail.Diff <= difficulty && trail.Length <= length
                           select trail;
 
@@ -121,36 +146,57 @@
         _trails = filteredTrails;
 
         UpdateMarkers();
-    }
+    }*/
 
-    private async Task AddMarker(TrailContainer trail)
+    private async Task AddMarker(CapturePoint capturePoint)
     {
 
         var authState = await AuthState;
 
-        string difficulty = trail.Diff.ToTrailStars();
-
         string infoWindowContent;
+
 
         if (authState.User.Identity.IsAuthenticated)
         {
+            Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            currentUser = await userDataService.GetUserDetails(userId);
+
+            string possibleAction;
+
+
+            //could be done cleaner
+            if (capturePoint.faction == 0)
+            {
+                possibleAction = "Capture";
+            }
+            else if (capturePoint.faction == (int)currentUser.Faction.Value)
+            {
+                possibleAction = "Reinforce";
+            }
+            else
+            {
+                possibleAction = "Attack";
+            }
+
             infoWindowContent = "<div id=content>" +
-            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
-            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
-            "<button title=\"See trail only\" onclick = \"showTrailOnly()\" ><img src = \"Images/route.png\" ></button>" +
-            "<button title=\"Walk the trail\" onclick = \"startTrail(" + trail.Id.ToString() + ")\" ><img src = \"Images/walk.png\" ></button>" +
+            "<h1 style=\"font-size:25px\"> "+ (Factions)capturePoint.faction +" capture point</h1>" +
+            "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
+            "<div class=\"text-center\">" +
+            "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() + "')\" > " + possibleAction + "</button>" +
+            "</div>" +
             "</div>";
+            Console.WriteLine(infoWindowContent);
         }
         else
         {
             infoWindowContent = "<div id=content>" +
-            "<p style=\"font-size:25px\"> Length: " + trail.Length + "km </p>" +
-            "<p style=\"font-size:25px\"> Difficulty: " + difficulty + "</p>" +
+            "<h1 style=\"font-size:25px\"> " + (Factions)capturePoint.faction + " capture point</h1>" +
+            "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
             "</div>";
         }
 
         await JSRuntime.InvokeAsync<string>(
-            "addMarker", trail.Lat, trail.Lng, infoWindowContent, (int)trail.trailType, trail.GeoJsonData);
+            "addMarker", capturePoint.Lat, capturePoint.Lon, infoWindowContent, capturePoint.faction);
     }
 
     public async ValueTask DisposeAsync()
@@ -165,6 +211,6 @@
     //test function to test trail walking on pc
     private async void TestTrailLoad()
     {
-        NavManager.NavigateTo("/TrailProgress/3");
+        NavManager.NavigateTo("/TrailProgress/" + testTrailID);
     }
 }

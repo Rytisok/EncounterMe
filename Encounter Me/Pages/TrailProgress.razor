@@ -1,4 +1,4 @@
-﻿@page "/TrailProgress/{ID:int}"
+﻿@page "/TrailProgress/{guidString}"
 @inject IJSRuntime JSRuntime
 @inject HttpClient Http
 @inject NavigationManager NavManager
@@ -8,29 +8,28 @@
 @using System.Security.Claims
 @using System.Collections.Generic
 @using System.Linq;
+@using System.Text.Json;
 @implements IAsyncDisposable
 @attribute [Authorize]
 
 <div id="map"></div>
 
-<button @onclick="TrailFinished">
-    TestFinish
-</button>
-
-<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail></Encounter_Me.Components.InfoModal>
-<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@currentUser trail=@_trailInProgress progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
+<Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail finishTrailAction=TrailFinished></Encounter_Me.Components.InfoModal>
+<Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@_userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>
 
 @code{
 
     [Parameter]
-    public int ID { get; set; }
+    public string guidString { get; set; }
+
+    public Guid ID { get; set; }
 
     private WindowNavigatorGeolocation _geolocationWrapper;
     private GeolocationPosition _geolocationPosition;
 
     private List<GeolocationPosition> _positionHistory = new List<GeolocationPosition>();
     private IAsyncDisposable _geopositionWatcher;
-    private TrailContainer _trailInProgress;
+    private CapturePoint _capturePointInProgress;
     private List<GeolocationCoordinates> _trailCoordinateList;
     private int _currentPos = 0;
 
@@ -39,7 +38,9 @@
     private Modal _successModal = new Modal();
     private Modal _infoModal = new Modal();
 
-    private UserData currentUser;
+    private UserData _currentUser;
+    private UserData _userDataSnapshot;
+    private CapturePoint _capturePointInProgressSnapshot;
 
     [CascadingParameter]
     public Task<AuthenticationState> AuthState { get; set; }
@@ -52,6 +53,12 @@
 
     [Inject]
     public IUserDataService userDataService { get; set; }
+
+    [Inject]
+    public ITrailService trailService { get; set; }
+
+    [Inject]
+    public ICapturePointService capturePointService { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,18 +83,26 @@
                 TimeoutTimeSpan = TimeSpan.FromMinutes(1)
             })).Location;
 
+            ID = Guid.Parse(guidString);
+
             await GetTrailInProgress(ID);
 
             await JSRuntime.InvokeAsync<string>(
-            "initializeWalkMap", _trailInProgress.Lat, _trailInProgress.Lng, dotNetObjRef);
+            "initializeWalkMap", _capturePointInProgress.Lat, _capturePointInProgress.Lon, dotNetObjRef);
 
-            string geojsonData = await Http.GetStringAsync(_trailInProgress.GeoJsonData);
+            var geoJsonTrailData = await trailService.GenerateTrail(_capturePointInProgress.Lat, _capturePointInProgress.Lon, 
+                _capturePointInProgress.DefenseLevel, 
+                _geolocationPosition.Coords.Latitude, _geolocationPosition.Coords.Longitude);
 
-            var geoJsonTrailData = await Http.GetFromJsonAsync<RooTobject>(_trailInProgress.GeoJsonData);
             _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
+
+            progressStats.overallDistance = Math.Round(CoordinateMath.CalculateOverallDistance(_trailCoordinateList.ToArray()), 2);
 
             await JSRuntime.InvokeAsync<object>(
                 "drawLines", (object)CoordinateConverter.GeolocationCoordinateListToCoordinateArray(_trailCoordinateList));
+
+            Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            _currentUser = await userDataService.GetUserDetails(userId);
 
             await WatchPosition();
         }
@@ -95,21 +110,9 @@
         base.OnAfterRender(firstRender);
     }
 
-    private async Task GetTrailInProgress(int trailID)
+    private async Task GetTrailInProgress(Guid capturePointID)
     {
-        List<TrailContainer> trails = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
-        var searchQuery = from trail
-                          in trails
-                          where trail.Id == trailID
-                          select trail;
-
-        List<TrailContainer> foundTrails = new List<TrailContainer>();
-
-        foreach (var trail in searchQuery)
-        {
-            _trailInProgress = trail;
-        }
-
+        _capturePointInProgress = await capturePointService.GetCapturePoint(capturePointID);
     }
 
     public async Task WatchPosition()
@@ -169,7 +172,7 @@
     [JSInvokable]
     public void OpenDetails()
     {
-        progressStats.TrailProgress = ((progressStats.DistanceWalked / _trailInProgress.Length * 100) + 1).ToString() + "%";
+        progressStats.TrailProgress = ((progressStats.DistanceWalked / progressStats.overallDistance * 100) + 1).ToString() + "%";
 
         progressStats.TrailTime = Math.Round((DateTime.UtcNow - progressStats.TrailStartTime).TotalHours, 2);
 
@@ -185,14 +188,36 @@
     [JSInvokable]
     public async void TrailFinished()
     {
-        Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
-        currentUser = await userDataService.GetUserDetails(userId);
-
+        ModalControl.CloseModal(_infoModal);
+        //create a clone of previous user data
+        _userDataSnapshot = (UserData)_currentUser.Clone();
+        _capturePointInProgressSnapshot = (CapturePoint)_capturePointInProgress.Clone();
         //enables success modal
         ModalControl.OpenModal(_successModal);
         //used to update UI elements
         StateHasChanged();
-        int xpGain = LevelAndXp.XpFromTrail(_trailInProgress);
-        userDataService.UpdateUserXp(currentUser, xpGain);
+
+        int xpGain = LevelAndXp.XpFromTrail(_capturePointInProgress.DefenseLevel);
+        userDataService.UpdateUserXp(_currentUser, xpGain);
+
+        if (_capturePointInProgress.faction == 0)
+        {
+            _capturePointInProgress.faction = (int)(_currentUser.Faction);
+            _capturePointInProgress.DefenseLevel = 1;
+        }
+        else if (_capturePointInProgress.faction == (int)(_currentUser.Faction))
+        {
+            if (_capturePointInProgress.DefenseLevel < 5)
+                _capturePointInProgress.DefenseLevel++;
+        }
+        else
+        {
+            _capturePointInProgress.DefenseLevel--;
+            if (_capturePointInProgress.DefenseLevel == 0)
+            {
+                _capturePointInProgress.faction = 0;
+            }
+        }
+        await capturePointService.UpdateCapturePoint(_capturePointInProgress);
     }
 }
