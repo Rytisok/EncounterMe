@@ -11,6 +11,7 @@ a, .btn-link {
 
 mapText {
     font-size: 20px;
+    letter-spacing: 0.001rem;
 }
 
 
