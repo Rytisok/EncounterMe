@@ -1,8 +1,8 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Roboto&family=Source+Sans+3:wght@400;500&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
 html, body #container {
-    font-family: 'Source Sans 3', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto Mono', monospace;
 }
 
 a, .btn-link {
@@ -256,6 +256,12 @@ mapText {
     box-shadow: none;
     -webkit-animation: 2s linear 0s normal none infinite running progress-bar-stripes,animate-positive 3s;
     animation: 2s linear 0s normal none infinite running progress-bar-stripes,animate-positive 3s;
+}
+.progress .faction-bar {
+    border: none;
+    box-shadow: none;
+    -webkit-animation: 3s linear 0s normal none infinite running progress-bar-stripes,animate-positive 3s;
+    animation: 3s linear 0s normal none infinite running progress-bar-stripes,animate-positive 3s;
 }
 
 
