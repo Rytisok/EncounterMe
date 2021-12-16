@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
 using BrowserInterop.Geolocation;
+using Encounter_Me.Shared;
 
 namespace Encounter_Me.Services
 {
@@ -36,6 +37,11 @@ namespace Encounter_Me.Services
             return await JsonSerializer.DeserializeAsync<IEnumerable<CapturePoint>>
                      (await _httpClient.GetStreamAsync($"api/capturepoint/{Lat1.ToString().Replace(',', '.')}/{Lon1.ToString().Replace(',', '.')}/{Lat2.ToString().Replace(',', '.')}/{Lon2.ToString().Replace(',', '.')}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
-       
+
+        public async Task<double> GetCapturePointPercentage(Factions faction)
+        {
+            return await JsonSerializer.DeserializeAsync<double>
+                  (await _httpClient.GetStreamAsync($"api/capturepoint/CapturePointPercentage/{faction.ToString()}"), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+        }
     }
 }

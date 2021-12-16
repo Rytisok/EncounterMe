@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Encounter_Me.Api.Models;
+using Encounter_Me.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Encounter_Me.Api.Controllers
@@ -29,6 +30,29 @@ namespace Encounter_Me.Api.Controllers
         public IActionResult GetCapturePointById(Guid id)
         {
             return Ok(_capturePointRepository.GetCapturePointById(id));
+        }
+
+        [HttpGet("CapturePointPercentage/{factionName}")]
+        public IActionResult GetCapturePointPercentage(string factionName)
+        {
+            try
+            {
+                Factions faction; 
+                Enum.TryParse(factionName, out faction);
+                int pointCount = _capturePointRepository.GetCapturePointCount();
+                int capturedFactionPointCount = pointCount - _capturePointRepository.GetCapturePointCountByFaction(Factions.Neutral);
+
+                int factionPointCount = _capturePointRepository.GetCapturePointCountByFaction(faction);
+
+                double percentage = ((double)factionPointCount / (double)capturedFactionPointCount) * 100;
+
+                return Ok(percentage);
+            }
+            catch
+            {
+                return BadRequest();
+            }
+            
         }
 
         [HttpPut]

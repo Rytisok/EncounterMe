@@ -11,12 +11,20 @@ namespace Encounter_Me.Pages
 
     public partial class Leaderboard
     {
+        [Inject]
+        public ICapturePointService capturePointService { get; set; }
+
         public IEnumerable<UserData> Users { get; set; }
         public IEnumerable<UserData> UsersByFive { get; set; }
         public IEnumerable<IGrouping<int, UserData>> FctionsGroup;
 
         int pageNumber = 1;
         int nr = 1;
+
+        private string redPercentage;
+        private string greenPercentage;
+        private string bluePercentage;
+        private string yeallowPercentage;
 
         [Inject]
         public IUserDataService UserDataService { get; set; }
@@ -27,6 +35,11 @@ namespace Encounter_Me.Pages
             await OrderUsersByExp();
             //await ShowFactionsMembers(Factions.Yellow);
             await doUsers5(pageNumber);
+
+            redPercentage = Math.Round(await capturePointService.GetCapturePointPercentage(Factions.Red), 1).ToString().Replace(',', '.');
+            bluePercentage = Math.Round(await capturePointService.GetCapturePointPercentage(Factions.Blue), 1).ToString().Replace(',', '.');
+            greenPercentage = Math.Round(await capturePointService.GetCapturePointPercentage(Factions.Green), 1).ToString().Replace(',', '.');
+            yeallowPercentage = Math.Round(await capturePointService.GetCapturePointPercentage(Factions.Yellow), 1).ToString().Replace(',', '.');
         }
 
         public async Task OrderUsersByExp()
