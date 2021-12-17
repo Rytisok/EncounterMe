@@ -122,41 +122,52 @@
     [Inject]
     public IUserDataService userDataService { get; set; }
 
+    [Inject]
+    public AuthenticationStateProvider AuthStateProvider { get; set; }
+
     private async Task CreateNewUser()
     {
         isRegistrationSuccess = false;
         showSignUpError = false;
-        try
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        if(authState.User.Identity.IsAuthenticated is false)
         {
-            var newUser = new UserData(
-            id: Guid.NewGuid(),
-            userName: registrationUserModel.UserName,
-            faction: (Factions)registrationUserModel.Faction,
-            firstName: registrationUserModel.FirstName,
-            lastName: registrationUserModel.LastName,
-            email: registrationUserModel.Email,
-            password: registrationUserModel.Password,
-            salt: null);
-            await userDataService.AddUser(newUser);
+            try
+            {
+                var newUser = new UserData(
+                id: Guid.NewGuid(),
+                userName: registrationUserModel.UserName,
+                faction: (Factions)registrationUserModel.Faction,
+                firstName: registrationUserModel.FirstName,
+                lastName: registrationUserModel.LastName,
+                email: registrationUserModel.Email,
+                password: registrationUserModel.Password,
+                salt: null);
+                await userDataService.AddUser(newUser);
 
-            Log.Information("Created new user {@model}", newUser);
+                Log.Information("Created new user {@model}", newUser);
+            }
+            catch (Exception e)
+            // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response.
+            // Especialy since getting the username right might take a few tries.
+            {
+                Console.WriteLine(e.Message);
+                showSignUpError = true;
+                signUpErrorText = e.Message;
+            }
+
+            if (showSignUpError is false)
+            {
+                isRegistrationSuccess = true;
+                var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
+                NavManager.NavigateTo("/");
+            }
         }
-        catch (Exception e)
-        // TODO: inline this check - a bit overkill to send entire form with all variables to get error as a response.
-        // Especialy since getting the username right might take a few tries.
+        else
         {
-            Console.WriteLine(e.Message);
-            showSignUpError = true;
-            signUpErrorText = e.Message;
+            NavManager.NavigateTo("/NiceTry");
         }
-
-
-        if (showSignUpError is false)
-        {
-            isRegistrationSuccess = true;
-            var result = await AuthService.Login(new LoginUserModel(registrationUserModel.Email, registrationUserModel.Password));
-            NavManager.NavigateTo("/");
-        }
-
     }
 }

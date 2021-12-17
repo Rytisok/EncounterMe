@@ -1,0 +1,19 @@
+﻿@page "/NiceTry"
+
+<h3>Curious to try everything, aren't you?</h3>
+
+<AuthorizeView>
+    <Authorized>
+        <br>
+        <h5>Surprise! Dear @context.User.FindFirst(System.Security.Claims.ClaimTypes.Name).Value you are already logged in! </h5>
+        <h7> Thus, you can not sign up once again...</h7>
+    </Authorized>   
+    <NotAuthorized>
+        <br>
+        <h7>Sorry, got to be logged in to know what's in here.</h7>
+    </NotAuthorized>
+</AuthorizeView> 
+
+@code {
+
+}
