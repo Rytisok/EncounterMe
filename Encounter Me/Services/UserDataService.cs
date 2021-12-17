@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
+using Serilog;
 
 namespace Encounter_Me.Services
 {
@@ -39,7 +40,12 @@ namespace Encounter_Me.Services
             var userJson =
                 new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync("api/user", userJson);
+
+            var response = await _httpClient.PutAsync("api/user", userJson);
+            if (response.IsSuccessStatusCode is false)
+            { 
+                throw new Exception(await response.Content.ReadAsStringAsync());
+            }
         }
 
         public async Task DeleteUser(Guid userId)
