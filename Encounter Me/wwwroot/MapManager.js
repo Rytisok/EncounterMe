@@ -49,7 +49,7 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     }
 
     //creates search for trails button and assigns UpdateMarkers method to its onClick event
-    let trailSearchEasyButton = L.easyButton('<mapText>Search for trails</mapText>', function (btn, map) {
+    let trailSearchEasyButton = L.easyButton('<mapText>Find capture points</mapText>', function (btn, map) {
         var bounds = map.getBounds();
         removeMarkers();
         dotNetObjRef.invokeMethodAsync("FindTrails", bounds.getSouthWest().lat, bounds.getSouthWest().lng, bounds.getNorthEast().lat, bounds.getNorthEast().lng);
@@ -58,8 +58,8 @@ function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
     }).addTo(map);
     trailSearchEasyButton.button.style.border = 'none';
     trailSearchEasyButton.button.style.borderRadius = '4px';
-    trailSearchEasyButton.button.style.backgroundColor = '#31E2A4';
-    trailSearchEasyButton.button.style.width = '300px';
+    trailSearchEasyButton.button.style.backgroundColor = '#ADAFAE';
+    trailSearchEasyButton.button.style.width = '280px';
     trailSearchEasyButton.button.style.fontFamily = 'source_code_promedium';
 
     //find trails in view on map init

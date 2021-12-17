@@ -12,7 +12,9 @@
 @implements IAsyncDisposable
 @attribute [Authorize]
 
-<div id="map"></div>
+<div id="mapWrapper">
+    <div id="map"></div>
+</div>
 
 <Encounter_Me.Components.InfoModal modal=@_infoModal progressStats=@progressStats cancelButtonAction=AbortTrail finishTrailAction=TrailFinished></Encounter_Me.Components.InfoModal>
 <Encounter_Me.Components.TrailCompleteModal modal=@_successModal currentUser=@_userDataSnapshot capturePoint=@_capturePointInProgressSnapshot progressStats=@progressStats></Encounter_Me.Components.TrailCompleteModal>

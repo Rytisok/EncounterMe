@@ -45,5 +45,15 @@ namespace Encounter_Me.Api.Models
 
             return null;
         }
+
+        public int GetCapturePointCount()
+        {
+            return _appDbContext.CapturePoints.Count();
+        }
+
+        public int GetCapturePointCountByFaction(Factions faction)
+        {
+            return (_appDbContext.CapturePoints.Where(e => e.faction == (int)faction)).Count();
+        }
     }
 }

@@ -1,43 +1,106 @@
-﻿@page "/Leaderboard"
+﻿@inject IJSRuntime JSRuntime
+@page "/Statistics"
 
+@if (Users == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+<div class="container" style="margin-top:1%">
+    <div class="d-flex justify-content-center">
+        <div class="row" style="width:100%;">
+            <h2>Statistics</h2>
+            <h3 style="margin-top:3%">Capture point control percentage:</h3>
+            <div class="progress" style="height: 7rem; margin-top:1.8%; background: #242424">
+                <div class="faction-bar linear active" style="width: @redPercentage%; background-color: #BC0D2D;"></div>
+                <h4 style="margin-left: 5px">Red: @redPercentage%</h4>
+            </div>
+            <div class="progress" style="height: 7rem; background: #242424 ">
+                <div class="faction-bar linear active" style="width: @bluePercentage%; background-color: #0972BC;"></div>
+                <h4 style="margin-left: 5px">Blue: @bluePercentage%</h4>
+            </div>
+            <div class="progress" style="height: 7rem; background: #242424">
+                <div class="faction-bar linear active" style="width: @greenPercentage%; background-color: #18E039;"></div>
+                <h4 style="margin-left: 5px">Green: @greenPercentage%</h4>
+            </div>
+            <div class="progress" style="height: 7rem; background: #242424">
+                <div class="faction-bar linear active" style="width: @yeallowPercentage%; background-color: #EEF200;"></div>
+                <h4 style="margin-left: 5px">Yellow: @yeallowPercentage%</h4>
+            </div>
+            <div class="main-box clearfix">
+                <h2 style="margin-top:3%">Leaderboard</h2>
+                <div class="table-responsive">
+                    <table class="table user-list">
+                        <thead>
+                            <tr>
+                                <th><h5>User</h5></th>
+                                <th class="text-center" style="color:black"><h5>Faction</h5></th>
+                                <th class="text-center" style="color:black"><h5>Level</h5></th>
+                                <th class="text-center" style="color:black"><h5>Xp</h5></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in UsersByFive)
+                            {
+                                <tr>
 
-<h1 class="page title">Leaderboard</h1>
+                                    <td>
+                                        <img src=@user.UserPhotoUrl alt="">
+                                        <a href="@($"profile/{user.Id}")">
+                                            <h6 style="color:black">@user.UserName</h6>
+                                        </a>
+                                    </td>
+                                    @if (user.Faction == Factions.Red)
+                                    {
+                                        <td class="text-center">
+                                            <h6 class="label label-default" style="color:#e00e0e">Red</h6>
+                                        </td>
 
-    @if (Users == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Level</th>
-                    <th>Xp</th>
-                    <th>Profile</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var user in Users)
-                {
-                    <tr>
-                        <td><img src=@user.UserPhotoUrl width="100" height="100"/></td>                 
-                        <td>@user.FirstName</td>
-                        <td>@user.LastName</td>
-                        <td>@user.Level</td>
-                        <td>@user.ExperiencePoints</td>
-                        <td>
-                            <a href="@($"profile/{user.Id}")" class="btn btn-primary table-btn">
-                                
-                            </a>
-                        </td>
+                                    }
+                                    else if (user.Faction == Factions.Blue)
+                                    {
+                                        <td class="text-center">
+                                            <h6 class="label label-default" style="color:#06039d">Blue</h6>
+                                        </td>
+                                    }
+                                    else if (user.Faction == Factions.Green)
+                                    {
+                                        <td class="text-center">
+                                            <h6 class="label label-default" style="color:#05a40e">Green</h6>
+                                        </td>
+                                    }
+                                    else if (user.Faction == Factions.Yellow)
+                                    {
+                                        <td class="text-center">
+                                            <h6 class="label label-default" style="color:#dfbd04">Yellow</h6>
+                                        </td>
+                                    }
 
-                    </tr>
-                }
+                                    <td class="text-center">
+                                        <h6 class="label label-default" style="color:black">@user.Level</h6>
+                                    </td>
+                                    <td class="text-center">
+                                        <h6 class="label label-default" style="color:black">@user.ExperiencePoints</h6>
+                                    </td>
 
-            </tbody>
-        </table>
-    }
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-right:5%">
+                    <select style="width:50px;float:right" @onclick="@(() => doUsers5(pageNumber))" @bind=@pageNumber>
+                        @for (int p = 1; p <= (int)Math.Ceiling((double)Users.Count() / 5); p++)
+                        {
+                            <option value="@p">@p</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+                    
+        }
