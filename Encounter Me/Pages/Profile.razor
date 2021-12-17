@@ -31,15 +31,14 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-2">
-                @if (canEdit)
-                {
+            @if (isAuthenticated && User.Id.Equals(userId))
+            {
+                <div class="col-md-2">
                     <a href=@($"editprofile/{User.Id}")>
                         <input type="submit" class="btn btn-dark" name="btnAddMore" value="Edit Profile" />
                     </a>
-                }
-
-            </div>
+                </div>
+            }
         </div>
         <div class="row">
             <div class="col-md-4">

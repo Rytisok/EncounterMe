@@ -1,13 +1,11 @@
 ﻿using Encounter_Me.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Encounter_Me.Shared;
-using Microsoft.AspNetCore.Components.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace Encounter_Me.Pages
 {
@@ -18,36 +16,28 @@ namespace Encounter_Me.Pages
         public UserData User { get; set; } = new UserData();
 
         [Inject]
-
         public IUserDataService UserDataService { get; set; }
+
+        [Inject]
+        public AuthenticationStateProvider AuthStateProvider { get; set; }
+        private bool isAuthenticated = false;
+        private Guid userId;
+
 
         private string imageBorderGradient = "";
         private string primaryColor = "";
         private string secondaryColor = "";
-        private bool canEdit = false;
-
-        [CascadingParameter]
-        public Task<AuthenticationState> AuthState { get; set; }
-        private AuthenticationState authState;
-
-        [Inject]
-        public IUserDataService userDataService { get; set; }
 
         protected async override Task OnInitializedAsync()
         {
-            authState = await AuthState;
-
             User = await UserDataService.GetUserDetails(Guid.Parse(Id));
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
             if (authState.User.Identity.IsAuthenticated)
             {
-                Guid userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
-                UserData currentUser = await userDataService.GetUserDetails(userId);
-                if (currentUser.Id.Equals(User.Id))
-                {
-                    canEdit = true;
-                }
-            } 
+                isAuthenticated = true;
+                userId = Guid.Parse(authState.User.FindFirst(ClaimTypes.UserData).Value);
+            }
 
             switch (User.Faction)
             {
