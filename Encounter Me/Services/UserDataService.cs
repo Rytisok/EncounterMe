@@ -5,16 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
+using Serilog;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using Encounter_Me.Authentication;
 
 namespace Encounter_Me.Services
 {
-    public class UserDataService:IUserDataService
+    [Authorize]
+    public class UserDataService : IUserDataService
     {
         private readonly HttpClient _httpClient;
 
-        public UserDataService(HttpClient httpClient)
+        private readonly IAuthenticationService _authenticationService;
+
+        public UserDataService(HttpClient httpClient, IAuthenticationService authenticationService)
         {
             _httpClient = httpClient;
+            _authenticationService = authenticationService;
+            _httpClient.BaseAddress = new Uri("https://localhost:44340/");
         }
 
         public async Task<UserData> AddUser(UserData user)
@@ -34,12 +44,18 @@ namespace Encounter_Me.Services
             }
         }
 
+        [Authorize]
         public async Task UpdateUser(UserData user)
         {
             var userJson =
                 new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
 
-            await _httpClient.PutAsync("api/user", userJson);
+
+            var response = await _httpClient.PutAsync("api/user", userJson);
+            if (response.IsSuccessStatusCode is false)
+            { 
+                throw new Exception(await response.Content.ReadAsStringAsync());
+            }
         }
 
         public async Task DeleteUser(Guid userId)
