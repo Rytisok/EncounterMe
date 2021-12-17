@@ -1,4 +1,5 @@
 ﻿using Encounter_Me.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System;
@@ -69,6 +70,7 @@ namespace Encounter_Me.Api.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult UpdateUser([FromBody] UserData user)
         {
             if (user == null)
@@ -97,6 +99,7 @@ namespace Encounter_Me.Api.Controllers
             }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult DeleteUser(Guid id)
         {
             if (id.Equals(Guid.Empty))
