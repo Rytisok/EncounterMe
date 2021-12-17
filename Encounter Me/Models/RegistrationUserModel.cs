@@ -28,7 +28,7 @@ namespace Encounter_Me.Shared
 
         [Required]
         [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$",
-            ErrorMessage = "Password should have at least 8 characters, one uppercase letter, one lowercase letter and a number.")]
+            ErrorMessage = "Password should have at least 8 symbols, one uppercase letter, one lowercase letter and a number.")]
         public string Password { get; set; }
 
         [Required]

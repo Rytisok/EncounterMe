@@ -92,6 +92,7 @@
                         <label for="Password">Password</label>
                         <InputText id="Password" placeholder="Enter Password" type="password" @bind-Value="registrationUserModel.Password" class="form-control" />
                         <ValidationMessage For="@(() => registrationUserModel.Password)" />
+                        <label for="Password" style="color: yellow">*At least 8 symbols, 1 uppercase, 1 lowercase and 1 number.</label>
                     </div>
                     <div class="col-md-12 mb-3">
                         <label for="Confirm password">Confirm password</label>
