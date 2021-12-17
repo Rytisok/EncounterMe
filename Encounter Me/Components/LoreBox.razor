@@ -1,0 +1,12 @@
+﻿<div style="border: 5px solid; border-image: linear-gradient(to right, @FrameColorA, @FrameColorB); border-image-slice: 1; margin-top: 2%;">
+    <h4 style="color: @HeaderColor; margin-left: 4px; margin-top: 4px;">@HeaderText</h4>
+    <h5 style="margin-left: 4px;">@DescriptionText</h5>
+</div>
+
+@code {
+    [Parameter] public string FrameColorA { get; set; }
+    [Parameter] public string FrameColorB { get; set; }
+    [Parameter] public string HeaderColor { get; set; }
+    [Parameter] public string HeaderText { get; set; }
+    [Parameter] public string DescriptionText { get; set; }
+}
