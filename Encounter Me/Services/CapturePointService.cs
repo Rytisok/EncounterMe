@@ -17,7 +17,6 @@ namespace Encounter_Me.Services
         public CapturePointService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("https://localhost:44340/");
         }
 
         public async Task<CapturePoint> GetCapturePoint(Guid Id)
