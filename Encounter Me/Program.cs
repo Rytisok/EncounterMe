@@ -34,18 +34,16 @@ namespace Encounter_Me
            .WriteTo.BrowserConsole()
            .CreateLogger();
 
-
-            //builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
+            builder.Services.AddScoped<HttpClient>(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
-
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddHttpClient<IUserDataService, UserDataService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
-            builder.Services.AddHttpClient<ITrailService, TrailService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
-            builder.Services.AddHttpClient<ICapturePointService, CapturePointService>(client => client.BaseAddress = new Uri("https://localhost:44340/"));
+            builder.Services.AddScoped<IUserDataService, UserDataService>();
+            builder.Services.AddScoped<ITrailService, TrailService>();
+            builder.Services.AddScoped<ICapturePointService, CapturePointService>();
             builder.Services.AddBlazorCurrentDevice();
             await builder.Build().RunAsync();
         }

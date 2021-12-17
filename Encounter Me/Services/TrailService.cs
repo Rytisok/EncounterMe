@@ -16,6 +16,7 @@ namespace Encounter_Me.Services
         public TrailService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("https://localhost:44340/");
         }
 
         public async Task<TrailContainer> AddTrail(TrailContainer trail)
