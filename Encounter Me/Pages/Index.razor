@@ -7,6 +7,7 @@
 @using BrowserInterop.Geolocation
 @using System.Security.Claims
 @using System.Linq
+@using BlazorCurrentDevice
 @implements IAsyncDisposable
 
 <div id="mapWrapper">
@@ -85,9 +86,30 @@
         base.OnAfterRender(firstRender);
     }
 
+    [Inject] IBlazorCurrentDeviceService BlazorCurrentDeviceService { get; set; }
+
     [JSInvokable]
     public async void StartTrail(string trailID)
     {
+        //Old method stopped working for some reason
+        //stupid fix
+
+        string g = await BlazorCurrentDeviceService.Type();
+        Console.WriteLine(g);
+
+        if (g == "Mobile")
+        {
+            NavManager.NavigateTo("/TrailProgress/" + trailID);
+        }
+        else
+        {
+            ModalControl.OpenModal(_errorModal);
+            testTrailID = trailID;
+            StateHasChanged();
+        }
+
+
+        /*
         try
         {
             DeviceValidator validator = new DeviceValidator();
@@ -99,7 +121,7 @@
             ModalControl.OpenModal(_errorModal);
             testTrailID = trailID;
             StateHasChanged();
-        }
+        }*/
     }
 
     public string testTrailID = "";
@@ -179,13 +201,12 @@
             }
 
             infoWindowContent = "<div id=content>" +
-            "<h1 style=\"font-size:25px\"> "+ (Factions)capturePoint.faction +" capture point</h1>" +
+            "<h1 style=\"font-size:25px\"> " + (Factions)capturePoint.faction + " capture point</h1>" +
             "<p style=\"font-size:25px\"> Defense level: " + capturePoint.DefenseLevel.ToString() + "</p>" +
             "<div class=\"text-center\">" +
             "<button class = \"btn-popup\" title=\"Walk the trail\" onclick = \"startTrail('" + capturePoint.guid.ToString() + "')\" > " + possibleAction + "</button>" +
             "</div>" +
             "</div>";
-            Console.WriteLine(infoWindowContent);
         }
         else
         {

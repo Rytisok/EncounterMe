@@ -8,7 +8,7 @@ public class ProgressStats
     public DateTime TrailStartTime;
     public double DistanceWalked;
     public string TrailProgress;
-    public double TrailTime;
+    public string TrailTime;
     public double overallDistance;
 
     public ProgressStats()
@@ -16,7 +16,7 @@ public class ProgressStats
         TrailStartTime = DateTime.UtcNow;
         DistanceWalked = 0;
         TrailProgress = "0%";
-        TrailTime = 0;
+        TrailTime = "";
         overallDistance = 0;
     }
 }

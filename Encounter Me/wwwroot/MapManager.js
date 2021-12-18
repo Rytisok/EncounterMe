@@ -9,6 +9,7 @@ var positionMarker = null;
 var dotNetObj = null;
 var walkedTrailLine = null;
 var lineToTrail = null;
+var missionStats = null;
 
 function initializeTrailMap(Lat, Lng, dotNetObjRef, drawPosition)
 {
@@ -101,11 +102,74 @@ function initializeWalkMap(Lat, Lng, dotNetObjRef) {
     trailFilterEasyButton.button.style.width = '48px';
     trailFilterEasyButton.button.style.height = '40px';
 
+
+    AddCorners();
+
+    //mission stats
+    missionStats = L.control({ position: 'bottomleft' });
+
+    missionStats.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'missionStats');
+        this._div.style = 'margin-bottom: 48%; margin-left: 3px;';
+        return this._div;
+    };
+
+    var missionInProgressText = L.control({ position: 'topcenter' });
+
+    missionInProgressText.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'missionInProgress');
+        this._div.style = 'margin-top: 5px;';
+        this.update();
+        return this._div;
+    };
+
+    missionInProgressText.update = function (props) {
+        this._div.innerHTML = '<h5>Mission In Progress</h5>' + '<h6>Proceed on the marked route</h6>';
+    };
+
+    missionInProgressText.addTo(map);
+    missionStats.addTo(map);
+
     markers = [];
     positionMarker = null;
     UpdatePositionMarker(Lat, Lng);
 }
 
+
+function AddCorners() {
+    var corners = map._controlCorners,
+        l = 'leaflet-',
+        container = map._controlContainer;
+
+    function createCorner(vSide, hSide) {
+        var className = l + vSide + ' ' + l + hSide;
+
+        corners[vSide + hSide] = L.DomUtil.create('div', className, container);
+    }
+    createCorner('top', 'left');
+    createCorner('top', 'right');
+    createCorner('bottom', 'left');
+    createCorner('bottom', 'right');
+
+    createCorner('top', 'center');
+    createCorner('middle', 'center');
+    createCorner('middle', 'left');
+    createCorner('middle', 'right');
+    createCorner('bottom', 'center');
+}
+
+function UpdateMissionStats(time, distance) {
+
+    if (missionStats != null)
+    {
+        missionStats.update = function (props) {
+            this._div.innerHTML = '<h5>Elapsed time:' + time + '</h5>' +
+                '<h5>Mission progress:' + distance + '</h5>';
+        };
+    }
+
+    missionStats.update();
+}
 
 //places dot icon on location
 function UpdatePositionMarker(Lat, Lng)

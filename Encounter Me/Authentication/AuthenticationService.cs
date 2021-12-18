@@ -35,7 +35,7 @@ namespace Encounter_Me.Authentication
                 new KeyValuePair<string, string>("Password", userForAuthentication.Password),
             });
 
-            var authResult = await _client.PostAsync("https://localhost:44340/api/token/authenticate", data); // To be changed later! Api will be hosted somewhere, not at localhost.
+            var authResult = await _client.PostAsync("https://e29a-78-56-13-240.ngrok.io/api/token/authenticate", data); // To be changed later! Api will be hosted somewhere, not at localhost.
 
             var authContent = await authResult.Content.ReadAsStringAsync();
 

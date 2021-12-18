@@ -92,8 +92,8 @@
             await JSRuntime.InvokeAsync<string>(
             "initializeWalkMap", _capturePointInProgress.Lat, _capturePointInProgress.Lon, dotNetObjRef);
 
-            var geoJsonTrailData = await trailService.GenerateTrail(_capturePointInProgress.Lat, _capturePointInProgress.Lon, 
-                _capturePointInProgress.DefenseLevel, 
+            var geoJsonTrailData = await trailService.GenerateTrail(_capturePointInProgress.Lat, _capturePointInProgress.Lon,
+                _capturePointInProgress.DefenseLevel,
                 _geolocationPosition.Coords.Latitude, _geolocationPosition.Coords.Longitude);
 
             _trailCoordinateList = await CoordinateConverter.ConvertGeojsonToGeolocationCoordinates(geoJsonTrailData);
@@ -151,11 +151,24 @@
                 await JSRuntime.InvokeAsync<string>(
                 "removeLineToTrail");
             }
+
+            progressStats.TrailProgress = Math.Round(((progressStats.DistanceWalked / progressStats.overallDistance * 100) + 1), 2).ToString() + "%";
+
+            TimeSpan elapsed = DateTime.UtcNow - progressStats.TrailStartTime;
+            progressStats.TrailTime = elapsed.ToString(@"hh\:mm");
+            await JSRuntime.InvokeAsync<string>(
+            "UpdateMissionStats", progressStats.TrailTime, progressStats.TrailProgress.ToString());
+
             if (_trailCoordinateList.Count <= 1)
             {
                 TrailFinished();
             }
             StateHasChanged();
+        }, new PositionOptions()
+        {
+            EnableHighAccuracy = true,
+            MaximumAgeTimeSpan = TimeSpan.FromHours(1),
+            TimeoutTimeSpan = TimeSpan.FromMinutes(1)
         }
         );
     }
@@ -176,7 +189,8 @@
     {
         progressStats.TrailProgress = ((progressStats.DistanceWalked / progressStats.overallDistance * 100) + 1).ToString() + "%";
 
-        progressStats.TrailTime = Math.Round((DateTime.UtcNow - progressStats.TrailStartTime).TotalHours, 2);
+        TimeSpan elapsed = DateTime.UtcNow - progressStats.TrailStartTime;
+        progressStats.TrailTime = elapsed.ToString(@"hh\:mm");
 
         ModalControl.OpenModal(_infoModal);
         StateHasChanged();
