@@ -748,7 +748,7 @@ skew to change the 'thickness' of the glitch.*/
 .table tbody > tr > td {
     font-size: 0.875em;
     background: #f5f5f5;
-    border-top: 10px solid #fff;
+    border-top: 10px solid #242424;
     vertical-align: middle;
     padding: 12px 8px;
 }
