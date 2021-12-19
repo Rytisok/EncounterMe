@@ -67,8 +67,9 @@
                         <div class="form-group">
                             <label class="col-lg-3 control-label">Photo Url:</label>
                             <div class="col-lg-8 mb-2">
-                                <InputText id="Email" placeholder="Enter Photo Url" @bind-Value="editUserModel.PhotoUrl" class="form-control" />
+                                <InputText id="Photo" placeholder="Enter Photo Url" @bind-Value="editUserModel.PhotoUrl" class="form-control" />
                                 <ValidationMessage For="@(() => editUserModel.PhotoUrl)" />
+                                <label for="Photo" style="color: yellow">*We suggest using square images.</label>
                             </div>
                         </div>
 
