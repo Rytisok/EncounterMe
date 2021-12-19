@@ -34,7 +34,7 @@ namespace Encounter_Me
            .WriteTo.BrowserConsole()
            .CreateLogger();
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44340") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
             builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
