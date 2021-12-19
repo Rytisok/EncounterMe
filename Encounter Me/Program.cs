@@ -34,7 +34,7 @@ namespace Encounter_Me
            .WriteTo.BrowserConsole()
            .CreateLogger();
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://e29a-78-56-13-240.ngrok.io") });
+            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:44340") });
             builder.Logging.SetMinimumLevel(LogLevel.Warning);///Can set minimal logging level
 
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

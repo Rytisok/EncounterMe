@@ -110,7 +110,7 @@ function initializeWalkMap(Lat, Lng, dotNetObjRef) {
 
     missionStats.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'missionStats');
-        this._div.style = 'margin-bottom: 48%; margin-left: 3px;';
+        this._div.style = 'margin-bottom: 35%; margin-left: 3px;';
         return this._div;
     };
 
@@ -409,6 +409,7 @@ function drawLineToTrail(userPoint, trailPoint)
         opacity: 0.85,
         smoothFactor: 1,
         dashArray: '20, 20',
+        lineCap: 'square',
         dashOffset: '20'
     }).addTo(map);
 }

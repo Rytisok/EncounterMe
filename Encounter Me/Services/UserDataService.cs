@@ -24,7 +24,7 @@ namespace Encounter_Me.Services
         {
             _httpClient = httpClient;
             _authenticationService = authenticationService;
-            _httpClient.BaseAddress = new Uri("https://e29a-78-56-13-240.ngrok.io ");
+            _httpClient.BaseAddress = new Uri("https://localhost:44340/");
         }
 
         public async Task<UserData> AddUser(UserData user)

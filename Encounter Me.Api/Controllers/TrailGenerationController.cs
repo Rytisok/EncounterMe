@@ -45,8 +45,10 @@ namespace Encounter_Me.Api.Controllers
             List<Coordinate> randomPoints = new List<Coordinate>();
             string polyline = "";
 
-            //double maxDist = 450 + 300 * difficulty;
-            double maxDist = 20 + 20 * difficulty;
+            double maxDist = 450 + 300 * difficulty;
+
+            //for demo short paths:
+            //double maxDist = 20 + 20 * difficulty;
             randomPoints = RandomCoordinates.RandomPoints(maxDist, center, 2);
 
             if (userCoords != null)

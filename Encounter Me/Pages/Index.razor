@@ -92,22 +92,8 @@
     public async void StartTrail(string trailID)
     {
         //Old method stopped working for some reason
-        //stupid fix
 
-        string g = await BlazorCurrentDeviceService.Type();
-        Console.WriteLine(g);
-
-        if (g == "Mobile")
-        {
-            NavManager.NavigateTo("/TrailProgress/" + trailID);
-        }
-        else
-        {
-            ModalControl.OpenModal(_errorModal);
-            testTrailID = trailID;
-            StateHasChanged();
-        }
-
+        NavManager.NavigateTo("/TrailProgress/" + trailID);
 
         /*
         try
