@@ -46,6 +46,9 @@ namespace Encounter_Me.Api.Controllers
             string polyline = "";
 
             double maxDist = 450 + 300 * difficulty;
+
+            //for demo short paths:
+            //double maxDist = 20 + 20 * difficulty;
             randomPoints = RandomCoordinates.RandomPoints(maxDist, center, 2);
 
             if (userCoords != null)
@@ -79,11 +82,13 @@ namespace Encounter_Me.Api.Controllers
 
                 trailResultGeojson += ("[" + coord.Lon.ToString().Replace(',', '.') + ", " + coord.Lat.ToString().Replace(',', '.') + "]");
 
-                if (i != coordinates.Count()-1)
-                {
-                    trailResultGeojson += ",";
-                }
+                trailResultGeojson += ",";
             }
+
+            Coordinate randomCoord = coordinates.ToArray()[coordinates.Count() - 1];
+            randomCoord = randomCoord.CalculateDerivedPosition(3, 90);
+
+            trailResultGeojson += ("[" + randomCoord.Lon.ToString().Replace(',', '.') + ", " + randomCoord.Lat.ToString().Replace(',', '.') + "]");
 
             trailResultGeojson += "]}}]}";
 
