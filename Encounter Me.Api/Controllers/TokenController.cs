@@ -3,12 +3,9 @@ using Encounter_Me.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,7 +15,7 @@ namespace Encounter_Me.Api.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class TokenController : Microsoft.AspNetCore.Mvc.Controller
+    public class TokenController : Controller
     {
         private readonly AppDbContext _context;
         private readonly IUserRepository _userRepository;
@@ -41,7 +38,6 @@ namespace Encounter_Me.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Create([FromForm]UserCreds loginUser)
         {
-            /// Check if user exists in DB here! 
             UserData user = _userRepository.GetUserByEmail(loginUser.Email);
 
             if(user is not null)
@@ -75,7 +71,7 @@ namespace Encounter_Me.Api.Controllers
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.UserData, user.Id.ToString()), //should be user id. 
+                new Claim(ClaimTypes.UserData, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString()),
             };

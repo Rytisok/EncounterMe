@@ -17,7 +17,7 @@ namespace Encounter_Me.Api.Logging
 
         public async Task Invoke(HttpContext httpContext)
         {
-            // Read and log request body data - contains sensitive information
+            // Read and log request body data - contains sensitive information (like password)
             // string requestBodyPayload = await ReadRequestBody(httpContext.Request);
             // LogHelper.RequestPayload = requestBodyPayload;
 
