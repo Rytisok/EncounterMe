@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace Encounter_Me.Authentication
 {
-    public class JwtParser // TODO: testout
+    public class JwtParser 
     {
         //jwt token - a standart format. Gives information about user. This info is needed for authentication.
 
@@ -19,11 +19,11 @@ namespace Encounter_Me.Authentication
 
             var keyValuePairs = JsonSerializer.Deserialize<Dictionary<string, object>>(jsonBytes);
 
-            ExtractRolesFromJWT(claims, keyValuePairs); // Rolesalready in claims. 
+            ExtractRolesFromJWT(claims, keyValuePairs); // Roles already in claims. 
 
             claims.AddRange(keyValuePairs.Select(kvp => new Claim(kvp.Key, kvp.Value.ToString()))); // This ir for everything else. 
 
-            return claims; // Claims - info about the logged in user. (To know roles, and other info - no need to add lots, we can do a separate call for that)
+            return claims; // Claims - info about the logged in user.
         }
 
 
@@ -35,11 +35,11 @@ namespace Encounter_Me.Authentication
             {
                 var parsedRoles = roles.ToString().Trim().TrimStart('[').TrimEnd(']').Split(',');
 
-                if (parsedRoles.Length > 1) // if we find more than one role
+                if (parsedRoles.Length > 1)
                 {
                     foreach (var parsedRole in parsedRoles)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, parsedRole.Trim('"')));  // add roleroletype to our claims, take parsed role without '"'.
+                        claims.Add(new Claim(ClaimTypes.Role, parsedRole.Trim('"')));
                     }
                 }
                 else
@@ -55,7 +55,7 @@ namespace Encounter_Me.Authentication
 
         private static byte[] ParseBase64WithoutPadding(string base64)
         {
-            switch (base64.Length % 4) // what the eftover is.
+            switch (base64.Length % 4)
             {
                 case 2:
                     base64 += "==";
@@ -65,7 +65,7 @@ namespace Encounter_Me.Authentication
                     break;
 
             }
-            return Convert.FromBase64String(base64); //convert to byte array.
+            return Convert.FromBase64String(base64);
 
         }
     }

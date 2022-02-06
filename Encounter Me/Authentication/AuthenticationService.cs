@@ -3,10 +3,8 @@ using Encounter_Me.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -42,7 +40,6 @@ namespace Encounter_Me.Authentication
             if (authResult.IsSuccessStatusCode == false)
             {
                 throw new Exception(authContent);
-                //return null; // Return null if not login = AuthStateProvider will return anonymous.
             }
 
             var result = JsonSerializer.Deserialize<AuthenticatedUserModel>(

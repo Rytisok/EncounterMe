@@ -1,7 +1,5 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Encounter_Me.Authentication
 {
-    public class AuthStateProvider : AuthenticationStateProvider // inherit from original AuthenticationStateProvider - overvriting some methods
+    public class AuthStateProvider : AuthenticationStateProvider // inherits from original AuthenticationStateProvider - overwites some methods
     {
         private readonly HttpClient _httpClient;
         private readonly ILocalStorageService _localStorage;
@@ -40,7 +38,7 @@ namespace Encounter_Me.Authentication
                      authenticationType: "jwtAuthType")));
         }
 
-        public void NotifyUserAuthentication(string token) // this is an event - we changed the login status of the user
+        public void NotifyUserAuthentication(string token)
         {
             var authenticatedUser = new ClaimsPrincipal(
                     identity: new ClaimsIdentity(JwtParser.ParseClaimsFromJWT(token),
