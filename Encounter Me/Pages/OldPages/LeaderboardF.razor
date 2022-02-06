@@ -1,6 +1,6 @@
 ﻿@page "/Leaderboard/ByFactions"
 
-
+@*
 @if (Users == null)
 {
     <p><em>Loading...</em></p>
@@ -17,7 +17,6 @@ else
                 <a class="btn btn-secondary" href="@($"Leaderboard/Factions")" role="button">Factions</a>
             </div>
             <div style="margin-right:5%">
-                @*Factions:*@
                 <select style="width:70px;float:right" @onclick="@(() => ShowFactionsMembers(x))" @bind=@x>
                     <option value=@Factions.Red selected>Red</option>
                     <option value=@Factions.Green>Green</option>
@@ -92,4 +91,4 @@ else
         </div>
     </div>
 }
-
+*@

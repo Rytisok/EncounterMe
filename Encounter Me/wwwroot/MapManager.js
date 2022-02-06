@@ -277,45 +277,6 @@ function updateMarkerSize() {
     });
 }
 
-function openFilterWindow(dotNetObjRef)
-{
-    if (filterWindow == null) {
-        filterWindow = L.control();
-
-        filterWindow.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'filter');
-            this.update();
-            L.DomEvent
-                .disableClickPropagation(this._div)
-                .disableScrollPropagation(this._div);
-            return this._div;
-        };
-
-        // method that we will use to update the control based on feature properties passed
-        filterWindow.update = function (d, l) {
-
-            //3 and 10 are the default values
-            var dif = (d ? d : 3);
-            var len = (l ? l : 10);
-
-            this._div.innerHTML = '<h4>Filter Trails</h4>' +
-                '<filter>Difficulty:</filter><br/>' +
-                '<input type="range" min="1" max="5" value="' + dif + '" class="slider" oninput="filterWindow.update(this.value, ' + len + ')" onchange="filterWindow.update(this.value, ' + len + ')" id="trailDiff">' + '<filter>' + dif + '★ </filter><br/>'+
-                '<filter>Length:</filter><br/>' +
-                '<input type="range" min="1" max="50" value="' + len + '" class="slider" oninput="filterWindow.update(' + dif + ', this.value)" onchange="filterWindow.update(' + dif + ', this.value)" id="trailLength">' + '<filter>' + len + 'km </filter><br/>';
-            dotNetObjRef.invokeMethodAsync("FilterMarkers", parseInt(dif), parseInt(len));
-        };
-
-        filterWindow.addTo(map);
-    }
-    else
-    {
-        filterWindow.remove();
-        filterWindow = null;
-    }
-    
-}
-
 function startTrail(ID)
 {
     dotNetObj.invokeMethodAsync("StartTrail", ID);
@@ -353,9 +314,4 @@ function removeLineToTrail() {
     if (lineToTrail != null) {
         map.removeLayer(lineToTrail);
     }
-}
-
-function futureFeature()
-{
-    alert("future feature");
 }

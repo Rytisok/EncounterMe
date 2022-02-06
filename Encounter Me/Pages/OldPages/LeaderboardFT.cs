@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Encounter_Me.Pages
 {
-
+    /*
     public partial class LeaderboardFT
     {
         public IEnumerable<UserData> Users { get; set; }
@@ -25,14 +25,14 @@ namespace Encounter_Me.Pages
             Users = (await UserDataService.GetAllUsers()).ToList();
             await ShowFactionsStats();
         }
-
+    
 
         public async Task ShowFactionsStats()
         {
-            /*FctionsGroup = (from usr in Users
-                            group usr by (int)usr.Faction into faction
-                            where faction.Key == 1
-                            select faction);*/
+            //FctionsGroup = (from usr in Users
+            //                group usr by (int)usr.Faction into faction
+            //                where faction.Key == 1
+            //                select faction);
 
             RedCount = (from usr in Users
                              select usr).Count(usr=>usr.Faction==Factions.Red);
@@ -44,8 +44,7 @@ namespace Encounter_Me.Pages
                              select usr).Count(usr => usr.Faction == Factions.Yellow);
 
         }
-
-
-
+     
     }
+    */
 }

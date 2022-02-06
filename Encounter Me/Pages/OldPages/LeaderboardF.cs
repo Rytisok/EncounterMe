@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Encounter_Me.Pages
 {
-
+    /*
     public partial class LeaderboardF
     {
         public IEnumerable<UserData> Users { get; set; }
@@ -35,8 +35,6 @@ namespace Encounter_Me.Pages
                             select faction);
 
         }
-
-
-
     }
+    */
 }

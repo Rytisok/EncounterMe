@@ -122,32 +122,6 @@
         }
     }
 
-    /*
-    [JSInvokable]
-    public async void FilterMarkers(int difficulty, int length)
-    {
-        _capturePoints = await Http.GetFromJsonAsync<List<TrailContainer>>("sample-data/testTrail.json");
-
-        await JSRuntime.InvokeAsync<string>(
-        "clearMarkers");
-
-        var filterQuery = from trail
-                          in _capturePoints
-                          where trail.Diff <= difficulty && trail.Length <= length
-                          select trail;
-
-        List<TrailContainer> filteredTrails = new List<TrailContainer>();
-
-        foreach (var trail in filterQuery)
-        {
-            filteredTrails.Add(trail);
-        }
-
-        _trails = filteredTrails;
-
-        UpdateMarkers();
-    }*/
-
     private async Task AddMarker(CapturePoint capturePoint)
     {
 
@@ -164,7 +138,7 @@
             string possibleAction;
 
 
-            //could be done cleaner
+            //set the appropriate UI text for possible to perform action
             if (capturePoint.faction == 0)
             {
                 possibleAction = "Capture";
